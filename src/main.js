@@ -401,6 +401,57 @@ const check_pi_8 = (C, eps) => {
             V.push([a, b, c, d]);
         }
     }
+    
+    const newElements = [];  // Temporary array to store new elements
+
+    V.forEach(([a, b, c, d]) => {
+        const newElement = [(c - a), (d - b), c, d];
+        
+        // Check if the new element already exists in V
+        const exists = V.some(([x, y, z, w]) =>
+            x === newElement[0] && y === newElement[1] && z === newElement[2] && w === newElement[3]
+        );
+    
+        // If the new element doesn't exist, push it to the temporary array
+        if (!exists) {
+            newElements.push(newElement);
+        }
+    });
+    
+    // Merge the new elements into V after the loop
+    V.push(...newElements);
+
+    function gcd(a, b) {
+        if (b) {
+            return gcd(b, a % b);
+        } else {
+            return Math.abs(a);
+        }
+    }
+
+    function toABC(a, b, c, d) {
+        let alpha, beta, gamma;
+        if (c**2 - 2 * d**2 >= 0) {
+            alpha = a * c - 2 * b * d;
+            beta = b * c - a * d;
+            gamma = c**2 - 2 * d**2;
+        } else {
+            alpha = -a * c + 2 * b * d;
+            beta = -b * c + a * d;
+            gamma = 2 * d**2 - c**2;
+        }
+        let grcodi = gcd(gamma,gcd(alpha,beta));
+        return [alpha/grcodi, beta/grcodi, gamma/grcodi];
+    }
+    
+    // Apply the transformation and update V
+    V.forEach(([a, b, c, d], index) => {
+        const [alpha, beta, gamma] = toABC(a, b, c, d);
+        // Assuming the new gamma should be used as c in the transformed coordinates
+        V[index] = [alpha, beta, gamma];
+    });
+    
+    console.log(V)
     return V;
 };
 
@@ -415,4 +466,3 @@ const sum_str = (a, b) => (
 
 const coord_str = ([a, b, c, d]) => sum_str(a, b) + "/" + sum_str(c, d);
 
-console.log(V)
