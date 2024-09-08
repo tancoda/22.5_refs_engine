@@ -414,3 +414,5 @@ const sum_str = (a, b) => (
 );
 
 const coord_str = ([a, b, c, d]) => sum_str(a, b) + "/" + sum_str(c, d);
+
+console.log(V)

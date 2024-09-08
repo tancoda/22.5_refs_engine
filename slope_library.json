@@ -1,0 +1,5427 @@
+[
+    {
+      "numerator": 0,
+      "denominator": 1,
+      "weight": 0,
+      "rank": 1,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 1,
+      "denominator": 50,
+      "weight": 0.02,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 49,
+      "weight": 0.02040816326530612,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 48,
+      "weight": 0.020833333333333332,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 47,
+      "weight": 0.02127659574468085,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 46,
+      "weight": 0.021739130434782608,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 45,
+      "weight": 0.022222222222222223,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 44,
+      "weight": 0.022727272727272728,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 43,
+      "weight": 0.023255813953488372,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 42,
+      "weight": 0.023809523809523808,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 41,
+      "weight": 0.024390243902439025,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 40,
+      "weight": 0.025,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 39,
+      "weight": 0.02564102564102564,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 38,
+      "weight": 0.02631578947368421,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 37,
+      "weight": 0.02702702702702703,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 36,
+      "weight": 0.027777777777777776,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 35,
+      "weight": 0.02857142857142857,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 34,
+      "weight": 0.029411764705882353,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 33,
+      "weight": 0.030303030303030304,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 32,
+      "weight": 0.03125,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 1,
+      "denominator": 31,
+      "weight": 0.03225806451612903,
+      "rank": 7,
+      "type": "diagA"
+    },
+    {
+      "numerator": 1,
+      "denominator": 30,
+      "weight": 0.03333333333333333,
+      "rank": 8,
+      "type": "diagB"
+    },
+    {
+      "numerator": 1,
+      "denominator": 29,
+      "weight": 0.034482758620689655,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 28,
+      "weight": 0.03571428571428571,
+      "rank": 9,
+      "type": "diagD"
+    },
+    {
+      "numerator": 1,
+      "denominator": 27,
+      "weight": 0.037037037037037035,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 26,
+      "weight": 0.038461538461538464,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 25,
+      "weight": 0.04,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 49,
+      "weight": 0.04081632653061224,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 24,
+      "weight": 0.041666666666666664,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 47,
+      "weight": 0.0425531914893617,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 23,
+      "weight": 0.043478260869565216,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 45,
+      "weight": 0.044444444444444446,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 22,
+      "weight": 0.045454545454545456,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 43,
+      "weight": 0.046511627906976744,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 21,
+      "weight": 0.047619047619047616,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 41,
+      "weight": 0.04878048780487805,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 20,
+      "weight": 0.05,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 39,
+      "weight": 0.05128205128205128,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 19,
+      "weight": 0.05263157894736842,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 37,
+      "weight": 0.05405405405405406,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 18,
+      "weight": 0.05555555555555555,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 35,
+      "weight": 0.05714285714285714,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 17,
+      "weight": 0.058823529411764705,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 50,
+      "weight": 0.06,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 33,
+      "weight": 0.06060606060606061,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 49,
+      "weight": 0.061224489795918366,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 16,
+      "weight": 0.0625,
+      "rank": 5,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 3,
+      "denominator": 47,
+      "weight": 0.06382978723404255,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 31,
+      "weight": 0.06451612903225806,
+      "rank": 9,
+      "type": "diagC"
+    },
+    {
+      "numerator": 3,
+      "denominator": 46,
+      "weight": 0.06521739130434782,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 15,
+      "weight": 0.06666666666666667,
+      "rank": 6,
+      "type": "diagA"
+    },
+    {
+      "numerator": 3,
+      "denominator": 44,
+      "weight": 0.06818181818181818,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 29,
+      "weight": 0.06896551724137931,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 43,
+      "weight": 0.06976744186046512,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 14,
+      "weight": 0.07142857142857142,
+      "rank": 7,
+      "type": "diagB"
+    },
+    {
+      "numerator": 3,
+      "denominator": 41,
+      "weight": 0.07317073170731707,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 27,
+      "weight": 0.07407407407407407,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 40,
+      "weight": 0.075,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 13,
+      "weight": 0.07692307692307693,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 38,
+      "weight": 0.07894736842105263,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 25,
+      "weight": 0.08,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 37,
+      "weight": 0.08108108108108109,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 49,
+      "weight": 0.08163265306122448,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 12,
+      "weight": 0.08333333333333333,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 47,
+      "weight": 0.0851063829787234,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 35,
+      "weight": 0.08571428571428572,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 23,
+      "weight": 0.08695652173913043,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 34,
+      "weight": 0.08823529411764706,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 45,
+      "weight": 0.08888888888888889,
+      "rank": 10,
+      "type": "diagG"
+    },
+    {
+      "numerator": 1,
+      "denominator": 11,
+      "weight": 0.09090909090909091,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 43,
+      "weight": 0.09302325581395349,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 32,
+      "weight": 0.09375,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 2,
+      "denominator": 21,
+      "weight": 0.09523809523809523,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 31,
+      "weight": 0.0967741935483871,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 41,
+      "weight": 0.0975609756097561,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 10,
+      "weight": 0.1,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 49,
+      "weight": 0.10204081632653061,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 39,
+      "weight": 0.10256410256410256,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 29,
+      "weight": 0.10344827586206896,
+      "rank": 7,
+      "type": "diagA"
+    },
+    {
+      "numerator": 5,
+      "denominator": 48,
+      "weight": 0.10416666666666667,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 19,
+      "weight": 0.10526315789473684,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 47,
+      "weight": 0.10638297872340426,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 28,
+      "weight": 0.10714285714285714,
+      "rank": 9,
+      "type": "diagF"
+    },
+    {
+      "numerator": 4,
+      "denominator": 37,
+      "weight": 0.10810810810810811,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 46,
+      "weight": 0.10869565217391304,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 9,
+      "weight": 0.1111111111111111,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 44,
+      "weight": 0.11363636363636363,
+      "rank": 10,
+      "type": "diagD"
+    },
+    {
+      "numerator": 4,
+      "denominator": 35,
+      "weight": 0.11428571428571428,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 26,
+      "weight": 0.11538461538461539,
+      "rank": 8,
+      "type": "diagB"
+    },
+    {
+      "numerator": 5,
+      "denominator": 43,
+      "weight": 0.11627906976744186,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 17,
+      "weight": 0.11764705882352941,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 42,
+      "weight": 0.11904761904761904,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 25,
+      "weight": 0.12,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 33,
+      "weight": 0.12121212121212122,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 41,
+      "weight": 0.12195121951219512,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 49,
+      "weight": 0.12244897959183673,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 8,
+      "weight": 0.125,
+      "rank": 4,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 6,
+      "denominator": 47,
+      "weight": 0.1276595744680851,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 39,
+      "weight": 0.1282051282051282,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 31,
+      "weight": 0.12903225806451613,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 23,
+      "weight": 0.13043478260869565,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 38,
+      "weight": 0.13157894736842105,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 15,
+      "weight": 0.13333333333333333,
+      "rank": 8,
+      "type": "diagC"
+    },
+    {
+      "numerator": 5,
+      "denominator": 37,
+      "weight": 0.13513513513513514,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 22,
+      "weight": 0.13636363636363635,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 29,
+      "weight": 0.13793103448275862,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 36,
+      "weight": 0.1388888888888889,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 43,
+      "weight": 0.13953488372093023,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 50,
+      "weight": 0.14,
+      "rank": 9,
+      "type": "diagB"
+    },
+    {
+      "numerator": 1,
+      "denominator": 7,
+      "weight": 0.14285714285714285,
+      "rank": 5,
+      "type": "diagA"
+    },
+    {
+      "numerator": 7,
+      "denominator": 48,
+      "weight": 0.14583333333333334,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 41,
+      "weight": 0.14634146341463414,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 34,
+      "weight": 0.14705882352941177,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 27,
+      "weight": 0.14814814814814814,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 47,
+      "weight": 0.14893617021276595,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 20,
+      "weight": 0.15,
+      "rank": 9,
+      "type": "diagD"
+    },
+    {
+      "numerator": 5,
+      "denominator": 33,
+      "weight": 0.15151515151515152,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 46,
+      "weight": 0.15217391304347827,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 13,
+      "weight": 0.15384615384615385,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 45,
+      "weight": 0.15555555555555556,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 32,
+      "weight": 0.15625,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 3,
+      "denominator": 19,
+      "weight": 0.15789473684210525,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 44,
+      "weight": 0.1590909090909091,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 25,
+      "weight": 0.16,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 31,
+      "weight": 0.16129032258064516,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 37,
+      "weight": 0.16216216216216217,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 43,
+      "weight": 0.16279069767441862,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 49,
+      "weight": 0.16326530612244897,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 6,
+      "weight": 0.16666666666666666,
+      "rank": 6,
+      "type": "diagB"
+    },
+    {
+      "numerator": 8,
+      "denominator": 47,
+      "weight": 0.1702127659574468,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 41,
+      "weight": 0.17073170731707318,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 35,
+      "weight": 0.17142857142857143,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 29,
+      "weight": 0.1724137931034483,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 23,
+      "weight": 0.17391304347826086,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 40,
+      "weight": 0.175,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 17,
+      "weight": 0.17647058823529413,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 45,
+      "weight": 0.17777777777777778,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 28,
+      "weight": 0.17857142857142858,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 39,
+      "weight": 0.1794871794871795,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 50,
+      "weight": 0.18,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 11,
+      "weight": 0.18181818181818182,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 49,
+      "weight": 0.1836734693877551,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 38,
+      "weight": 0.18421052631578946,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 27,
+      "weight": 0.18518518518518517,
+      "rank": 7,
+      "type": "diagA"
+    },
+    {
+      "numerator": 8,
+      "denominator": 43,
+      "weight": 0.18604651162790697,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 16,
+      "weight": 0.1875,
+      "rank": 5,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 7,
+      "denominator": 37,
+      "weight": 0.1891891891891892,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 21,
+      "weight": 0.19047619047619047,
+      "rank": 9,
+      "type": "diagG"
+    },
+    {
+      "numerator": 9,
+      "denominator": 47,
+      "weight": 0.19148936170212766,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 26,
+      "weight": 0.19230769230769232,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 31,
+      "weight": 0.1935483870967742,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 36,
+      "weight": 0.19444444444444445,
+      "rank": 10,
+      "type": "diagD"
+    },
+    {
+      "numerator": 8,
+      "denominator": 41,
+      "weight": 0.1951219512195122,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 46,
+      "weight": 0.1956521739130435,
+      "rank": 9,
+      "type": "diagB"
+    },
+    {
+      "numerator": 1,
+      "denominator": 5,
+      "weight": 0.2,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 49,
+      "weight": 0.20408163265306123,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 44,
+      "weight": 0.20454545454545456,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 39,
+      "weight": 0.20512820512820512,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 34,
+      "weight": 0.20588235294117646,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 29,
+      "weight": 0.20689655172413793,
+      "rank": 9,
+      "type": "diagC"
+    },
+    {
+      "numerator": 5,
+      "denominator": 24,
+      "weight": 0.20833333333333334,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 43,
+      "weight": 0.20930232558139536,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 19,
+      "weight": 0.21052631578947367,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 33,
+      "weight": 0.21212121212121213,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 47,
+      "weight": 0.2127659574468085,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 14,
+      "weight": 0.21428571428571427,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 37,
+      "weight": 0.21621621621621623,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 23,
+      "weight": 0.21739130434782608,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 32,
+      "weight": 0.21875,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 9,
+      "denominator": 41,
+      "weight": 0.21951219512195122,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 50,
+      "weight": 0.22,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 9,
+      "weight": 0.2222222222222222,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 49,
+      "weight": 0.22448979591836735,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 40,
+      "weight": 0.225,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 31,
+      "weight": 0.22580645161290322,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 22,
+      "weight": 0.22727272727272727,
+      "rank": 8,
+      "type": "diagB"
+    },
+    {
+      "numerator": 8,
+      "denominator": 35,
+      "weight": 0.22857142857142856,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 48,
+      "weight": 0.22916666666666666,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 13,
+      "weight": 0.23076923076923078,
+      "rank": 6,
+      "type": "diagA"
+    },
+    {
+      "numerator": 10,
+      "denominator": 43,
+      "weight": 0.23255813953488372,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 30,
+      "weight": 0.23333333333333334,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 47,
+      "weight": 0.23404255319148937,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 17,
+      "weight": 0.23529411764705882,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 38,
+      "weight": 0.23684210526315788,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 21,
+      "weight": 0.23809523809523808,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 46,
+      "weight": 0.2391304347826087,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 25,
+      "weight": 0.24,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 29,
+      "weight": 0.2413793103448276,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 33,
+      "weight": 0.24242424242424243,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 37,
+      "weight": 0.24324324324324326,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 41,
+      "weight": 0.24390243902439024,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 45,
+      "weight": 0.24444444444444444,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 12,
+      "denominator": 49,
+      "weight": 0.24489795918367346,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 4,
+      "weight": 0.25,
+      "rank": 3,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 12,
+      "denominator": 47,
+      "weight": 0.2553191489361702,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 43,
+      "weight": 0.2558139534883721,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 39,
+      "weight": 0.2564102564102564,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 35,
+      "weight": 0.2571428571428571,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 31,
+      "weight": 0.25806451612903225,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 27,
+      "weight": 0.25925925925925924,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 50,
+      "weight": 0.26,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 23,
+      "weight": 0.2608695652173913,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 42,
+      "weight": 0.2619047619047619,
+      "rank": 9,
+      "type": "diagB"
+    },
+    {
+      "numerator": 5,
+      "denominator": 19,
+      "weight": 0.2631578947368421,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 34,
+      "weight": 0.2647058823529412,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 49,
+      "weight": 0.2653061224489796,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 15,
+      "weight": 0.26666666666666666,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 41,
+      "weight": 0.2682926829268293,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 26,
+      "weight": 0.2692307692307692,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 37,
+      "weight": 0.2702702702702703,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 48,
+      "weight": 0.2708333333333333,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 11,
+      "weight": 0.2727272727272727,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 40,
+      "weight": 0.275,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 29,
+      "weight": 0.27586206896551724,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 47,
+      "weight": 0.2765957446808511,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 18,
+      "weight": 0.2777777777777778,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 12,
+      "denominator": 43,
+      "weight": 0.27906976744186046,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 25,
+      "weight": 0.28,
+      "rank": 7,
+      "type": "diagA"
+    },
+    {
+      "numerator": 9,
+      "denominator": 32,
+      "weight": 0.28125,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 11,
+      "denominator": 39,
+      "weight": 0.28205128205128205,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 46,
+      "weight": 0.2826086956521739,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 7,
+      "weight": 0.2857142857142857,
+      "rank": 6,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 45,
+      "weight": 0.28888888888888886,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 38,
+      "weight": 0.2894736842105263,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 31,
+      "weight": 0.2903225806451613,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 24,
+      "weight": 0.2916666666666667,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 12,
+      "denominator": 41,
+      "weight": 0.2926829268292683,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 17,
+      "weight": 0.29411764705882354,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 44,
+      "weight": 0.29545454545454547,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 27,
+      "weight": 0.2962962962962963,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 37,
+      "weight": 0.2972972972972973,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 47,
+      "weight": 0.2978723404255319,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 10,
+      "weight": 0.3,
+      "rank": 7,
+      "type": "diagB"
+    },
+    {
+      "numerator": 13,
+      "denominator": 43,
+      "weight": 0.3023255813953488,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 33,
+      "weight": 0.30303030303030304,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 23,
+      "weight": 0.30434782608695654,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 36,
+      "weight": 0.3055555555555556,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 49,
+      "weight": 0.30612244897959184,
+      "rank": 8,
+      "type": "diagA"
+    },
+    {
+      "numerator": 4,
+      "denominator": 13,
+      "weight": 0.3076923076923077,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 42,
+      "weight": 0.30952380952380953,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 29,
+      "weight": 0.3103448275862069,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 45,
+      "weight": 0.3111111111111111,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 16,
+      "weight": 0.3125,
+      "rank": 5,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 11,
+      "denominator": 35,
+      "weight": 0.3142857142857143,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 19,
+      "weight": 0.3157894736842105,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 41,
+      "weight": 0.3170731707317073,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 22,
+      "weight": 0.3181818181818182,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 47,
+      "weight": 0.3191489361702128,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 25,
+      "weight": 0.32,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 28,
+      "weight": 0.32142857142857145,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 31,
+      "weight": 0.3225806451612903,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 34,
+      "weight": 0.3235294117647059,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 12,
+      "denominator": 37,
+      "weight": 0.32432432432432434,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 40,
+      "weight": 0.325,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 43,
+      "weight": 0.32558139534883723,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 46,
+      "weight": 0.32608695652173914,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 49,
+      "weight": 0.32653061224489793,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 3,
+      "weight": 0.3333333333333333,
+      "rank": 4,
+      "type": "diagA"
+    },
+    {
+      "numerator": 17,
+      "denominator": 50,
+      "weight": 0.34,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 47,
+      "weight": 0.3404255319148936,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 44,
+      "weight": 0.3409090909090909,
+      "rank": 10,
+      "type": "diagF"
+    },
+    {
+      "numerator": 14,
+      "denominator": 41,
+      "weight": 0.34146341463414637,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 38,
+      "weight": 0.34210526315789475,
+      "rank": 9,
+      "type": "diagB"
+    },
+    {
+      "numerator": 12,
+      "denominator": 35,
+      "weight": 0.34285714285714286,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 32,
+      "weight": 0.34375,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 10,
+      "denominator": 29,
+      "weight": 0.3448275862068966,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 26,
+      "weight": 0.34615384615384615,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 49,
+      "weight": 0.3469387755102041,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 23,
+      "weight": 0.34782608695652173,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 43,
+      "weight": 0.3488372093023256,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 20,
+      "weight": 0.35,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 37,
+      "weight": 0.35135135135135137,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 17,
+      "weight": 0.35294117647058826,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 48,
+      "weight": 0.3541666666666667,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 31,
+      "weight": 0.3548387096774194,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 45,
+      "weight": 0.35555555555555557,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 14,
+      "weight": 0.35714285714285715,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 39,
+      "weight": 0.358974358974359,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 25,
+      "weight": 0.36,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 36,
+      "weight": 0.3611111111111111,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 47,
+      "weight": 0.3617021276595745,
+      "rank": 8,
+      "type": "diagA"
+    },
+    {
+      "numerator": 4,
+      "denominator": 11,
+      "weight": 0.36363636363636365,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 41,
+      "weight": 0.36585365853658536,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 30,
+      "weight": 0.36666666666666664,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 18,
+      "denominator": 49,
+      "weight": 0.3673469387755102,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 19,
+      "weight": 0.3684210526315789,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 46,
+      "weight": 0.3695652173913043,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 27,
+      "weight": 0.37037037037037035,
+      "rank": 9,
+      "type": "diagC"
+    },
+    {
+      "numerator": 13,
+      "denominator": 35,
+      "weight": 0.37142857142857144,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 43,
+      "weight": 0.37209302325581395,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 8,
+      "weight": 0.375,
+      "rank": 4,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 17,
+      "denominator": 45,
+      "weight": 0.37777777777777777,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 37,
+      "weight": 0.3783783783783784,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 29,
+      "weight": 0.3793103448275862,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 50,
+      "weight": 0.38,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 21,
+      "weight": 0.38095238095238093,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 34,
+      "weight": 0.38235294117647056,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 18,
+      "denominator": 47,
+      "weight": 0.3829787234042553,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 13,
+      "weight": 0.38461538461538464,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 44,
+      "weight": 0.38636363636363635,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 12,
+      "denominator": 31,
+      "weight": 0.3870967741935484,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 49,
+      "weight": 0.3877551020408163,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 18,
+      "weight": 0.3888888888888889,
+      "rank": 8,
+      "type": "diagB"
+    },
+    {
+      "numerator": 16,
+      "denominator": 41,
+      "weight": 0.3902439024390244,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 23,
+      "weight": 0.391304347826087,
+      "rank": 7,
+      "type": "diagA"
+    },
+    {
+      "numerator": 11,
+      "denominator": 28,
+      "weight": 0.39285714285714285,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 33,
+      "weight": 0.3939393939393939,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 38,
+      "weight": 0.39473684210526316,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 43,
+      "weight": 0.3953488372093023,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 48,
+      "weight": 0.3958333333333333,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 5,
+      "weight": 0.4,
+      "rank": 6,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 47,
+      "weight": 0.40425531914893614,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 42,
+      "weight": 0.40476190476190477,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 37,
+      "weight": 0.40540540540540543,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 32,
+      "weight": 0.40625,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 11,
+      "denominator": 27,
+      "weight": 0.4074074074074074,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 49,
+      "weight": 0.40816326530612246,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 22,
+      "weight": 0.4090909090909091,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 39,
+      "weight": 0.41025641025641024,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 17,
+      "weight": 0.4117647058823529,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 46,
+      "weight": 0.41304347826086957,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 12,
+      "denominator": 29,
+      "weight": 0.41379310344827586,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 41,
+      "weight": 0.4146341463414634,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 12,
+      "weight": 0.4166666666666667,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 18,
+      "denominator": 43,
+      "weight": 0.4186046511627907,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 31,
+      "weight": 0.41935483870967744,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 50,
+      "weight": 0.42,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 19,
+      "weight": 0.42105263157894735,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 45,
+      "weight": 0.4222222222222222,
+      "rank": 8,
+      "type": "diagA"
+    },
+    {
+      "numerator": 11,
+      "denominator": 26,
+      "weight": 0.4230769230769231,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 33,
+      "weight": 0.42424242424242425,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 40,
+      "weight": 0.425,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 47,
+      "weight": 0.425531914893617,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 7,
+      "weight": 0.42857142857142855,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 44,
+      "weight": 0.4318181818181818,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 37,
+      "weight": 0.43243243243243246,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 30,
+      "weight": 0.43333333333333335,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 23,
+      "weight": 0.43478260869565216,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 39,
+      "weight": 0.4358974358974359,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 16,
+      "weight": 0.4375,
+      "rank": 5,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 18,
+      "denominator": 41,
+      "weight": 0.43902439024390244,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 25,
+      "weight": 0.44,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 34,
+      "weight": 0.4411764705882353,
+      "rank": 9,
+      "type": "diagB"
+    },
+    {
+      "numerator": 19,
+      "denominator": 43,
+      "weight": 0.4418604651162791,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 9,
+      "weight": 0.4444444444444444,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 47,
+      "weight": 0.44680851063829785,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 38,
+      "weight": 0.4473684210526316,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 29,
+      "weight": 0.4482758620689655,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 22,
+      "denominator": 49,
+      "weight": 0.4489795918367347,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 20,
+      "weight": 0.45,
+      "rank": 9,
+      "type": "diagF"
+    },
+    {
+      "numerator": 14,
+      "denominator": 31,
+      "weight": 0.45161290322580644,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 42,
+      "weight": 0.4523809523809524,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 11,
+      "weight": 0.45454545454545453,
+      "rank": 6,
+      "type": "diagA"
+    },
+    {
+      "numerator": 21,
+      "denominator": 46,
+      "weight": 0.45652173913043476,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 35,
+      "weight": 0.45714285714285713,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 24,
+      "weight": 0.4583333333333333,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 37,
+      "weight": 0.4594594594594595,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 50,
+      "weight": 0.46,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 13,
+      "weight": 0.46153846153846156,
+      "rank": 8,
+      "type": "diagC"
+    },
+    {
+      "numerator": 19,
+      "denominator": 41,
+      "weight": 0.4634146341463415,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 28,
+      "weight": 0.4642857142857143,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 43,
+      "weight": 0.46511627906976744,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 15,
+      "weight": 0.4666666666666667,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 22,
+      "denominator": 47,
+      "weight": 0.46808510638297873,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 32,
+      "weight": 0.46875,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 23,
+      "denominator": 49,
+      "weight": 0.46938775510204084,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 17,
+      "weight": 0.47058823529411764,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 36,
+      "weight": 0.4722222222222222,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 19,
+      "weight": 0.47368421052631576,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 40,
+      "weight": 0.475,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 21,
+      "weight": 0.47619047619047616,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 44,
+      "weight": 0.4772727272727273,
+      "rank": 11,
+      "type": "diagD"
+    },
+    {
+      "numerator": 11,
+      "denominator": 23,
+      "weight": 0.4782608695652174,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 48,
+      "weight": 0.4791666666666667,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 12,
+      "denominator": 25,
+      "weight": 0.48,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 27,
+      "weight": 0.48148148148148145,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 29,
+      "weight": 0.4827586206896552,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 31,
+      "weight": 0.4838709677419355,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 33,
+      "weight": 0.48484848484848486,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 35,
+      "weight": 0.4857142857142857,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 18,
+      "denominator": 37,
+      "weight": 0.4864864864864865,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 39,
+      "weight": 0.48717948717948717,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 41,
+      "weight": 0.4878048780487805,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 43,
+      "weight": 0.4883720930232558,
+      "rank": 8,
+      "type": "diagA"
+    },
+    {
+      "numerator": 22,
+      "denominator": 45,
+      "weight": 0.4888888888888889,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 47,
+      "weight": 0.48936170212765956,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 24,
+      "denominator": 49,
+      "weight": 0.4897959183673469,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 2,
+      "weight": 0.5,
+      "rank": 2,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 25,
+      "denominator": 49,
+      "weight": 0.5102040816326531,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 24,
+      "denominator": 47,
+      "weight": 0.5106382978723404,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 45,
+      "weight": 0.5111111111111111,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 22,
+      "denominator": 43,
+      "weight": 0.5116279069767442,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 41,
+      "weight": 0.5121951219512195,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 39,
+      "weight": 0.5128205128205128,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 37,
+      "weight": 0.5135135135135135,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 18,
+      "denominator": 35,
+      "weight": 0.5142857142857142,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 33,
+      "weight": 0.5151515151515151,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 31,
+      "weight": 0.5161290322580645,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 29,
+      "weight": 0.5172413793103449,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 27,
+      "weight": 0.5185185185185185,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 25,
+      "weight": 0.52,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 48,
+      "weight": 0.5208333333333334,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 12,
+      "denominator": 23,
+      "weight": 0.5217391304347826,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 44,
+      "weight": 0.5227272727272727,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 21,
+      "weight": 0.5238095238095238,
+      "rank": 7,
+      "type": "diagA"
+    },
+    {
+      "numerator": 21,
+      "denominator": 40,
+      "weight": 0.525,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 19,
+      "weight": 0.5263157894736842,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 36,
+      "weight": 0.5277777777777778,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 17,
+      "weight": 0.5294117647058824,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 26,
+      "denominator": 49,
+      "weight": 0.5306122448979592,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 32,
+      "weight": 0.53125,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 25,
+      "denominator": 47,
+      "weight": 0.5319148936170213,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 15,
+      "weight": 0.5333333333333333,
+      "rank": 6,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 43,
+      "weight": 0.5348837209302325,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 28,
+      "weight": 0.5357142857142857,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 22,
+      "denominator": 41,
+      "weight": 0.5365853658536586,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 13,
+      "weight": 0.5384615384615384,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 50,
+      "weight": 0.54,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 37,
+      "weight": 0.5405405405405406,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 24,
+      "weight": 0.5416666666666666,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 35,
+      "weight": 0.5428571428571428,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 46,
+      "weight": 0.5434782608695652,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 11,
+      "weight": 0.5454545454545454,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 42,
+      "weight": 0.5476190476190477,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 31,
+      "weight": 0.5483870967741935,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 20,
+      "weight": 0.55,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 49,
+      "weight": 0.5510204081632653,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 29,
+      "weight": 0.5517241379310345,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 38,
+      "weight": 0.5526315789473685,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 26,
+      "denominator": 47,
+      "weight": 0.5531914893617021,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 9,
+      "weight": 0.5555555555555556,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 24,
+      "denominator": 43,
+      "weight": 0.5581395348837209,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 34,
+      "weight": 0.5588235294117647,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 25,
+      "weight": 0.56,
+      "rank": 9,
+      "type": "diagC"
+    },
+    {
+      "numerator": 23,
+      "denominator": 41,
+      "weight": 0.5609756097560976,
+      "rank": 8,
+      "type": "diagA"
+    },
+    {
+      "numerator": 9,
+      "denominator": 16,
+      "weight": 0.5625,
+      "rank": 5,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 22,
+      "denominator": 39,
+      "weight": 0.5641025641025641,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 23,
+      "weight": 0.5652173913043478,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 30,
+      "weight": 0.5666666666666667,
+      "rank": 9,
+      "type": "diagB"
+    },
+    {
+      "numerator": 21,
+      "denominator": 37,
+      "weight": 0.5675675675675675,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 44,
+      "weight": 0.5681818181818182,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 7,
+      "weight": 0.5714285714285714,
+      "rank": 5,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 47,
+      "weight": 0.574468085106383,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 40,
+      "weight": 0.575,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 33,
+      "weight": 0.5757575757575758,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 26,
+      "weight": 0.5769230769230769,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 26,
+      "denominator": 45,
+      "weight": 0.5777777777777777,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 19,
+      "weight": 0.5789473684210527,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 50,
+      "weight": 0.58,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 18,
+      "denominator": 31,
+      "weight": 0.5806451612903226,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 43,
+      "weight": 0.5813953488372093,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 12,
+      "weight": 0.5833333333333334,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 24,
+      "denominator": 41,
+      "weight": 0.5853658536585366,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 29,
+      "weight": 0.5862068965517241,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 46,
+      "weight": 0.5869565217391305,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 17,
+      "weight": 0.5882352941176471,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 39,
+      "weight": 0.5897435897435898,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 22,
+      "weight": 0.5909090909090909,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 49,
+      "weight": 0.5918367346938775,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 27,
+      "weight": 0.5925925925925926,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 32,
+      "weight": 0.59375,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 22,
+      "denominator": 37,
+      "weight": 0.5945945945945946,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 42,
+      "weight": 0.5952380952380952,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 28,
+      "denominator": 47,
+      "weight": 0.5957446808510638,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 5,
+      "weight": 0.6,
+      "rank": 5,
+      "type": "diagA"
+    },
+    {
+      "numerator": 29,
+      "denominator": 48,
+      "weight": 0.6041666666666666,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 26,
+      "denominator": 43,
+      "weight": 0.6046511627906976,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 38,
+      "weight": 0.6052631578947368,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 33,
+      "weight": 0.6060606060606061,
+      "rank": 10,
+      "type": "diagG"
+    },
+    {
+      "numerator": 17,
+      "denominator": 28,
+      "weight": 0.6071428571428571,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 23,
+      "weight": 0.6086956521739131,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 41,
+      "weight": 0.6097560975609756,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 18,
+      "weight": 0.6111111111111112,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 30,
+      "denominator": 49,
+      "weight": 0.6122448979591837,
+      "rank": 10,
+      "type": "diagC"
+    },
+    {
+      "numerator": 19,
+      "denominator": 31,
+      "weight": 0.6129032258064516,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 44,
+      "weight": 0.6136363636363636,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 13,
+      "weight": 0.6153846153846154,
+      "rank": 6,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 47,
+      "weight": 0.6170212765957447,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 34,
+      "weight": 0.6176470588235294,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 21,
+      "weight": 0.6190476190476191,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 50,
+      "weight": 0.62,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 18,
+      "denominator": 29,
+      "weight": 0.6206896551724138,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 37,
+      "weight": 0.6216216216216216,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 28,
+      "denominator": 45,
+      "weight": 0.6222222222222222,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 8,
+      "weight": 0.625,
+      "rank": 4,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 27,
+      "denominator": 43,
+      "weight": 0.627906976744186,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 22,
+      "denominator": 35,
+      "weight": 0.6285714285714286,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 27,
+      "weight": 0.6296296296296297,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 46,
+      "weight": 0.6304347826086957,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 12,
+      "denominator": 19,
+      "weight": 0.631578947368421,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 49,
+      "weight": 0.6326530612244898,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 30,
+      "weight": 0.6333333333333333,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 26,
+      "denominator": 41,
+      "weight": 0.6341463414634146,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 11,
+      "weight": 0.6363636363636364,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 30,
+      "denominator": 47,
+      "weight": 0.6382978723404256,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 36,
+      "weight": 0.6388888888888888,
+      "rank": 11,
+      "type": "diagD"
+    },
+    {
+      "numerator": 16,
+      "denominator": 25,
+      "weight": 0.64,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 39,
+      "weight": 0.6410256410256411,
+      "rank": 8,
+      "type": "diagA"
+    },
+    {
+      "numerator": 9,
+      "denominator": 14,
+      "weight": 0.6428571428571429,
+      "rank": 8,
+      "type": "diagB"
+    },
+    {
+      "numerator": 29,
+      "denominator": 45,
+      "weight": 0.6444444444444445,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 31,
+      "weight": 0.6451612903225806,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 48,
+      "weight": 0.6458333333333334,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 17,
+      "weight": 0.6470588235294118,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 24,
+      "denominator": 37,
+      "weight": 0.6486486486486487,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 20,
+      "weight": 0.65,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 28,
+      "denominator": 43,
+      "weight": 0.6511627906976745,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 23,
+      "weight": 0.6521739130434783,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 32,
+      "denominator": 49,
+      "weight": 0.6530612244897959,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 26,
+      "weight": 0.6538461538461539,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 29,
+      "weight": 0.6551724137931034,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 32,
+      "weight": 0.65625,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 23,
+      "denominator": 35,
+      "weight": 0.6571428571428571,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 38,
+      "weight": 0.6578947368421053,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 41,
+      "weight": 0.6585365853658537,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 44,
+      "weight": 0.6590909090909091,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 47,
+      "weight": 0.6595744680851063,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 33,
+      "denominator": 50,
+      "weight": 0.66,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 2,
+      "denominator": 3,
+      "weight": 0.6666666666666666,
+      "rank": 4,
+      "type": "general"
+    },
+    {
+      "numerator": 33,
+      "denominator": 49,
+      "weight": 0.673469387755102,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 46,
+      "weight": 0.6739130434782609,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 43,
+      "weight": 0.6744186046511628,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 40,
+      "weight": 0.675,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 37,
+      "weight": 0.6756756756756757,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 34,
+      "weight": 0.6764705882352942,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 31,
+      "weight": 0.6774193548387096,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 28,
+      "weight": 0.6785714285714286,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 25,
+      "weight": 0.68,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 32,
+      "denominator": 47,
+      "weight": 0.6808510638297872,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 22,
+      "weight": 0.6818181818181818,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 28,
+      "denominator": 41,
+      "weight": 0.6829268292682927,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 19,
+      "weight": 0.6842105263157895,
+      "rank": 7,
+      "type": "diagA"
+    },
+    {
+      "numerator": 24,
+      "denominator": 35,
+      "weight": 0.6857142857142857,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 16,
+      "weight": 0.6875,
+      "rank": 5,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 31,
+      "denominator": 45,
+      "weight": 0.6888888888888889,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 29,
+      "weight": 0.6896551724137931,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 42,
+      "weight": 0.6904761904761905,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 13,
+      "weight": 0.6923076923076923,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 34,
+      "denominator": 49,
+      "weight": 0.6938775510204082,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 36,
+      "weight": 0.6944444444444444,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 23,
+      "weight": 0.6956521739130435,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 33,
+      "weight": 0.696969696969697,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 30,
+      "denominator": 43,
+      "weight": 0.6976744186046512,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 10,
+      "weight": 0.7,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 33,
+      "denominator": 47,
+      "weight": 0.7021276595744681,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 26,
+      "denominator": 37,
+      "weight": 0.7027027027027027,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 27,
+      "weight": 0.7037037037037037,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 44,
+      "weight": 0.7045454545454546,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 12,
+      "denominator": 17,
+      "weight": 0.7058823529411765,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 41,
+      "weight": 0.7073170731707317,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 24,
+      "weight": 0.7083333333333334,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 22,
+      "denominator": 31,
+      "weight": 0.7096774193548387,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 38,
+      "weight": 0.7105263157894737,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 32,
+      "denominator": 45,
+      "weight": 0.7111111111111111,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 7,
+      "weight": 0.7142857142857143,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 33,
+      "denominator": 46,
+      "weight": 0.717391304347826,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 28,
+      "denominator": 39,
+      "weight": 0.717948717948718,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 32,
+      "weight": 0.71875,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 18,
+      "denominator": 25,
+      "weight": 0.72,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 43,
+      "weight": 0.7209302325581395,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 18,
+      "weight": 0.7222222222222222,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 34,
+      "denominator": 47,
+      "weight": 0.723404255319149,
+      "rank": 10,
+      "type": "diagC"
+    },
+    {
+      "numerator": 21,
+      "denominator": 29,
+      "weight": 0.7241379310344828,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 40,
+      "weight": 0.725,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 11,
+      "weight": 0.7272727272727273,
+      "rank": 6,
+      "type": "general"
+    },
+    {
+      "numerator": 35,
+      "denominator": 48,
+      "weight": 0.7291666666666666,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 37,
+      "weight": 0.7297297297297297,
+      "rank": 8,
+      "type": "diagA"
+    },
+    {
+      "numerator": 19,
+      "denominator": 26,
+      "weight": 0.7307692307692307,
+      "rank": 9,
+      "type": "diagB"
+    },
+    {
+      "numerator": 30,
+      "denominator": 41,
+      "weight": 0.7317073170731707,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 15,
+      "weight": 0.7333333333333333,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 36,
+      "denominator": 49,
+      "weight": 0.7346938775510204,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 34,
+      "weight": 0.7352941176470589,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 19,
+      "weight": 0.7368421052631579,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 42,
+      "weight": 0.7380952380952381,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 23,
+      "weight": 0.7391304347826086,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 50,
+      "weight": 0.74,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 27,
+      "weight": 0.7407407407407407,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 31,
+      "weight": 0.7419354838709677,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 26,
+      "denominator": 35,
+      "weight": 0.7428571428571429,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 39,
+      "weight": 0.7435897435897436,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 32,
+      "denominator": 43,
+      "weight": 0.7441860465116279,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 35,
+      "denominator": 47,
+      "weight": 0.7446808510638298,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 3,
+      "denominator": 4,
+      "weight": 0.75,
+      "rank": 3,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 37,
+      "denominator": 49,
+      "weight": 0.7551020408163265,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 34,
+      "denominator": 45,
+      "weight": 0.7555555555555555,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 41,
+      "weight": 0.7560975609756098,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 28,
+      "denominator": 37,
+      "weight": 0.7567567567567568,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 33,
+      "weight": 0.7575757575757576,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 22,
+      "denominator": 29,
+      "weight": 0.7586206896551724,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 25,
+      "weight": 0.76,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 35,
+      "denominator": 46,
+      "weight": 0.7608695652173914,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 21,
+      "weight": 0.7619047619047619,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 38,
+      "weight": 0.7631578947368421,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 17,
+      "weight": 0.7647058823529411,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 36,
+      "denominator": 47,
+      "weight": 0.7659574468085106,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 30,
+      "weight": 0.7666666666666667,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 33,
+      "denominator": 43,
+      "weight": 0.7674418604651163,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 13,
+      "weight": 0.7692307692307693,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 48,
+      "weight": 0.7708333333333334,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 35,
+      "weight": 0.7714285714285715,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 22,
+      "weight": 0.7727272727272727,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 24,
+      "denominator": 31,
+      "weight": 0.7741935483870968,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 40,
+      "weight": 0.775,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 38,
+      "denominator": 49,
+      "weight": 0.7755102040816326,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 9,
+      "weight": 0.7777777777777778,
+      "rank": 6,
+      "type": "diagA"
+    },
+    {
+      "numerator": 39,
+      "denominator": 50,
+      "weight": 0.78,
+      "rank": 10,
+      "type": "diagB"
+    },
+    {
+      "numerator": 32,
+      "denominator": 41,
+      "weight": 0.7804878048780488,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 32,
+      "weight": 0.78125,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 18,
+      "denominator": 23,
+      "weight": 0.782608695652174,
+      "rank": 9,
+      "type": "diagC"
+    },
+    {
+      "numerator": 29,
+      "denominator": 37,
+      "weight": 0.7837837837837838,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 14,
+      "weight": 0.7857142857142857,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 47,
+      "weight": 0.7872340425531915,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 26,
+      "denominator": 33,
+      "weight": 0.7878787878787878,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 19,
+      "weight": 0.7894736842105263,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 34,
+      "denominator": 43,
+      "weight": 0.7906976744186046,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 24,
+      "weight": 0.7916666666666666,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 29,
+      "weight": 0.7931034482758621,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 34,
+      "weight": 0.7941176470588235,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 39,
+      "weight": 0.7948717948717948,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 35,
+      "denominator": 44,
+      "weight": 0.7954545454545454,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 39,
+      "denominator": 49,
+      "weight": 0.7959183673469388,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 4,
+      "denominator": 5,
+      "weight": 0.8,
+      "rank": 5,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 46,
+      "weight": 0.8043478260869565,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 33,
+      "denominator": 41,
+      "weight": 0.8048780487804879,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 36,
+      "weight": 0.8055555555555556,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 31,
+      "weight": 0.8064516129032258,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 26,
+      "weight": 0.8076923076923077,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 38,
+      "denominator": 47,
+      "weight": 0.8085106382978723,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 21,
+      "weight": 0.8095238095238095,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 30,
+      "denominator": 37,
+      "weight": 0.8108108108108109,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 16,
+      "weight": 0.8125,
+      "rank": 5,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 35,
+      "denominator": 43,
+      "weight": 0.813953488372093,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 22,
+      "denominator": 27,
+      "weight": 0.8148148148148148,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 38,
+      "weight": 0.8157894736842105,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 40,
+      "denominator": 49,
+      "weight": 0.8163265306122449,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 11,
+      "weight": 0.8181818181818182,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 41,
+      "denominator": 50,
+      "weight": 0.82,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 32,
+      "denominator": 39,
+      "weight": 0.8205128205128205,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 28,
+      "weight": 0.8214285714285714,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 45,
+      "weight": 0.8222222222222222,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 17,
+      "weight": 0.8235294117647058,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 33,
+      "denominator": 40,
+      "weight": 0.825,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 23,
+      "weight": 0.8260869565217391,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 24,
+      "denominator": 29,
+      "weight": 0.8275862068965517,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 35,
+      "weight": 0.8285714285714286,
+      "rank": 8,
+      "type": "diagA"
+    },
+    {
+      "numerator": 34,
+      "denominator": 41,
+      "weight": 0.8292682926829268,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 39,
+      "denominator": 47,
+      "weight": 0.8297872340425532,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 5,
+      "denominator": 6,
+      "weight": 0.8333333333333334,
+      "rank": 6,
+      "type": "general"
+    },
+    {
+      "numerator": 41,
+      "denominator": 49,
+      "weight": 0.8367346938775511,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 36,
+      "denominator": 43,
+      "weight": 0.8372093023255814,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 37,
+      "weight": 0.8378378378378378,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 26,
+      "denominator": 31,
+      "weight": 0.8387096774193549,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 25,
+      "weight": 0.84,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 44,
+      "weight": 0.8409090909090909,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 19,
+      "weight": 0.8421052631578947,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 32,
+      "weight": 0.84375,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 38,
+      "denominator": 45,
+      "weight": 0.8444444444444444,
+      "rank": 10,
+      "type": "diagC"
+    },
+    {
+      "numerator": 11,
+      "denominator": 13,
+      "weight": 0.8461538461538461,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 39,
+      "denominator": 46,
+      "weight": 0.8478260869565217,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 28,
+      "denominator": 33,
+      "weight": 0.8484848484848485,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 20,
+      "weight": 0.85,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 40,
+      "denominator": 47,
+      "weight": 0.851063829787234,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 27,
+      "weight": 0.8518518518518519,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 34,
+      "weight": 0.8529411764705882,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 35,
+      "denominator": 41,
+      "weight": 0.8536585365853658,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 41,
+      "denominator": 48,
+      "weight": 0.8541666666666666,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 6,
+      "denominator": 7,
+      "weight": 0.8571428571428571,
+      "rank": 6,
+      "type": "general"
+    },
+    {
+      "numerator": 43,
+      "denominator": 50,
+      "weight": 0.86,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 43,
+      "weight": 0.8604651162790697,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 36,
+      "weight": 0.8611111111111112,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 29,
+      "weight": 0.8620689655172413,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 22,
+      "weight": 0.8636363636363636,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 32,
+      "denominator": 37,
+      "weight": 0.8648648648648649,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 15,
+      "weight": 0.8666666666666667,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 33,
+      "denominator": 38,
+      "weight": 0.868421052631579,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 23,
+      "weight": 0.8695652173913043,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 31,
+      "weight": 0.8709677419354839,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 34,
+      "denominator": 39,
+      "weight": 0.8717948717948718,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 41,
+      "denominator": 47,
+      "weight": 0.8723404255319149,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 7,
+      "denominator": 8,
+      "weight": 0.875,
+      "rank": 4,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 43,
+      "denominator": 49,
+      "weight": 0.8775510204081632,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 36,
+      "denominator": 41,
+      "weight": 0.8780487804878049,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 33,
+      "weight": 0.8787878787878788,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 22,
+      "denominator": 25,
+      "weight": 0.88,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 42,
+      "weight": 0.8809523809523809,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 17,
+      "weight": 0.8823529411764706,
+      "rank": 7,
+      "type": "diagA"
+    },
+    {
+      "numerator": 38,
+      "denominator": 43,
+      "weight": 0.8837209302325582,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 26,
+      "weight": 0.8846153846153846,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 35,
+      "weight": 0.8857142857142857,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 39,
+      "denominator": 44,
+      "weight": 0.8863636363636364,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 8,
+      "denominator": 9,
+      "weight": 0.8888888888888888,
+      "rank": 6,
+      "type": "general"
+    },
+    {
+      "numerator": 41,
+      "denominator": 46,
+      "weight": 0.8913043478260869,
+      "rank": 10,
+      "type": "diagB"
+    },
+    {
+      "numerator": 33,
+      "denominator": 37,
+      "weight": 0.8918918918918919,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 28,
+      "weight": 0.8928571428571429,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 42,
+      "denominator": 47,
+      "weight": 0.8936170212765957,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 19,
+      "weight": 0.8947368421052632,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 43,
+      "denominator": 48,
+      "weight": 0.8958333333333334,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 26,
+      "denominator": 29,
+      "weight": 0.896551724137931,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 35,
+      "denominator": 39,
+      "weight": 0.8974358974358975,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 44,
+      "denominator": 49,
+      "weight": 0.8979591836734694,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 9,
+      "denominator": 10,
+      "weight": 0.9,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 41,
+      "weight": 0.9024390243902439,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 28,
+      "denominator": 31,
+      "weight": 0.9032258064516129,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 21,
+      "weight": 0.9047619047619048,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 32,
+      "weight": 0.90625,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 39,
+      "denominator": 43,
+      "weight": 0.9069767441860465,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 10,
+      "denominator": 11,
+      "weight": 0.9090909090909091,
+      "rank": 8,
+      "type": "diagC"
+    },
+    {
+      "numerator": 41,
+      "denominator": 45,
+      "weight": 0.9111111111111111,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 34,
+      "weight": 0.9117647058823529,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 23,
+      "weight": 0.9130434782608695,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 32,
+      "denominator": 35,
+      "weight": 0.9142857142857143,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 43,
+      "denominator": 47,
+      "weight": 0.9148936170212766,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 11,
+      "denominator": 12,
+      "weight": 0.9166666666666666,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 45,
+      "denominator": 49,
+      "weight": 0.9183673469387755,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 34,
+      "denominator": 37,
+      "weight": 0.918918918918919,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 25,
+      "weight": 0.92,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 35,
+      "denominator": 38,
+      "weight": 0.9210526315789473,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 12,
+      "denominator": 13,
+      "weight": 0.9230769230769231,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 40,
+      "weight": 0.925,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 27,
+      "weight": 0.9259259259259259,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 38,
+      "denominator": 41,
+      "weight": 0.926829268292683,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 13,
+      "denominator": 14,
+      "weight": 0.9285714285714286,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 40,
+      "denominator": 43,
+      "weight": 0.9302325581395349,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 29,
+      "weight": 0.9310344827586207,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 41,
+      "denominator": 44,
+      "weight": 0.9318181818181818,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 14,
+      "denominator": 15,
+      "weight": 0.9333333333333333,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 43,
+      "denominator": 46,
+      "weight": 0.9347826086956522,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 31,
+      "weight": 0.9354838709677419,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 44,
+      "denominator": 47,
+      "weight": 0.9361702127659575,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 15,
+      "denominator": 16,
+      "weight": 0.9375,
+      "rank": 5,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 46,
+      "denominator": 49,
+      "weight": 0.9387755102040817,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 33,
+      "weight": 0.9393939393939394,
+      "rank": 8,
+      "type": "diagA"
+    },
+    {
+      "numerator": 47,
+      "denominator": 50,
+      "weight": 0.94,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 16,
+      "denominator": 17,
+      "weight": 0.9411764705882353,
+      "rank": 7,
+      "type": "general"
+    },
+    {
+      "numerator": 33,
+      "denominator": 35,
+      "weight": 0.9428571428571428,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 17,
+      "denominator": 18,
+      "weight": 0.9444444444444444,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 35,
+      "denominator": 37,
+      "weight": 0.9459459459459459,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 18,
+      "denominator": 19,
+      "weight": 0.9473684210526315,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 39,
+      "weight": 0.9487179487179487,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 19,
+      "denominator": 20,
+      "weight": 0.95,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 39,
+      "denominator": 41,
+      "weight": 0.9512195121951219,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 20,
+      "denominator": 21,
+      "weight": 0.9523809523809523,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 41,
+      "denominator": 43,
+      "weight": 0.9534883720930233,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 21,
+      "denominator": 22,
+      "weight": 0.9545454545454546,
+      "rank": 9,
+      "type": "diagB"
+    },
+    {
+      "numerator": 43,
+      "denominator": 45,
+      "weight": 0.9555555555555556,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 22,
+      "denominator": 23,
+      "weight": 0.9565217391304348,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 45,
+      "denominator": 47,
+      "weight": 0.9574468085106383,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 23,
+      "denominator": 24,
+      "weight": 0.9583333333333334,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 47,
+      "denominator": 49,
+      "weight": 0.9591836734693877,
+      "rank": 13,
+      "type": "general"
+    },
+    {
+      "numerator": 24,
+      "denominator": 25,
+      "weight": 0.96,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 25,
+      "denominator": 26,
+      "weight": 0.9615384615384616,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 26,
+      "denominator": 27,
+      "weight": 0.9629629629629629,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 27,
+      "denominator": 28,
+      "weight": 0.9642857142857143,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 28,
+      "denominator": 29,
+      "weight": 0.9655172413793104,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 29,
+      "denominator": 30,
+      "weight": 0.9666666666666667,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 30,
+      "denominator": 31,
+      "weight": 0.967741935483871,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 31,
+      "denominator": 32,
+      "weight": 0.96875,
+      "rank": 6,
+      "type": "powTwo"
+    },
+    {
+      "numerator": 32,
+      "denominator": 33,
+      "weight": 0.9696969696969697,
+      "rank": 8,
+      "type": "general"
+    },
+    {
+      "numerator": 33,
+      "denominator": 34,
+      "weight": 0.9705882352941176,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 34,
+      "denominator": 35,
+      "weight": 0.9714285714285714,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 35,
+      "denominator": 36,
+      "weight": 0.9722222222222222,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 36,
+      "denominator": 37,
+      "weight": 0.972972972972973,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 37,
+      "denominator": 38,
+      "weight": 0.9736842105263158,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 38,
+      "denominator": 39,
+      "weight": 0.9743589743589743,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 39,
+      "denominator": 40,
+      "weight": 0.975,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 40,
+      "denominator": 41,
+      "weight": 0.975609756097561,
+      "rank": 10,
+      "type": "general"
+    },
+    {
+      "numerator": 41,
+      "denominator": 42,
+      "weight": 0.9761904761904762,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 42,
+      "denominator": 43,
+      "weight": 0.9767441860465116,
+      "rank": 10,
+      "type": "diagC"
+    },
+    {
+      "numerator": 43,
+      "denominator": 44,
+      "weight": 0.9772727272727273,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 44,
+      "denominator": 45,
+      "weight": 0.9777777777777777,
+      "rank": 11,
+      "type": "general"
+    },
+    {
+      "numerator": 45,
+      "denominator": 46,
+      "weight": 0.9782608695652174,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 46,
+      "denominator": 47,
+      "weight": 0.9787234042553191,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 47,
+      "denominator": 48,
+      "weight": 0.9791666666666666,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 48,
+      "denominator": 49,
+      "weight": 0.9795918367346939,
+      "rank": 9,
+      "type": "general"
+    },
+    {
+      "numerator": 49,
+      "denominator": 50,
+      "weight": 0.98,
+      "rank": 12,
+      "type": "general"
+    },
+    {
+      "numerator": 1,
+      "denominator": 1,
+      "weight": 1,
+      "rank": 1,
+      "type": "powTwo"
+    }
+  ]
