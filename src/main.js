@@ -466,3 +466,24 @@ const sum_str = (a, b) => (
 
 const coord_str = ([a, b, c, d]) => sum_str(a, b) + "/" + sum_str(c, d);
 
+function rankIt(alpha, beta, gamma) {
+    let rankA = Infinity;
+    let rankB = Infinity;
+    let rankC = Infinity;
+    let rankD = Infinity;
+    if (beta >= 0 && alpha+beta >=0) {
+        rankA = searchForFraction(beta,gamma) + searchForFraction(alpha+beta,gamma)
+    }
+    if (beta <= 0 && alpha+2*beta>= 0) {
+        rankB = searchForFraction(-beta,gamma) + searchForFraction(alpha+2*beta,gamma)
+    }
+    if (beta >= 0 && alpha-beta >= 0) {
+        rankC = searchForFraction(2*beta,gamma) + searchForFraction(alpha-2*beta,gamma)
+    }
+    if (beta >= 0 && alpha-beta >= 0) {
+        rankD = searchForFraction(beta,gamma) + searchForFraction(alpha-beta,gamma)
+    }
+
+    // Return an array of the computed ranks
+    return [rankA, rankB, rankC, rankD];
+}
