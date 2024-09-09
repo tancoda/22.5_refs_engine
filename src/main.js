@@ -4,6 +4,7 @@ import { SVG } from "./flatfolder/svg.js";
 import { X } from "./flatfolder/conversion.js";
 import { AVL } from "./flatfolder/avl.js";
 import { IO } from "./flatfolder/io.js";
+import { lookupTable } from "./slope_generator.js";
 
 window.onload = () => { MAIN.startup(); };  // entry point
 
@@ -390,7 +391,7 @@ const check_pi_8 = (C, eps) => {
             }
         }
     }
-    const V = [];
+    let V = [];
     for (const v of C) {
         const u = T.insert(v);
         if (u == undefined) {
@@ -421,14 +422,6 @@ const check_pi_8 = (C, eps) => {
     // Merge the new elements into V after the loop
     V.push(...newElements);
 
-    function gcd(a, b) {
-        if (b) {
-            return gcd(b, a % b);
-        } else {
-            return Math.abs(a);
-        }
-    }
-
     function toABC(a, b, c, d) {
         let alpha, beta, gamma;
         if (c**2 - 2 * d**2 >= 0) {
@@ -450,6 +443,23 @@ const check_pi_8 = (C, eps) => {
         // Assuming the new gamma should be used as c in the transformed coordinates
         V[index] = [alpha, beta, gamma];
     });
+
+    function constructible(element) {
+        const gamma = element[2];
+        return ((Math.log(gamma)/Math.log(2)) % 1 !== 0);
+    }
+
+    const Vcon = V.filter(constructible);
+
+    if (Vcon.length > V.length/2){
+        V = Vcon;
+    }
+
+    V.forEach((item, index) => {
+        const [alpha, beta, gamma] = item;
+        const additionalData = rankIt(alpha, beta, gamma);
+        V[index] = [alpha, beta, gamma, ...additionalData]; // Update element with additional data
+    });
     
     console.log(V)
     return V;
@@ -466,24 +476,58 @@ const sum_str = (a, b) => (
 
 const coord_str = ([a, b, c, d]) => sum_str(a, b) + "/" + sum_str(c, d);
 
+function gcd(a, b) {
+    if (b) {
+        return gcd(b, a % b);
+    } else {
+        return Math.abs(a);
+    }
+}
+
 function rankIt(alpha, beta, gamma) {
     let rankA = Infinity;
     let rankB = Infinity;
     let rankC = Infinity;
     let rankD = Infinity;
     if (beta >= 0 && alpha+beta >=0) {
-        rankA = searchForFraction(beta,gamma) + searchForFraction(alpha+beta,gamma)
+        rankA = searchForFraction(beta/gcd(beta,gamma),gamma/gcd(beta,gamma)) + 
+        searchForFraction((alpha+beta)/gcd((alpha+beta),gamma),gamma/gcd((alpha+beta),gamma))
     }
     if (beta <= 0 && alpha+2*beta>= 0) {
-        rankB = searchForFraction(-beta,gamma) + searchForFraction(alpha+2*beta,gamma)
+        rankB = searchForFraction(-beta/gcd(beta,gamma),gamma/gcd(beta,gamma)) + 
+        searchForFraction((alpha+2*beta)/gcd((alpha+2*beta),gamma),gamma/gcd((alpha+2*beta),gamma))
+    }
+    if (beta >= 0 && alpha-2*beta >= 0) {
+        rankC = searchForFraction(2*beta/gcd(2*beta,gamma),gamma/gcd(2*beta,gamma)) + 
+        searchForFraction((alpha-2*beta)/gcd((alpha-2*beta),gamma),gamma/gcd((alpha-2*beta),gamma))
     }
     if (beta >= 0 && alpha-beta >= 0) {
-        rankC = searchForFraction(2*beta,gamma) + searchForFraction(alpha-2*beta,gamma)
-    }
-    if (beta >= 0 && alpha-beta >= 0) {
-        rankD = searchForFraction(beta,gamma) + searchForFraction(alpha-beta,gamma)
+        rankD = searchForFraction(beta/gcd(beta,gamma),gamma/gcd(beta,gamma)) + 
+        searchForFraction((alpha-beta)/gcd((alpha-beta),gamma),gamma/gcd((alpha-beta),gamma))
     }
 
     // Return an array of the computed ranks
     return [rankA, rankB, rankC, rankD];
+}
+
+// Function to search for a specific numerator and denominator
+function findRank(numerator, denominator) {
+    // Check if the fraction is greater than one
+    if (numerator > denominator) {
+        // Swap numerator and denominator for fractions greater than 1
+        [numerator, denominator] = [denominator, numerator];
+    }
+    //performs regular search
+    let result = lookupTable.find(row => row.numerator === numerator && row.denominator === denominator);
+    return result ? result.rank : null;  // Return the rank if found, otherwise return null
+}
+
+// Function you can call later to search after data is loaded
+function searchForFraction(numerator, denominator) {
+    let rank = findRank(numerator, denominator);
+    if (rank !== null) {
+        return rank;
+    } else {
+        return Infinity;
+    }
 }

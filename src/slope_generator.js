@@ -1,7 +1,7 @@
 let lookupTable = [];
 
 //input max denominator, assumed to be 50
-const n = 50;
+const n = 100;
 
 function gcd(a, b) {
     if (b) {
@@ -130,13 +130,13 @@ for (let b = 1; b <= n; b++) {
 // Sort the fractions by their value (numerator/denominator)
 lookupTable.sort((frac1, frac2) => (frac1.numerator / frac1.denominator) - (frac2.numerator / frac2.denominator));
 
-console.log(lookupTable);
+export {lookupTable};
 
-let stupidityScore = 0
-for (let i = 0; i < lookupTable.length; i +=1) {
-    stupidityScore += lookupTable[i].rank;
-}
-console.log(`Stupidity score (50): ${stupidityScore/lookupTable.length}`)
+//let stupidityScore = 0
+//for (let i = 0; i < lookupTable.length; i +=1) {
+//    stupidityScore += lookupTable[i].rank;
+//}
+//console.log(`Stupidity score (50): ${stupidityScore/lookupTable.length}`)
 
 /*// importing the fs module
 const fs = require("fs");
