@@ -485,30 +485,110 @@ function gcd(a, b) {
 }
 
 function rankIt(alpha, beta, gamma) {
-    let rankA = Infinity;
-    let rankB = Infinity;
-    let rankC = Infinity;
-    let rankD = Infinity;
-    if (beta >= 0 && alpha+beta >=0) {
-        rankA = searchForFraction(beta/gcd(beta,gamma),gamma/gcd(beta,gamma)) + 
-        searchForFraction((alpha+beta)/gcd((alpha+beta),gamma),gamma/gcd((alpha+beta),gamma))
+    // Initialize ranks with default values
+    let rankA = Infinity, rankB = Infinity, rankC = Infinity, rankD = Infinity;
+    let rankE = Infinity, rankF = Infinity, rankG = Infinity, rankH = Infinity;
+    let rankI = Infinity, rankJ = Infinity;
+
+    // Perform the checks and calculations
+    if (beta >= 0 && alpha + beta >= 0) {
+        const rank1 = searchForFraction(beta, gamma);
+        const rank2 = searchForFraction(alpha + beta, gamma);
+        if (rank1 !== undefined && rank2 !== undefined) {
+            rankA = rank1 + rank2;
+        }
     }
-    if (beta <= 0 && alpha+2*beta>= 0) {
-        rankB = searchForFraction(-beta/gcd(beta,gamma),gamma/gcd(beta,gamma)) + 
-        searchForFraction((alpha+2*beta)/gcd((alpha+2*beta),gamma),gamma/gcd((alpha+2*beta),gamma))
+    if (beta <= 0 && alpha + 2 * beta >= 0) {
+        const rank1 = searchForFraction(-beta, gamma);
+        const rank2 = searchForFraction(alpha + 2 * beta, gamma);
+        if (rank1 !== undefined && rank2 !== undefined) {
+            rankB = rank1 + rank2;
+        }
     }
-    if (beta >= 0 && alpha-2*beta >= 0) {
-        rankC = searchForFraction(2*beta/gcd(2*beta,gamma),gamma/gcd(2*beta,gamma)) + 
-        searchForFraction((alpha-2*beta)/gcd((alpha-2*beta),gamma),gamma/gcd((alpha-2*beta),gamma))
+    if (beta >= 0 && alpha - 2 * beta >= 0) {
+        const rank1 = searchForFraction(2 * beta, gamma);
+        const rank2 = searchForFraction(alpha - 2 * beta, gamma);
+        if (rank1 !== undefined && rank2 !== undefined) {
+            rankC = rank1 + rank2;
+        }
     }
-    if (beta >= 0 && alpha-beta >= 0) {
-        rankD = searchForFraction(beta/gcd(beta,gamma),gamma/gcd(beta,gamma)) + 
-        searchForFraction((alpha-beta)/gcd((alpha-beta),gamma),gamma/gcd((alpha-beta),gamma))
+    if (beta >= 0 && alpha - beta >= 0) {
+        const rank1 = searchForFraction(beta, gamma);
+        const rank2 = searchForFraction(alpha - beta, gamma);
+        if (rank1 !== undefined && rank2 !== undefined) {
+            rankD = rank1 + rank2;
+        }
+    }
+    if (alpha + beta >= 0 && alpha + 2 * beta >= 0) {
+        const rank1 = searchForFraction(alpha + beta, gamma);
+        const rank2 = searchForFraction(alpha + 2 * beta, gamma);
+        if (rank1 !== undefined && rank2 !== undefined) {
+            rankE = rank1 + rank2;
+        }
+    }
+    if (alpha + beta >= 0 && -alpha + 2 * beta >= 0) {
+        const rank1 = searchForFraction(2 * alpha + 2 * beta, 3 * gamma);
+        const rank2 = searchForFraction(-alpha + 2 * beta, 3 * gamma);
+        if (rank1 !== undefined && rank2 !== undefined) {
+            rankF = rank1 + rank2;
+        }
+    }
+    if (alpha + beta >= 0 && -alpha + beta >= 0) {
+        const rank1 = searchForFraction(alpha + beta, 2 * gamma);
+        const rank2 = searchForFraction(-alpha + beta, 2 * gamma);
+        if (rank1 !== undefined && rank2 !== undefined) {
+            rankG = rank1 + rank2;
+        }
+    }
+    if (alpha + 2 * beta >= 0 && alpha - 2 * beta >= 0) {
+        const rank1 = searchForFraction(alpha + 2 * beta, 2 * gamma);
+        const rank2 = searchForFraction(alpha - 2 * beta, 4 * gamma);
+        if (rank1 !== undefined && rank2 !== undefined) {
+            rankH = rank1 + rank2;
+        }
+    }
+    if (alpha + 2 * beta >= 0 && alpha - beta >= 0) {
+        const rank1 = searchForFraction(alpha + 2 * beta, 3 * gamma);
+        const rank2 = searchForFraction(alpha - beta, 3 * gamma);
+        if (rank1 !== undefined && rank2 !== undefined) {
+            rankI = rank1 + rank2;
+        }
+    }
+    if (-alpha + 2 * beta >= 0 && alpha - beta >= 0) {
+        const rank1 = searchForFraction(-alpha + 2 * beta, gamma);
+        const rank2 = searchForFraction(2 * alpha - 2 * beta, gamma);
+        if (rank1 !== undefined && rank2 !== undefined) {
+            rankJ = rank1 + rank2;
+        }
     }
 
-    // Return an array of the computed ranks
-    return [rankA, rankB, rankC, rankD];
+    const types = [
+        { name: "A", value: rankA },
+        { name: "B", value: rankB },
+        { name: "C", value: rankC },
+        { name: "D", value: rankD },
+        { name: "E", value: rankE },
+        { name: "F", value: rankF },
+        { name: "G", value: rankG },
+        { name: "H", value: rankH },
+        { name: "I", value: rankI },
+        { name: "J", value: rankJ }
+    ];
+    
+    // Check if all ranks are Infinity
+    const allInfinity = types.every(type => type.value === Infinity);
+    
+    if (allInfinity) {
+        return ["N/A", Infinity];
+    }
+    
+    // Find the object with the minimum value
+    const minType = types.reduce((min, current) => current.value < min.value ? current : min, types[0]);
+    
+    // Return the type corresponding to the minimum value
+    return [minType.name, minType.value];
 }
+
 
 // Function to search for a specific numerator and denominator
 function findRank(numerator, denominator) {
@@ -524,7 +604,7 @@ function findRank(numerator, denominator) {
 
 // Function you can call later to search after data is loaded
 function searchForFraction(numerator, denominator) {
-    let rank = findRank(numerator, denominator);
+    let rank = findRank(numerator/gcd(numerator,denominator), denominator/gcd(numerator,denominator));
     if (rank !== null) {
         return rank;
     } else {
