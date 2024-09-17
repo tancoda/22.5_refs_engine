@@ -114,7 +114,7 @@ function type (a,b) {
         return "diagG";
     } else if (general(a,b)===min){
         return "general";
-    } else return error
+    } else return null
 }
 
 // Generate the Farey sequence
@@ -169,6 +169,60 @@ function searchForFraction(numerator, denominator) {
     }
 }
 
+const quid = 200;
+let counts = {
+    a1: 0, b1: 0, c1: 0, d: 0, e: 0, f: 0, 
+    g: 0, p: 0, gen: 0
+};
+
+for (let a = 0; a < quid; ++a) {
+    for (let b = 0; b < quid; ++b) {
+        let counter = type(a,b);
+
+        switch (counter) {
+            case "diagA":
+                counts.a1 += 1;
+                break;
+            case "diagB":
+                counts.b1 += 1;
+                break;
+            case "diagC":
+                counts.c1 += 1;
+                break;
+            case "diagD":
+                counts.d += 1;
+                break;
+            case "diagE":
+                counts.e += 1;
+                break;
+            case "diagF":
+                counts.f += 1;
+                break;
+            case "diagG":
+                counts.g += 1;
+                break;
+            case "powTwo":
+                counts.p += 1;
+                break;
+            case "general":
+                counts.gen += 1;
+                break;
+        }
+    }
+}
+
+// Log results
+console.log( 
+    "A: " + counts.a1, 
+    "B: " + counts.b1, 
+    "C: " + counts.c1, 
+    "D: " + counts.d, 
+    "E: " + counts.e, 
+    "F: " + counts.f, 
+    "G: " + counts.g, 
+    "powTwo: " + counts.p, 
+    "general: " + counts.gen
+);
 
 //---------------------------------------------------------------------------------------------------------
 // PART TWO: A rectangle having w/h = (a + b(rt2)) / c can be decomposed into a pair of slopes in ten possible ways.
@@ -320,6 +374,70 @@ function rankIt(alpha, beta, gamma) {
     // Return the type corresponding to the minimum value
     return [minType.name, minType.value];
 }
+
+/*const quid = 50;
+let counts = {
+    a1: 0, b1: 0, c1: 0, d: 0, e: 0, f: 0, 
+    g: 0, h: 0, i: 0, j: 0
+};
+
+for (let a = -quid; a < quid; ++a) {
+    for (let b = -quid; b < quid; ++b) {
+        for (let c = 0; c < (2 * quid); ++c) {
+            if (summup(a, b, c) > 1) {
+                let counter = rankIt(a, b, c);
+
+                switch (counter[0]) {
+                    case "A":
+                        counts.a1 += 1;
+                        break;
+                    case "B":
+                        counts.b1 += 1;
+                        break;
+                    case "C":
+                        counts.c1 += 1;
+                        break;
+                    case "D":
+                        counts.d += 1;
+                        break;
+                    case "E":
+                        counts.e += 1;
+                        break;
+                    case "F":
+                        counts.f += 1;
+                        break;
+                    case "G":
+                        counts.g += 1;
+                        break;
+                    case "H":
+                        counts.h += 1;
+                        break;
+                    case "I":
+                        counts.i += 1;
+                        break;
+                    case "J":
+                        counts.j += 1;
+                        break;
+                }
+            }
+        }
+    }
+}
+
+// Log results
+console.log( 
+    "A: " + counts.a1, 
+    "B: " + counts.b1, 
+    "C: " + counts.c1, 
+    "D: " + counts.d, 
+    "E: " + counts.e, 
+    "F: " + counts.f, 
+    "G: " + counts.g, 
+    "H: " + counts.h, 
+    "I: " + counts.i, 
+    "J: " + counts.j, 
+);
+*/
 
 //------------------------------------------------------------------------------------------------------------------------------
 

@@ -139,10 +139,10 @@ function scaleAndCenterCoordinates(coords, canvasWidth, canvasHeight) {
     const height = maxY - minY;
 
     // Scale the pattern to fit the canvas size with some padding
-    const scale = Math.min(canvasWidth / width, canvasHeight / height) * 0.45;
+    const scale = Math.min((canvasWidth / 2)/ width, canvasHeight / height) * 0.9;
 
     // Calculate offsets to center the pattern
-    const offsetX = 20;
+    const offsetX = (((canvasWidth / 2) - width * scale) / 2 - minX * scale);
     const offsetY = (canvasHeight - height * scale) / 2 - minY * scale;
 
     // Scale and translate coordinates
@@ -264,6 +264,11 @@ function processC2(C, eps) {
         try {
             let C2 = checkPi8(C, eps);
 
+            function isComplete(element) {
+                return element !== undefined}
+            
+            C2 = C2.filter(isComplete);
+            
             C2.forEach(([a, b, c, d], index) => {
                 const [alpha, beta, gamma] = toABC(a, b, c, d);
                 C2[index] = [alpha, beta, gamma]
@@ -306,6 +311,12 @@ function processC2(C, eps) {
                     (item[0] === 1 && item[1] === -0 && item[2] === 1)
                 )
             );
+
+            function isReasonable (element) {
+                return ((summup (element[0], element[1], element[2]) < (defaultValue2 ** -1)) && (summup (element[0], element[1], element[2]) > ((1 - defaultValue2) ** -1)))
+            }
+
+            C2 = C2.filter(isReasonable);
 
             C2.sort((a, b) => {
                 if (a === undefined || b === undefined) return Infinity; // Handle undefined values
@@ -414,8 +425,6 @@ const checkPi8 = (C, eps) => {
 
 let lookupTable = [];
 
-//max denominator
-const n = defaultValue1;
 //most extreme fraction
 const m = (1/defaultValue2);
 
@@ -520,7 +529,7 @@ function type (a,b) {
 }
 
 // Generate the Farey sequence
-for (let b = 1; b <= n; b++) {
+for (let b = 1; b <= defaultValue1; b++) {
     for (let a = 0; a <= b; a++) {
         if (gcd(a, b) === 1) {  // Check if gcd(a, b) == 1 (i.e., they are coprime)
             lookupTable.push({ 
@@ -564,7 +573,7 @@ function findRank(numerator, denominator) {
 
 // Function you can call later to search after data is loaded
 function searchForFraction(numerator, denominator) {
-    if (denominator <= n && numerator <= n) {
+    if (denominator <= defaultValue1 && numerator <= defaultValue1) {
         return findRank(numerator/gcd(numerator,denominator), denominator/gcd(numerator,denominator));
     } else {
         return Infinity;
