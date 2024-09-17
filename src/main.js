@@ -4,7 +4,7 @@ import { SVG } from "./flatfolder/svg.js";
 import { X } from "./flatfolder/conversion.js";
 import { AVL } from "./flatfolder/avl.js";
 import { IO } from "./flatfolder/io.js";
-import { lookupTable } from "./slope_generator.js";
+import { lookupTable } from "./slope-generator.js";
 
 window.onload = () => { MAIN.startup(); };  // entry point
 
@@ -215,12 +215,6 @@ const MAIN = {
                     coords.textContent = s;
                 };
             }
-            // const D = MAIN.triangulate(C, VC, EV, eps);
-            // if (D != undefined) {
-            //     SVG.draw_segments(svg, D, {
-            //         id: `diags`, stroke: MAIN.color.C, stroke_width: 1
-            //     });
-            // }
         }
     },
     update_grid: (g, C, VC, eps) => {
@@ -357,9 +351,12 @@ const pi_8_coord = (c) => {
     return D;
 };
 
+const V = [];
+
 const r2 = 2**0.5;
 const val = ([a, b]) => a + r2*b;
 const check_pi_8 = (C, eps) => {
+
     const T = new AVL((a, b) => {
         return (Math.abs(a - b) < eps) ? 0 : (a - b);
     });
@@ -391,7 +388,7 @@ const check_pi_8 = (C, eps) => {
             }
         }
     }
-    let V = [];
+
     for (const v of C) {
         const u = T.insert(v);
         if (u == undefined) {
@@ -402,66 +399,7 @@ const check_pi_8 = (C, eps) => {
             V.push([a, b, c, d]);
         }
     }
-    
-    const newElements = [];  // Temporary array to store new elements
 
-    V.forEach(([a, b, c, d]) => {
-        const newElement = [(c - a), (d - b), c, d];
-        
-        // Check if the new element already exists in V
-        const exists = V.some(([x, y, z, w]) =>
-            x === newElement[0] && y === newElement[1] && z === newElement[2] && w === newElement[3]
-        );
-    
-        // If the new element doesn't exist, push it to the temporary array
-        if (!exists) {
-            newElements.push(newElement);
-        }
-    });
-    
-    // Merge the new elements into V after the loop
-    V.push(...newElements);
-
-    function toABC(a, b, c, d) {
-        let alpha, beta, gamma;
-        if (c**2 - 2 * d**2 >= 0) {
-            alpha = a * c - 2 * b * d;
-            beta = b * c - a * d;
-            gamma = c**2 - 2 * d**2;
-        } else {
-            alpha = -a * c + 2 * b * d;
-            beta = -b * c + a * d;
-            gamma = 2 * d**2 - c**2;
-        }
-        let grcodi = gcd(gamma,gcd(alpha,beta));
-        return [alpha/grcodi, beta/grcodi, gamma/grcodi];
-    }
-    
-    // Apply the transformation and update V
-    V.forEach(([a, b, c, d], index) => {
-        const [alpha, beta, gamma] = toABC(a, b, c, d);
-        // Assuming the new gamma should be used as c in the transformed coordinates
-        V[index] = [alpha, beta, gamma];
-    });
-
-    function constructible(element) {
-        const gamma = element[2];
-        return ((Math.log(gamma)/Math.log(2)) % 1 !== 0);
-    }
-
-    const Vcon = V.filter(constructible);
-
-    if (Vcon.length > V.length/2){
-        V = Vcon;
-    }
-
-    V.forEach((item, index) => {
-        const [alpha, beta, gamma] = item;
-        const additionalData = rankIt(alpha, beta, gamma);
-        V[index] = [alpha, beta, gamma, ...additionalData]; // Update element with additional data
-    });
-    
-    console.log(V)
     return V;
 };
 
@@ -476,6 +414,73 @@ const sum_str = (a, b) => (
 
 const coord_str = ([a, b, c, d]) => sum_str(a, b) + "/" + sum_str(c, d);
 
+window.V = V;
+console.log(window.V);
+
+const newElements = [];  // Temporary array to store new elements
+
+window.V.forEach(([a, b, c, d]) => {
+    const newElement = [(c - a), (d - b), c, d];
+    
+    // Check if the new element already exists in myV
+    const exists = window.V.some(([x, y, z, w]) =>
+        x === newElement[0] && y === newElement[1] && z === newElement[2] && w === newElement[3]
+    );
+
+    // If the new element doesn't exist, push it to the temporary array
+    if (!exists) {
+        newElements.push(newElement);
+    }
+});
+
+// Merge the new elements into V after the loop
+//window.V.push(...newElements);
+
+console.log(newElements);
+
+/*
+
+function toABC(a, b, c, d) {
+    let alpha, beta, gamma;
+    if (c**2 - 2 * d**2 >= 0) {
+        alpha = a * c - 2 * b * d;
+        beta = b * c - a * d;
+        gamma = c**2 - 2 * d**2;
+    } else {
+        alpha = -a * c + 2 * b * d;
+        beta = -b * c + a * d;
+        gamma = 2 * d**2 - c**2;
+    }
+    let grcodi = gcd(gamma,gcd(alpha,beta));
+    return [alpha/grcodi, beta/grcodi, gamma/grcodi];
+}
+
+// Apply the transformation and update V
+myV.forEach(([a, b, c, d], index) => {
+    const [alpha, beta, gamma] = toABC(a, b, c, d);
+    // Assuming the new gamma should be used as c in the transformed coordinates
+    myV[index] = [alpha, beta, gamma];
+});
+
+function constructible(element) {
+    const gamma = element[2];
+    return ((Math.log(gamma)/Math.log(2)) % 1 !== 0);
+}
+
+const myVcon = myV.filter(constructible);
+
+if (myVcon.length > myV.length/2){
+    myV = myVcon;
+}
+
+myV.forEach((item, index) => {
+    const [alpha, beta, gamma] = item;
+    const additionalData = rankIt(alpha, beta, gamma);
+    myV[index] = [alpha, beta, gamma, ...additionalData]; // Update element with additional data
+});
+
+console.log(myV);
+
 function gcd(a, b) {
     if (b) {
         return gcd(b, a % b);
@@ -484,7 +489,44 @@ function gcd(a, b) {
     }
 }
 
+// Function to search for a specific numerator and denominator
+function findRank(numerator, denominator) {
+    // Check if the fraction is greater than one
+    if (numerator > denominator) {
+        // Swap numerator and denominator for fractions greater than 1
+        [numerator, denominator] = [denominator, numerator];
+    }
+    if (numerator/denominator < 0) {
+        [numerator, denominator] = [-numerator, -denominator]
+    }
+    //performs regular search
+    if (numerator === 0) {
+        return 0;
+    } else if (numerator/denominator === 1){
+        return 1;
+    } else {
+        let result = lookupTable.find(row => row.numerator === numerator && row.denominator === denominator);
+        return result ? result.rank : null;  // Return the rank if found, otherwise return null
+    }
+}
+
+// Function you can call later to search after data is loaded
+function searchForFraction(numerator, denominator) {
+    let rank = findRank(numerator/gcd(numerator,denominator), denominator/gcd(numerator,denominator));
+    if (rank !== null) {
+        return rank;
+    } else {
+        return Infinity;
+    }
+}
+
 function rankIt(alpha, beta, gamma) {
+    if (gamma < 0 && alpha + beta < 0){
+        alpha = -alpha;
+        beta = -beta;
+        gamma = -gamma;
+    }
+
     // Initialize ranks with default values
     let rankA = Infinity, rankB = Infinity, rankC = Infinity, rankD = Infinity;
     let rankE = Infinity, rankF = Infinity, rankG = Infinity, rankH = Infinity;
@@ -496,6 +538,9 @@ function rankIt(alpha, beta, gamma) {
         const rank2 = searchForFraction(alpha + beta, gamma);
         if (rank1 !== undefined && rank2 !== undefined) {
             rankA = rank1 + rank2;
+            if (rank1 !== 0) {
+                rankA += 3;
+            }
         }
     }
     if (beta <= 0 && alpha + 2 * beta >= 0) {
@@ -503,6 +548,9 @@ function rankIt(alpha, beta, gamma) {
         const rank2 = searchForFraction(alpha + 2 * beta, gamma);
         if (rank1 !== undefined && rank2 !== undefined) {
             rankB = rank1 + rank2;
+            if (rank1 !== 0) {
+                rankB += 3;
+            }
         }
     }
     if (beta >= 0 && alpha - 2 * beta >= 0) {
@@ -510,6 +558,9 @@ function rankIt(alpha, beta, gamma) {
         const rank2 = searchForFraction(alpha - 2 * beta, gamma);
         if (rank1 !== undefined && rank2 !== undefined) {
             rankC = rank1 + rank2;
+            if (rank1 !== 0) {
+                rankC += 3;
+            }
         }
     }
     if (beta >= 0 && alpha - beta >= 0) {
@@ -517,48 +568,66 @@ function rankIt(alpha, beta, gamma) {
         const rank2 = searchForFraction(alpha - beta, gamma);
         if (rank1 !== undefined && rank2 !== undefined) {
             rankD = rank1 + rank2;
+            if (rank1 !== 0) {
+                rankD += 3;
+            }
         }
     }
     if (alpha + beta >= 0 && alpha + 2 * beta >= 0) {
         const rank1 = searchForFraction(alpha + beta, gamma);
         const rank2 = searchForFraction(alpha + 2 * beta, gamma);
         if (rank1 !== undefined && rank2 !== undefined) {
-            rankE = rank1 + rank2;
+            rankE = rank1 + rank2 + 3;
         }
     }
     if (alpha + beta >= 0 && -alpha + 2 * beta >= 0) {
         const rank1 = searchForFraction(2 * alpha + 2 * beta, 3 * gamma);
         const rank2 = searchForFraction(-alpha + 2 * beta, 3 * gamma);
         if (rank1 !== undefined && rank2 !== undefined) {
-            rankF = rank1 + rank2;
+            rankF = rank1 + rank2 + 3;
+            if (rank1 !== 0 && rank2 !== 0) {
+                rankF += 1;
+            }
         }
     }
     if (alpha + beta >= 0 && -alpha + beta >= 0) {
         const rank1 = searchForFraction(alpha + beta, 2 * gamma);
         const rank2 = searchForFraction(-alpha + beta, 2 * gamma);
         if (rank1 !== undefined && rank2 !== undefined) {
-            rankG = rank1 + rank2;
+            rankG = rank1 + rank2 + 3;
+            if (rank1 !== 0 && rank2 !== 0) {
+                rankG += 1;
+            }
         }
     }
     if (alpha + 2 * beta >= 0 && alpha - 2 * beta >= 0) {
         const rank1 = searchForFraction(alpha + 2 * beta, 2 * gamma);
         const rank2 = searchForFraction(alpha - 2 * beta, 4 * gamma);
         if (rank1 !== undefined && rank2 !== undefined) {
-            rankH = rank1 + rank2;
+            rankH = rank1 + rank2 + 3;
+            if (rank1 !== 0 && rank2 !== 0) {
+                rankH += 1;
+            }
         }
     }
     if (alpha + 2 * beta >= 0 && alpha - beta >= 0) {
         const rank1 = searchForFraction(alpha + 2 * beta, 3 * gamma);
         const rank2 = searchForFraction(alpha - beta, 3 * gamma);
         if (rank1 !== undefined && rank2 !== undefined) {
-            rankI = rank1 + rank2;
+            rankI = rank1 + rank2 + 3;
+            if (rank1 !== 0 && rank2 !== 0) {
+                rankI += 1;
+            }
         }
     }
     if (-alpha + 2 * beta >= 0 && alpha - beta >= 0) {
         const rank1 = searchForFraction(-alpha + 2 * beta, gamma);
         const rank2 = searchForFraction(2 * alpha - 2 * beta, gamma);
         if (rank1 !== undefined && rank2 !== undefined) {
-            rankJ = rank1 + rank2;
+            rankJ = rank1 + rank2 + 3;
+            if (rank1 !== 0 && rank2 !== 0) {
+                rankJ += 2;
+            }
         }
     }
 
@@ -589,25 +658,74 @@ function rankIt(alpha, beta, gamma) {
     return [minType.name, minType.value];
 }
 
-
-// Function to search for a specific numerator and denominator
-function findRank(numerator, denominator) {
-    // Check if the fraction is greater than one
-    if (numerator > denominator) {
-        // Swap numerator and denominator for fractions greater than 1
-        [numerator, denominator] = [denominator, numerator];
-    }
-    //performs regular search
-    let result = lookupTable.find(row => row.numerator === numerator && row.denominator === denominator);
-    return result ? result.rank : null;  // Return the rank if found, otherwise return null
-}
-
-// Function you can call later to search after data is loaded
-function searchForFraction(numerator, denominator) {
-    let rank = findRank(numerator/gcd(numerator,denominator), denominator/gcd(numerator,denominator));
-    if (rank !== null) {
-        return rank;
+function findBisectorA(a,b,c) {
+    if ((summup(a,b,c) >= Math.SQRT2 + 1)) {
+        return [(a * ((a^2) - 2*(b^2) - (c^2))), 
+            (b * ((a^2) - (2*(b^2)) + (c^2))), 
+            (2*c * ((a^2) - (2*(b^2))))]
     } else {
-        return Infinity;
+        return [Infinity, Infinity, Infinity]
     }
 }
+
+function findBisectorB(a,b,c) {
+    if ((summup(a,b,c) <= Math.SQRT2 + 1)) {
+        return [(2 * a * c * (a ** 2 - 2 * (b ** 2)) * (a ** 2 - 2 * (b ** 2) - c ** 2)),
+            (-2 * b * c * (a ** 2 - 2 * (b ** 2)) * (a ** 2 - 2 * (b ** 2) + c ** 2)),
+            ((a ** 2) * ((a ** 2 - 2 * (b ** 2) - c ** 2) ** 2) - (2 * (b ** 2) * ((a ** 2 - 2 * (b ** 2) + c ** 2) ** 2)))]
+    } else {
+        return[Infinity, Infinity, Infinity]
+    }
+}
+
+function findSwitchIt(a,b,c) {
+    if (summup(a,b,c) > 1) {
+        return [((a-c)*(a+c)-(2*(b**2))),
+        (-2*b*c),
+        (((a-c)**2)-(2*(b**2)))]
+    } else {
+        return [Infinity, Infinity, Infinity]
+    }
+}
+
+function alts(a,b,c) {
+    let double, quadruple, bisectorA, bisectorB, switchIt
+
+    let regular = rankIt(a,b,c);
+
+    if(summup(a,b,c) > 2) {
+        double = rankIt(a,b,2*c)
+    } else double = ["N/A", Infinity];
+
+    if (summup(a,b,c) > 4) {
+        quadruple = rankIt (a,b,4*c)
+    } else quadruple = ["N/A", Infinity];
+
+    bisectorA = findBisectorA(a,b,c);
+    const rankBisectorA = rankIt(bisectorA[0], bisectorA[1], bisectorA[2]);
+
+    bisectorB = findBisectorB(a,b,c);
+    const rankBisectorB = rankIt(bisectorB[0], bisectorB[1], bisectorB[2]);
+
+    switchIt = findSwitchIt(a,b,c);
+    const rankSwitchIt = rankIt(switchIt[0], switchIt[1], switchIt[2]);
+
+    const types = [
+        { name: "regular", meth: regular[0], value: regular[1]},
+        { name: "double", meth: double[0], value: double[1] + 1},
+        { name: "quadruple", meth: quadruple[0], value: quadruple[1] + 2},
+        { name: "bisectorA", meth: rankBisectorA[0], value: rankBisectorA[1] + 1},
+        { name: "bisectorB", meth: rankBisectorB[0], value: rankBisectorB[1] + 1},
+        { name: "switchIt", meth: rankSwitchIt[0], value: rankSwitchIt[1] + 1}
+    ]
+
+    console.log(types)
+}
+
+function arcctg(x) { return Math.PI / 2 - Math.atan(x) };
+
+function summup(a,b,c) {
+    return (a + b*Math.SQRT2) / c
+}
+
+*/

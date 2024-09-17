@@ -1,3 +1,3 @@
 # CP Analyze
 
-[CP Analyze](https://origamimagiro.github.io/cp_analyze/)
+[CP Analyze](https://tancoda.github.io/22.5_refs_experiment/)
