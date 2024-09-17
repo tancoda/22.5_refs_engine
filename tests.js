@@ -6,6 +6,7 @@ let lookupTable = [];
 
 //input max denominator, assumed to be 100
 const n = 100;
+const m = 50;
 
 function gcd(a, b) {
     if (b) {
@@ -149,7 +150,10 @@ function findRank(numerator, denominator) {
         return 0;
     } else if (numerator/denominator === 1){
         return 1;
-    } else {
+    } else if (denominator/numerator > m || numerator/denominator > m){
+        return null;
+    }
+    else {
         let result = lookupTable.find(row => row.numerator === numerator && row.denominator === denominator);
         return result ? result.rank : null;  // Return the rank if found, otherwise return null
     }
@@ -157,7 +161,7 @@ function findRank(numerator, denominator) {
 
 // Function you can call later to search after data is loaded
 function searchForFraction(numerator, denominator) {
-    if (denominator <= n) {
+    if (denominator <= n && numerator <= n) {
         return findRank(numerator/gcd(numerator,denominator), denominator/gcd(numerator,denominator));
     } else {
         return Infinity;
@@ -386,13 +390,13 @@ function findSwitchIt(a,b,c) {
     }
 }
 
-/*function findHSA(a,b,c) {
-    
+function findHSA(a,b,c) {
+    //CORRECT
     if (summup(a,b,c) >= 1) {
     
     let hsaA = a * ((a ** 2) - (2 * (b ** 2)) + (c ** 2));
-    let hsaB = b * (-a + (2 * (a ** 2)) - (2 * (b ** 2)) - (c ** 2));
-    let hsaC = c * ((a ** 2) - (2 * (b ** 2)));
+    let hsaB = -b * (-(a ** 2) + (2 * (b ** 2)) + (c ** 2));
+    let hsaC = 2 * c * ((a ** 2) - (2 * (b ** 2)));
 
     if ((summup(hsaA, hsaB, hsaC) < 0) || (hsaA + (hsaB * Math.SQRT2) < 0 && hsaC < 0)) {
         hsaA = -hsaA;
@@ -407,81 +411,114 @@ function findSwitchIt(a,b,c) {
     }
 }
 
-function testArcCtgError(a, b, c) {
-    let summupABC = summup(a, b, c);
-    let hsaIT = findHSA(a, b, c);
-    let summuphsa = summup(hsaIT[0], hsa[1], switchIt[2]);
+function findHSB(a,b,c) {
+    //CORRECT!
+    if (summup(a,b,c) >= 1) {
+    
+    let hsBA = (a ** 4) + (4 * (b ** 4)) - (c ** 4) - (4 * (a ** 2) * (b ** 2));
+    let hsBB = -4 * a * b * (c ** 2);
+    let hsBC = (a ** 4) + (4 * (b ** 4)) + (c ** 4) - (2 * (a ** 2) * (c ** 2)) - (4 * (a ** 2) * (b ** 2)) - (4 * (b ** 2) * (c ** 2));
 
-    // Check for both conditions
-    let error = Math.abs((Math.PI / 4) - ((arcctg(summupABC) + arcctg(summupSwitchit))));
+    if ((summup(hsBA, hsBB, hsBC) < 0) || (hsBA + (hsBB * Math.SQRT2) < 0 && hsBC < 0)) {
+        hsBA = -hsBA;
+        hsBB = -hsBB;
+        hsBC = -hsBC;
+    } 
 
-    // Set a small tolerance for floating-point precision
-    let tolerance = 1e-6;
-    if (error <= tolerance) {
-        console.log("Arc cotangent test passed");
-        return true;
+    let hsBG = gcd((gcd(hsBA, hsBB)), hsBC);
+    return [hsBA/hsBG, hsBB/hsBG, hsBC/hsBG]
     } else {
-        console.log("Arc cotangent test failed");
-        return false;
+        return [Infinity, Infinity, Infinity]
     }
-}*/
-
-
-function alts(a,b,c) {
-    let rankDouble, rankQuadruple, rankNegDoub, rankNegQuad
-
-    function neg(a,b,c) {
-        return [(a**2)-(a*c)-(2*(b**2)),
-            -b * c,
-            ((a-c) ** 2) - (2 * (b ** 2))];
-    }
-
-    const rankDefault = rankIt(a,b,c);
-    const negDef = neg(a,b,c);
-    const rankNegDef = rankIt(negDef[0], negDef[1], negDef[2]);
-
-    if (summup(a,b,c) > 2) {
-        rankDouble = rankIt(a,b,2*c)
-        const negDoub = neg(a,b,2*c);
-        rankNegDoub = rankIt(negDoub[0], negDoub[1], negDoub[2]);
-    } else rankDouble = ["N/A", Infinity];
-    rankNegDoub = ["N/A", Infinity];
-
-    if (summup(a,b,c) > 4) {
-        rankQuadruple = rankIt (a,b,4*c)
-        const negQuad = neg(a,b,4*c);
-        rankNegQuad = rankIt(negQuad[0], negQuad[1], negQuad[2]);
-    } else rankQuadruple = ["N/A", Infinity]
-    rankNegQuad = ["N/A", Infinity];
-
-    bisectorED = findBisector(a,b,c);
-    const rankBisector = rankIt(bisectorED[0], bisectorED[1], bisectorED[2]);
-    const negBis = neg(bisectorED[0], bisectorED[1], bisectorED[2]);
-    const rankNegBis = rankIt(negBis[0], negBis[1], negBis[2]);
-
-    switchIt = findSwitchIt(a,b,c);
-    const rankSwitchIt = rankIt(switchIt[0], switchIt[1], switchIt[2]);
-    const negSwitch = neg(switchIt[0], switchIt[1], switchIt[2]);
-    const rankNegSwitch = rankIt(negSwitch[0], negSwitch[1], negSwitch[2]);
-
-    const types = [
-        { name: "default",      meth: rankDefault[0],       value: rankDefault[1]},
-        { name: "negdefault",   meth: rankNegDef[0],        value: rankNegDef[1]},
-        { name: "double",       meth: rankDouble[0],        value: rankDouble[1] + 1},
-        { name: "negdoub",      meth: rankNegDoub[0],       value: rankNegDoub[1] + 1},
-        { name: "quadruple",    meth: rankQuadruple[0],     value: rankQuadruple[1] + 2},
-        { name: "negquad",      meth: rankNegQuad[0],       value: rankNegQuad[1] + 2},
-        { name: "bisector",     meth: rankBisector[0],      value: rankBisector[1] + 1},
-        { name: "negbis",       meth: rankNegBis[0],        value: rankNegBis[1] + 1},
-        { name: "switchIt",     meth: rankSwitchIt[0],      value: rankSwitchIt[1] + 1},
-        { name: "negswitch",    meth: rankNegSwitch[0],     value: rankNegSwitch[1] + 1}
-    ]
-
-    console.log(types)
 }
 
-console.log(alts(1,1,1));
-console.log(alts(1,3,5));
-console.log(alts(5,6,7));
-console.log(alts(-3,4,2));
-console.log(alts(4,-1,2));
+
+function alts(a, b, c) {
+    function neg(a, b, c) {
+        const alpha = (a ** 2) - (a * c) - (2 * (b ** 2));
+        const beta = -b * c;
+        const gamma = ((a - c) ** 2) - (2 * (b ** 2));
+
+        const grcodi = gcd(gcd(alpha, beta), gamma);
+
+        if ((summup(alpha, beta, gamma) < 0) || (alpha + (beta * Math.SQRT2) < 0 && gamma < 0)) {
+            return [-alpha / grcodi, -beta / grcodi, -gamma / grcodi];
+        }
+
+        return [alpha / grcodi, beta / grcodi, gamma / grcodi];
+    }
+
+    function createRankType(name, values, rankIncrement = 0) {
+        const rank = rankIt(values[0], values[1], values[2]);
+        const negValues = neg(values[0], values[1], values[2]);
+        const rankNeg = rankIt(negValues[0], negValues[1], negValues[2]);
+        
+        return [
+            { name: name, meth: rank[0], value: rank[1] + rankIncrement, elev: values },
+            { name: `neg${name}`, meth: rankNeg[0], value: rankNeg[1] + rankIncrement, elev: negValues }
+        ];
+    }
+
+    // Default and negdefault
+    const defaultType = createRankType('default', [a, b, c]);
+
+    // Double and negdouble (only calculate if summup > 2)
+    const doubleType = summup(a, b, c) > 2 ? createRankType('double', [a, b, 2 * c], 1) : [{ name: 'double', meth: 'N/A', value: Infinity }, { name: 'negdouble', meth: 'N/A', value: Infinity }];
+
+    // Quadruple and negquadruple (only calculate if summup > 4)
+    const quadrupleType = summup(a, b, c) > 4 ? createRankType('quadruple', [a, b, 4 * c], 2) : [{ name: 'quadruple', meth: 'N/A', value: Infinity }, { name: 'negquadruple', meth: 'N/A', value: Infinity }];
+
+    // Bisector and negbisector
+    const bisectorValues = findBisector(a, b, c);
+    const bisectorType = createRankType('bisector', bisectorValues, 1);
+
+    // SwitchIt and negSwitchIt
+    const switchItValues = findSwitchIt(a, b, c);
+    const switchItType = createRankType('switchIt', switchItValues, 1);
+
+    // HSA and negHSA
+    const hsaValues = findHSA(a, b, c);
+    const hsaType = createRankType('HSA', hsaValues, 1);
+
+    // HSB and negHSB
+    const hsbValues = findHSB(a, b, c);
+    const hsbType = createRankType('HSB', hsbValues, 1)
+
+    // Combine all rank types into one array
+    const types = [
+        ...defaultType,
+        ...doubleType,
+        ...quadrupleType,
+        ...bisectorType,
+        ...switchItType,
+        ...hsaType,
+        ...hsbType
+    ];
+
+    // Check if all ranks are Infinity
+    const allInfinity = types.every(type => type.value === Infinity);
+    if (allInfinity) {
+        return ["N/A", Infinity];
+    }
+
+    // Find the object with the minimum value
+    const minType = types.reduce((min, current) => current.value < min.value ? current : min, types[0]);
+
+    // Return the type corresponding to the minimum value
+    return [minType.name, minType.meth, minType.value, minType.elev];
+}
+
+
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
+console.log(alts((Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20)),(Math.ceil(Math.random() * 20))));
