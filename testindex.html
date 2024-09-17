@@ -1,30 +1,64 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>REFSinator</title>
-    <!-- Load the Paper.js library -->
-    <script type="text/javascript" src="paperjs-v0.12.17\dist\paper-full.js"></script>
-    <!-- Load external PaperScript and associate it with myCanvas -->
-    <script type="text/paperscript" src="test-paper.js" canvas="myCanvas">
-    </script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Fold File</title>
+    <!-- Include Paper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js"></script>
+    <script type="module" src="./src/main-new.js"></script>
     <style>
-        html,
-        body {
+        html, body {
             height: 100%;
+            margin: 0;
+            padding: 0;
         }
 
-        /* Scale canvas with resize attribute to full size */
-        canvas[resize] {
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #fileInput,
+        #value1,
+        #value2,
+        #submitButton {
+            margin: 10px;
+        }
+
+        #myCanvas {
+            flex: 1; /* Takes up remaining space */
             width: 100%;
-            height: 100%;
         }
     </style>
-
 </head>
 <body>
-	<canvas id="myCanvas" resize></canvas>
-</body>
-</html>
+    <div>
+        <input type="file" id="fileInput" />
+        <label for="value1">Max denominator:</label>
+        <input type="number" id="value1" value="100">
+        <label for="value2">Border:</label>
+        <input type="number" id="value2" value="0.1">
+        <button id="submitButton">Update Values</button>
+    </div>
+    <canvas id="myCanvas" resize></canvas>
+    <script type="module">
+        // Initialize Paper.js
+        function initializeCanvas() {
+            const canvas = document.getElementById('myCanvas');
+            if (canvas) {
+                paper.setup(canvas);
+                resizeCanvas(); // Ensure canvas size is correct
+            } else {
+                console.error('Canvas element not found.');
+            }
+        }
+
+        // Function to resize the canvas
+        function resizeCanvas() {
+            const canvas = document.getElementById('myCanvas');
+            if (canvas) {
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+                paper.view.viewSize = new paper.Size(canvas.clientWidth, canvas.clientHeight);
+            }}

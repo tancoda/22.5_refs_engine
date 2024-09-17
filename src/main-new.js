@@ -1,13 +1,346 @@
-// PART ONE: Generates the farey sequence of all fractions having a denominator less than or equal to n.
-// Each fraction corresponds to a slope.  The lookup table records the number of creases required
-// to develop that slope, and the methodology used to do so.
+import { M } from "./flatfolder/math.js";
+import { IO } from "./flatfolder/io.js";
+import { AVL } from "./flatfolder/avl.js";
+import { NOTE } from "./flatfolder/note.js";
 
-let lookupTable = [];
+document.getElementById("fileInput").addEventListener("change", (e) => {
+    if (e.target.files.length > 0) {
+        const fileReader = new FileReader();
+        fileReader.onload = (event) => {
+            processFile(event);
+        };
+        fileReader.readAsText(e.target.files[0]);
+    }
+});
 
-//input max denominator, assumed to be 100
-const n = 100;
-//input most extreme fraction
-const m = 50;
+// Initialize Paper.js
+function initializeCanvas() {
+    const canvas = document.getElementById('myCanvas');
+    if (canvas) {
+        paper.setup(canvas);
+        resizeCanvas(); // Ensure canvas size is correct
+    } else {
+        console.error('Canvas element not found.');
+    }
+}
+
+// Initialize canvas on page load
+initializeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Default values
+let defaultValue1 = 100;
+let defaultValue2 = 0.1;
+
+// Function to initialize values from inputs or defaults
+function initializeValues() {
+    const value1Input = document.getElementById("value1");
+    const value2Input = document.getElementById("value2");
+
+    // Set default values to inputs
+    value1Input.value = defaultValue1;
+    value2Input.value = defaultValue2;
+}
+
+// Function to update values based on user input
+function updateValues() {
+    const value1 = parseFloat(document.getElementById("value1").value);
+    const value2 = parseFloat(document.getElementById("value2").value);
+
+    // Validate and set values (you might want to add more validation)
+    if (!isNaN(value1)) defaultValue1 = value1;
+    if (!isNaN(value2)) defaultValue2 = value2;
+
+    // Use the updated values as needed
+    console.log('Updated values:', defaultValue1, defaultValue2);
+
+    // Rerun file processing to recalculate C2
+    const fileInput = document.getElementById("fileInput").files[0];
+    if (fileInput) {
+        const fileReader = new FileReader();
+        fileReader.onload = (event) => {
+            processFile(event);  // Call processFile with the file content
+        };
+        fileReader.readAsText(fileInput);
+    } else {
+        alert("Please select a file before updating values.");
+    }
+}
+
+// Initialize values when page loads
+initializeValues();
+
+// Add event listener to button
+document.getElementById("submitButton").addEventListener("click", updateValues);
+
+// Function to prompt the user for a pair of values
+function getUserInput() {
+    const input = prompt("Please enter a pair of values separated by a comma (e.g., 10, 20):");
+    if (input) {
+        const [value1, value2] = input.split(',').map(Number);
+        if (!isNaN(value1) && !isNaN(value2)) {
+            return [value1, value2];
+        } else {
+            alert("Invalid input. Please enter numeric values.");
+            return null;
+        }
+    } else {
+        alert("Input canceled.");
+        return null;
+    }
+}
+
+// Function to format the edges with coordinates and type
+function formatEdges(V, EV, EA) {
+    return EV.map(([a, b]) => {
+        const [x1, y1] = V[a];
+        const [x2, y2] = V[b];
+        // Calculate the index in EA based on the edge
+        const edgeIndex = EV.findIndex(edge => (edge[0] === a && edge[1] === b) || (edge[0] === b && edge[1] === a));
+        const type = (edgeIndex >= 0 && EA[edgeIndex]) || 'unknown'; // Handle undefined cases
+        return [x1, y1, x2, y2, type];
+    });
+}
+
+// Function to resize the canvas
+function resizeCanvas() {
+    const canvas = document.getElementById('myCanvas');
+    if (canvas) {
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+        paper.view.viewSize = new paper.Size(canvas.clientWidth, canvas.clientHeight);
+        console.log('Canvas resized to:', canvas.clientWidth, canvas.clientHeight);
+    }
+}
+
+window.addEventListener('load', resizeCanvas);
+window.addEventListener('resize', resizeCanvas);
+
+let globalEdgesFormatted = [];
+
+function clearCanvas() {
+    if (paper.project) {
+        paper.project.activeLayer.removeChildren();
+    }
+}
+
+// Function to scale and center the coordinates
+function scaleAndCenterCoordinates(coords, canvasWidth, canvasHeight) {
+    // Find the min and max x and y values
+    const xs = coords.map(([x1, y1, x2, y2]) => [x1, x2]).flat();
+    const ys = coords.map(([y1, y2]) => [y1, y2]).flat();
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    // Calculate width and height of the coordinates
+    const width = maxX - minX;
+    const height = maxY - minY;
+
+    // Scale the pattern to fit the canvas size with some padding
+    const scale = Math.min(canvasWidth / width, canvasHeight / height) * 0.45;
+
+    // Calculate offsets to center the pattern
+    const offsetX = 20;
+    const offsetY = (canvasHeight - height * scale) / 2 - minY * scale;
+
+    // Scale and translate coordinates
+    return coords.map(([x1, y1, x2, y2, type]) => [
+        x1 * scale + offsetX,
+        y1 * scale + offsetY,
+        x2 * scale + offsetX,
+        y2 * scale + offsetY,
+        type
+    ]);
+}
+
+// Function to draw edges on the canvas
+function drawGlobalEdges() {
+    if (!paper.project) {
+        console.warn('Paper.js project not initialized.');
+        return;
+    }
+    if (globalEdgesFormatted.length === 0) {
+        console.warn('No creases available to draw.');
+        return;
+    }
+    // Get the canvas size
+    const canvas = document.getElementById('myCanvas');
+    const canvasWidth = canvas.clientWidth;
+    const canvasHeight = canvas.clientHeight;
+
+    // Scale and center coordinates
+    const scaledEdges = scaleAndCenterCoordinates(globalEdgesFormatted, canvasWidth, canvasHeight);
+
+    const colorMap = {
+        'B': 'black',
+        'V': 'blue',
+        'M': 'red'
+    };
+
+    scaledEdges.forEach(([x1, y1, x2, y2, type]) => {
+        const color = colorMap[type] || 'black'; // default to black if type is not found
+        const line = new paper.Path.Line(new paper.Point(x1, y1), new paper.Point(x2, y2));
+        line.strokeColor = color;
+    });
+}
+
+// Function to handle file input and extract coordinates
+function processFile(event) {
+    try {
+        NOTE.clear_log();
+        NOTE.start("*** Starting File Import ***");
+        const doc = event.target.result;
+        const file_name = document.getElementById("fileInput").value;
+        const parts = file_name.split(".");
+        const type = parts[parts.length - 1].toLowerCase();
+        NOTE.time(`Importing from file ${file_name}`);
+        
+        // Process the file content based on its type
+        const [V_org, VV, EVi, EAi, EF, FV, FE] = IO.doc_type_side_2_V_VV_EV_EA_EF_FV_FE(doc, type, true);
+        const Vi = M.normalize_points(V_org);
+        const EPS = 10**(-8);
+        
+        // Convert vertices to radical form
+        const [C, VC] = V_2_C_VC(Vi, EPS);
+        
+        // Prepare the target object
+        const target = { C, VC, EV: EVi, EA: EAi, FV };
+
+        clearCanvas();
+
+        // Update the globalEdgesFormatted array with the formatted edges
+        globalEdgesFormatted = formatEdges(Vi, EVi, EAi);
+        drawGlobalEdges();
+
+        // Check pi/8 coordinates and proceed with further processing
+        processC2(C, EPS).then(C2 => {
+            target.C2 = C2;  // Attach C2 to target if needed
+            update(target, EPS);
+        }).catch(error => {
+            console.error('Failed to process C2:', error);
+            NOTE.time(`Failed to process C2: ${error.message}`);
+        });
+        
+    } catch (error) {
+        console.error('Failed to process file:', error);
+        NOTE.time(`Failed to process file: ${error.message}`);
+    }
+}
+
+// Function to convert vertices to radical form
+function V_2_C_VC(V, eps) {
+    const Ci = [];
+    for (let i = 0; i < V.length; ++i) {
+        for (const j of [0, 1]) {
+            Ci.push([V[i][j], i, j]);
+        }
+    }
+    Ci.sort(([a, ai, aj], [b, bi, bj]) => a - b);
+    const C = [];
+    const VC = V.map(() => [undefined, undefined]);
+    C.push(Ci[0][0]);
+    VC[Ci[0][1]][Ci[0][2]] = 0;
+    for (let i = 1; i < Ci.length; ++i) {
+        const [c1, i1, j1] = Ci[i - 1];
+        const [c2, i2, j2] = Ci[i];
+        if (c2 - c1 > eps) {
+            C.push(c2);
+        }
+        VC[i2][j2] = C.length - 1;
+    }
+    return [C, VC];
+}
+
+// Function to update the display or data structure
+function update(target, eps) {
+    const { C, VC, EV, EA, FV, C2 } = target;
+}
+
+// Function to process C2 with a Promise
+function processC2(C, eps) {
+    return new Promise((resolve, reject) => {
+        try {
+            let C2 = checkPi8(C, eps);
+
+            C2.forEach(([a, b, c, d], index) => {
+                const [alpha, beta, gamma] = toABC(a, b, c, d);
+                C2[index] = [alpha, beta, gamma]
+            });
+
+            function constructible(element) {
+                const gamma = element[2];
+                return ((Math.log(gamma)/Math.log(2)) % 1 !== 0);
+            }
+
+            const C2con = C2.filter(constructible);
+
+            if (C2con.length > C2.length/2){
+                C2 = C2con;
+            }
+
+            C2.forEach(([a, b, c], index) => {
+                const [alpha, beta, gamma] = inverse(a, b, c);
+                C2[index] = [alpha, beta, gamma];
+            })
+
+            C2.forEach(([a, b, c], index) => {
+                const [alpha, beta, gamma] = normalize(a, b, c);
+                C2[index] = [alpha, beta, gamma];
+            })
+
+            function updateC2(C2) {
+                return C2.map(([a, b, c]) => {
+                    const minType = alts(a, b, c);
+                    return [a, b, c, minType.name, minType.meth, minType.value, minType.elev];
+                });
+            }
+
+            C2 = updateC2(C2);
+
+            C2 = C2.filter(item => 
+                item[5] !== undefined &&
+                !(
+                    (item[0] === 1 && item[1] === 0 && item[2] === 1) || 
+                    (item[0] === 1 && item[1] === -0 && item[2] === 1)
+                )
+            );
+
+            C2.sort((a, b) => {
+                if (a === undefined || b === undefined) return Infinity; // Handle undefined values
+                return (a[5] || 0) - (b[5] || 0); // Compare minType.value (index 5)
+            });
+
+            console.log(C2)
+            resolve(C2);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function summup(a,b,c) {
+    return (a + (b * Math.SQRT2)) / c
+}
+
+function normalize(a,b,c) {
+    let grcodi = gcd(gcd(a, b), c);
+    if (summup(a,b,c) < 0 || ((a + (b * Math.SQRT2) < 0) && (c < 0))) {
+        a = -a;
+        b = -b;
+        c = -c;
+    };
+    return [a/grcodi, b/grcodi, c/grcodi];
+}
+
+function inverse(a, b, c) {
+    let alpha = a * c;
+    let beta = -b * c;
+    let gamma = (a ** 2) - (2 * (b ** 2));
+
+    return [alpha, beta, gamma]
+}
 
 function gcd(a, b) {
     if (b) {
@@ -16,6 +349,75 @@ function gcd(a, b) {
         return Math.abs(a);
     }
 }
+
+function toABC(a, b, c, d) {
+    let alpha, beta, gamma;
+    if (c**2 - 2 * d**2 >= 0) {
+        alpha = a * c - 2 * b * d;
+        beta = b * c - a * d;
+        gamma = c**2 - 2 * d**2;
+    } else {
+        alpha = -a * c + 2 * b * d;
+        beta = -b * c + a * d;
+        gamma = 2 * d**2 - c**2;
+    }
+    let grcodi = gcd(gamma,gcd(alpha,beta));
+    return [alpha/grcodi, beta/grcodi, gamma/grcodi];
+}
+
+// Function to check if coordinates are at pi/8 and return corresponding radical forms
+const checkPi8 = (C, eps) => {
+    const r2 = Math.sqrt(2);
+    const val = ([a, b]) => a + r2 * b;
+    const T = new AVL((a, b) => Math.abs(a - b) < eps ? 0 : a - b);
+    const M = new Map();
+    T.insert(0);
+    T.insert(1);
+    M.set(0, [0, 0, 1, 0]);
+    M.set(1, [1, 0, 1, 0]);
+
+    for (let n = 0; n < 50; ++n) {
+        for (let i = 0; i <= n; ++i) {
+            for (let j = 0; j <= n - i; ++j) {
+                for (const [a, b] of [[j, i], [-j, i], [j, -i]]) {
+                    const num = val([a, b]);
+                    if (num < 0) continue;
+                    for (let k = 0; k <= n - i - j; ++k) {
+                        const l = n - i - j - k;
+                        for (const [c, d] of [[l, k], [-l, k], [l, -k]]) {
+                            const den = val([c, d]);
+                            if (den <= 0) continue;
+                            const v = num / den;
+                            if (v > 1) continue;
+                            const u = T.insert(v);
+                            if (u === undefined) {
+                                M.set(v, [a, b, c, d]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return C.map(v => {
+        const u = T.insert(v);
+        return u === undefined ? undefined : M.get(u);
+    });
+};
+
+//----------------------------------------------------------------------------------------
+
+// PART ONE: Generates the farey sequence of all fractions having a denominator less than or equal to n.
+// Each fraction corresponds to a slope.  The lookup table records the number of creases required
+// to develop that slope, and the methodology used to do so.
+
+let lookupTable = [];
+
+//max denominator
+const n = defaultValue1;
+//most extreme fraction
+const m = (1/defaultValue2);
 
 // if b is a power of 2, the reference may be developed in log2(b)+1 folds
 function powTwo(b) {
@@ -143,7 +545,7 @@ function findRank(numerator, denominator) {
         // Swap numerator and denominator for fractions greater than 1
         [numerator, denominator] = [denominator, numerator];
     }
-    if (numerator/denominator < 0) {
+    if (numerator/denominator < 0 || (numerator < 0 && denominator < 0)) {
         [numerator, denominator] = [-numerator, -denominator]
     }
     //performs regular search
@@ -152,7 +554,7 @@ function findRank(numerator, denominator) {
     } else if (numerator/denominator === 1){
         return 1;
     } else if (denominator/numerator > m || numerator/denominator > m){
-        return null;
+        return Infinity;
     }
     else {
         let result = lookupTable.find(row => row.numerator === numerator && row.denominator === denominator);
@@ -169,12 +571,10 @@ function searchForFraction(numerator, denominator) {
     }
 }
 
-
 //---------------------------------------------------------------------------------------------------------
 // PART TWO: A rectangle having w/h = (a + b(rt2)) / c can be decomposed into a pair of slopes in ten possible ways.
 // This section calculates the number of creases required for each situation, and reports the most efficient option,
 // and the corresponding number of creases.
-
 
 function rankIt(alpha, beta, gamma) {
 
@@ -321,13 +721,7 @@ function rankIt(alpha, beta, gamma) {
     return [minType.name, minType.value];
 }
 
-//------------------------------------------------------------------------------------------------------------------------------
-
-function summup(a,b,c) {
-    return (a + (b * Math.SQRT2)) / c
-}
-
-function arcctg(x) { return Math.PI / 2 - Math.atan(x) };
+//---------------------------------------------------------------------------------------------------------------
 
 function findBisector(a,b,c) {
     if ((summup(a,b,c) >= Math.SQRT2 + 1)) {
@@ -433,7 +827,6 @@ function findHSB(a,b,c) {
     }
 }
 
-
 function alts(a, b, c) {
     function neg(a, b, c) {
         const alpha = (a ** 2) - (a * c) - (2 * (b ** 2));
@@ -471,19 +864,19 @@ function alts(a, b, c) {
 
     // Bisector and negbisector
     const bisectorValues = findBisector(a, b, c);
-    const bisectorType = createRankType('bisector', bisectorValues, 1);
+    const bisectorType = createRankType('bisector', bisectorValues, 2);
 
     // SwitchIt and negSwitchIt
     const switchItValues = findSwitchIt(a, b, c);
-    const switchItType = createRankType('switchIt', switchItValues, 1);
+    const switchItType = createRankType('switchIt', switchItValues, 2);
 
     // HSA and negHSA
     const hsaValues = findHSA(a, b, c);
-    const hsaType = createRankType('HSA', hsaValues, 1);
+    const hsaType = createRankType('HSA', hsaValues, 2);
 
     // HSB and negHSB
     const hsbValues = findHSB(a, b, c);
-    const hsbType = createRankType('HSB', hsbValues, 1)
+    const hsbType = createRankType('HSB', hsbValues, 2)
 
     // Combine all rank types into one array
     const types = [
@@ -506,85 +899,12 @@ function alts(a, b, c) {
     const minType = types.reduce((min, current) => current.value < min.value ? current : min, types[0]);
 
     // Return the type corresponding to the minimum value
-    return [minType.name, minType.meth, minType.value, minType.elev];
+    return {
+         name: minType.name, 
+         meth: minType.meth, 
+         value: minType.value, 
+         elev: minType.elev
+    };
 }
 
-//console.log(alts(Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20)));
-//console.log(alts(Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20)));
-//console.log(alts(Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20)));
-//console.log(alts(Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20)));
-//console.log(alts(Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20)));
-//console.log(alts(Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20)));
-
-/*const quid = 50;
-let counts = {
-    df: 0, ndf: 0, db: 0, ndb: 0, q: 0, nq: 0, 
-    s: 0, ns: 0, hb: 0, nhb: 0, ha: 0, nha: 0
-};
-
-for (let a = -quid; a < quid; ++a) {
-    for (let b = -quid; b < quid; ++b) {
-        for (let c = 0; c < (2 * quid); ++c) {
-            if (summup(a, b, c) > 1) {
-                let counter = alts(a, b, c);
-
-                switch (counter[0]) {
-                    case "default":
-                        counts.df += 1;
-                        break;
-                    case "negdefault":
-                        counts.ndf += 1;
-                        break;
-                    case "double":
-                        counts.db += 1;
-                        break;
-                    case "negdouble":
-                        counts.ndb += 1;
-                        break;
-                    case "quadruple":
-                        counts.q += 1;
-                        break;
-                    case "negquadruple":
-                        counts.nq += 1;
-                        break;
-                    case "switchIt":
-                        counts.s += 1;
-                        break;
-                    case "negswitchIt":
-                        counts.ns += 1;
-                        break;
-                    case "HSB":
-                        counts.hb += 1;
-                        break;
-                    case "negHSB":
-                        counts.nhb += 1;
-                        break;
-                    case "HSA":
-                        counts.ha += 1;
-                        break;
-                    case "negHSA":
-                        counts.nha += 1;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    }
-}
-
-// Log results
-console.log("df: " + counts.df, 
-    "ndf: " + counts.ndf, 
-    "db: " + counts.db, 
-    "ndb: " + counts.ndb, 
-    "q: " + counts.q, 
-    "nq: " + counts.nq, 
-    "s: " + counts.s, 
-    "ns: " + counts.ns, 
-    "hb: " + counts.hb, 
-    "nhb: " + counts.nhb, 
-    "ha: " + counts.ha, 
-    "nha: " + counts.nha
-);
-*/
+//-------------------------------------------------------------------------------------------------------------
