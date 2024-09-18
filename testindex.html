@@ -7,104 +7,20 @@
     <!-- Include Paper.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js"></script>
     <script type="module" src="./src/main-new.js"></script>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-        }
-
-        #title {
-            text-align: center;
-            margin: 20px 0;
-            font-size: 2em; /* Bigger font size */
-            font-weight: bold; /* Bold font */
-            padding: 3px 0; /* Padding to add some space around the title */
-        }
-
-        #description {
-            text-align: center;
-            font-size: 1em;
-            margin: 10px 20px;
-        }
-
-        #fileInput {
-            margin: 10px;
-        }
-
-        #controls {
-            margin: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-        }
-
-        #controls button {
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-            font-weight: bold;
-            background-color: lightgray;
-            border: none;
-            cursor: pointer;
-        }
-
-        #controls span {
-            font-size: 20px;
-        }
-
-        #inputContainer {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 10px;
-        }
-
-        .inputRow {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .inputRow label {
-            flex: 1 1 auto;
-            margin-right: 10px;
-        }
-
-        .inputRow input {
-            flex: 0 0 100px; /* Ensure input width is fixed */
-        }
-
-        #submitButton {
-            margin-top: 10px;
-            padding: 5px 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        #myCanvas {
-            flex: 1; /* Takes up remaining space */
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS file -->
 </head>
 <body>
     <div id="title">REFSinator</div>
 
     <div id="description">
-        Input a 22.5-degree Crease Pattern as a .FOLD file. REFSinator will iterate through a stupid number of possible reference-finding procedures, and spit out the quickest one.  Use the + and - buttons at the bottom of the screen to scroll through multiple options.
+        Input a 22.5-degree Crease Pattern as a .FOLD file. REFSinator will iterate through a stupid number of possible reference-finding procedures, and spit out the quickest one. Use the + and - buttons at the bottom of the screen to scroll through multiple options.
     </div>
 
     <div id="inputContainer">
-        <input type="file" id="fileInput" />
+        <div class="inputRow">
+            <input type="file" id="fileInput" />
+            <button id="submitButton">Update Values</button>
+        </div>
         <div class="inputRow">
             <label for="value1">Avoid fractions having a denominator greater than:</label>
             <input type="number" id="value1" value="100">
@@ -113,7 +29,6 @@
             <label for="value2">Avoid refs within this distance of the edge (edge length = 1):</label>
             <input type="number" id="value2" value="0.1">
         </div>
-        <button id="submitButton">Update Values</button>
     </div>
 
     <canvas id="myCanvas" resize></canvas>
