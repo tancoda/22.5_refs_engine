@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REFSinator</title>
+    <title>Refsinator</title>
     <!-- Include Paper.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js"></script>
     <script type="module" src="./src/main-new.js"></script>
     <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS file -->
 </head>
 <body>
-    <div id="title">REFSinator</div>
+    <div id="title">22.5° Refsinator</div>
 
     <div id="description">
-        Input a 22.5-degree Crease Pattern as a .FOLD file. REFSinator will iterate through a stupid number of possible reference-finding procedures, and spit out the quickest one. Use the + and - buttons at the bottom of the screen to scroll through multiple options.
+        Input a 22.5° Crease Pattern as a .FOLD file. REFSinator will iterate through a stupid number of possible reference-finding procedures, and spit out the quickest one. Use the + and - buttons at the bottom of the screen to scroll through multiple options.
     </div>
 
     <div id="inputContainer">
@@ -56,8 +56,12 @@
         function resizeCanvas() {
             const canvas = document.getElementById('myCanvas');
             if (canvas) {
-                canvas.width = canvas.clientWidth;
-                canvas.height = canvas.clientHeight;
+                const height = window.innerHeight - (document.getElementById('title').offsetHeight +
+                                                     document.getElementById('description').offsetHeight +
+                                                     document.getElementById('inputContainer').offsetHeight +
+                                                     document.getElementById('controls').offsetHeight);
+                canvas.width = window.innerWidth;
+                canvas.height = height;
                 paper.view.viewSize = new paper.Size(canvas.width, canvas.height);
             }
         }
@@ -67,26 +71,39 @@
     </script>
 
     <script>
-        let variable = 1; // Starting value
-        
-        function updateDisplay() {
-            document.getElementById('variableValue').innerText = variable;
-            // Call your update function here if needed
+
+        // Reset variable when uploading a new CP
+            function handleFileUpload() {
+            // Your logic for handling file upload and processing goes here
+            
+            // Reset window.variable to 1
+            window.variable = 1;
+            updateDisplay(); // Update the display to reflect the new value
         }
 
+        // Event listener for file input or submit button
+        document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+        document.getElementById('submitButton').addEventListener('click', handleFileUpload);
+
+        window.variable = 1; // Starting value
+
+        window.updateDisplay = function() {
+            document.getElementById('variableValue').innerText = window.variable;
+        };
+
         document.getElementById('decreaseButton').addEventListener('click', () => {
-            if (variable > 1) {
-                variable--;
-                updateDisplay();
+            if (window.variable > 1) {
+                window.variable--;
+                window.updateDisplay();
             }
         });
 
         document.getElementById('increaseButton').addEventListener('click', () => {
-            variable++;
-            updateDisplay();
+            window.variable++;
+            window.updateDisplay();
         });
 
-        updateDisplay();
+        window.updateDisplay();
     </script>
 </body>
 </html>

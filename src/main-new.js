@@ -29,7 +29,7 @@ initializeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
 // Default values
-let defaultValue1 = 100;
+let defaultValue1 = 50;
 let defaultValue2 = 0.1;
 
 // Function to initialize values from inputs or defaults
@@ -73,23 +73,6 @@ initializeValues();
 // Add event listener to button
 document.getElementById("submitButton").addEventListener("click", updateValues);
 
-// Function to prompt the user for a pair of values
-function getUserInput() {
-    const input = prompt("Please enter a pair of values separated by a comma (e.g., 10, 20):");
-    if (input) {
-        const [value1, value2] = input.split(',').map(Number);
-        if (!isNaN(value1) && !isNaN(value2)) {
-            return [value1, value2];
-        } else {
-            alert("Invalid input. Please enter numeric values.");
-            return null;
-        }
-    } else {
-        alert("Input canceled.");
-        return null;
-    }
-}
-
 // Function to format the edges with coordinates and type
 function formatEdges(V, EV, EA) {
     return EV.map(([a, b]) => {
@@ -124,6 +107,8 @@ function clearCanvas() {
     }
 }
 
+let scale, offsetX, offsetY;
+
 // Function to scale and center the coordinates
 function scaleAndCenterCoordinates(coords, canvasWidth, canvasHeight) {
     // Find the min and max x and y values
@@ -139,11 +124,11 @@ function scaleAndCenterCoordinates(coords, canvasWidth, canvasHeight) {
     const height = maxY - minY;
 
     // Scale the pattern to fit the canvas size with some padding
-    const scale = Math.min((canvasWidth / 2)/ width, canvasHeight / height) * 0.9;
+    scale = Math.min((canvasWidth / 2)/ width, canvasHeight / height) * 0.85;
 
     // Calculate offsets to center the pattern
-    const offsetX = (((canvasWidth / 2) - width * scale) / 2 - minX * scale);
-    const offsetY = (canvasHeight - height * scale) / 2 - minY * scale;
+    offsetX = (((canvasWidth / 2) - width * scale) / 2 - minX * scale);
+    offsetY = (canvasHeight - height * scale) / 2 - minY * scale;
 
     // Scale and translate coordinates
     return coords.map(([x1, y1, x2, y2, type]) => [
@@ -186,6 +171,19 @@ function drawGlobalEdges() {
     });
 }
 
+function dispatchGlobalViReadyEvent() {
+    const event = new CustomEvent('globalViReady', { detail: globalVi });
+    window.dispatchEvent(event);
+}
+
+function dispatchGlobalC2ReadyEvent() {
+    const event = new CustomEvent('globalC2Ready', { detail: globalC2 });
+    window.dispatchEvent(event);
+}
+
+let globalVi = [];
+let globalC2 = [];
+
 // Function to handle file input and extract coordinates
 function processFile(event) {
     try {
@@ -197,26 +195,28 @@ function processFile(event) {
         const type = parts[parts.length - 1].toLowerCase();
         NOTE.time(`Importing from file ${file_name}`);
         
-        // Process the file content based on its type
         const [V_org, VV, EVi, EAi, EF, FV, FE] = IO.doc_type_side_2_V_VV_EV_EA_EF_FV_FE(doc, type, true);
         const Vi = M.normalize_points(V_org);
+        globalVi = Vi;
+
+        dispatchGlobalViReadyEvent();
+
         const EPS = 10**(-8);
         
-        // Convert vertices to radical form
         const [C, VC] = V_2_C_VC(Vi, EPS);
         
-        // Prepare the target object
         const target = { C, VC, EV: EVi, EA: EAi, FV };
 
         clearCanvas();
 
-        // Update the globalEdgesFormatted array with the formatted edges
         globalEdgesFormatted = formatEdges(Vi, EVi, EAi);
         drawGlobalEdges();
 
-        // Check pi/8 coordinates and proceed with further processing
         processC2(C, EPS).then(C2 => {
-            target.C2 = C2;  // Attach C2 to target if needed
+            globalC2 = C2;
+            dispatchGlobalC2ReadyEvent();
+
+            target.C2 = C2;
             update(target, EPS);
         }).catch(error => {
             console.error('Failed to process C2:', error);
@@ -917,3 +917,150 @@ function alts(a, b, c) {
 }
 
 //-------------------------------------------------------------------------------------------------------------
+
+let viReady = false;
+let c2Ready = false;
+let viData;
+let c2Data;
+
+window.addEventListener('globalViReady', (event) => {
+    viData = event.detail;
+    viReady = true;
+    checkBothReady();
+});
+
+window.addEventListener('globalC2Ready', (event) => {
+    c2Data = event.detail;
+    c2Ready = true;
+    checkBothReady();
+});
+
+function checkBothReady() {
+    if (viReady && c2Ready) {
+        handleBothReady(viData, c2Data);
+    }
+}
+
+function handleBothReady(vi, c2) {
+
+    whiteRabbit(window.variable, c2, vi);
+
+    function updateOnVariableChange() {
+        whiteRabbit(window.variable, c2, vi);
+    }
+
+    // Add listeners to handle changes in the variable
+    document.getElementById('decreaseButton').addEventListener('click', updateOnVariableChange);
+    document.getElementById('increaseButton').addEventListener('click', updateOnVariableChange);
+}
+
+function whiteRabbit(num, arr1, arr2) {
+    // Check if arr1 is an array and has the required length
+    if (!Array.isArray(arr1) || arr1.length < num) {
+        console.error('arr1 is not an array or does not have enough elements.');
+        window.variable = globalC2.length;
+        return;
+    }
+    
+    // Check if arr1[num-1] is defined and has the expected structure
+    if (!Array.isArray(arr1[num - 1]) || arr1[num - 1].length < 1) {
+        console.error('arr1[num-1] is not an array or does not have enough elements.');
+        return;
+    }
+    
+    const alpha = (arr1[(num-1)][0]);
+    const beta = (arr1[(num-1)][1]);
+    const gamma = (arr1[(num-1)][2]);
+
+    const coord = ((summup(alpha, beta, gamma)) ** -1);
+
+    searchVi(arr2, coord);
+}
+
+let elevX = null;
+let elevY = null;
+let circles = []; // Array to store circle paths
+
+function searchVi(vi, searchValue, tolerance = 10e-8) {
+    let found = false;
+
+    // Clear previous lines if they exist
+    if (elevX) {
+        elevX.remove();
+        elevX = null;
+    }
+
+    if (elevY) {
+        elevY.remove();
+        elevY = null;
+    }
+
+    // Clear previous circles
+    for (let circle of circles) {
+        circle.remove();
+    }
+    circles = []; // Clear the circles array
+
+    let foundXval = [];
+    let foundYval = [];
+    let foundValues = [];
+
+    // Scaling functions (ensure scale, offsetX, and offsetY are defined)
+    function scaleX(x) {
+        return (x * scale) + offsetX;
+    }
+
+    function scaleY(y) {
+        return (y * scale) + offsetY;
+    }
+
+    // Search through vi array
+    for (let i = 0; i < vi.length; i++) {
+        const [x, y] = vi[i];
+
+        // Check for y value with tolerance
+        if (Math.abs(y - searchValue) < tolerance) {
+            foundYval.push(vi[i]);
+            found = true;
+        }
+
+        // Check for x value with tolerance
+        if (Math.abs(x - searchValue) < tolerance) {
+            foundXval.push(vi[i]);
+            found = true;
+        }
+    }
+
+    // Decide which line to draw based on counts
+    if (foundYval.length >= foundXval.length) {
+        foundValues = foundYval;
+        elevY = new paper.Path.Line(
+            new paper.Point(scaleX(0), scaleY(searchValue)),
+            new paper.Point(scaleX(1), scaleY(searchValue))
+        );
+        elevY.strokeColor = '#00ff00';
+        elevY.strokeWidth = 4;
+    } else if (foundXval.length > foundYval.length) {
+        foundValues = foundXval;
+        elevX = new paper.Path.Line(
+            new paper.Point(scaleX(searchValue), scaleY(0)),
+            new paper.Point(scaleX(searchValue), scaleY(1))
+        );
+        elevX.strokeColor = '#00ff00';
+        elevX.strokeWidth = 4;
+    }
+
+    // Draw new circles at found values
+    for (let i = 0; i < foundValues.length; i++) {
+        let circle = new paper.Path.Circle({
+            center: [scaleX(foundValues[i][0]), scaleY(foundValues[i][1])],
+            radius: 4,
+            fillColor: 'green',
+        });
+        circles.push(circle); // Add circle to the list
+    }
+
+    if (!found) {
+        console.log(`${searchValue} not found within tolerance ${tolerance} in Vi.`);
+    }
+}
