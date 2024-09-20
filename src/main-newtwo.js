@@ -228,10 +228,10 @@ function drawEverything() {
         const steponex6 = 3*canvasWidth/4 + stepSize + padding;
         const steponey6 = canvasHeight/2 + padding/2 + stepSize/2;
 
-        step1((globalC2[window.variable-1][4]),stepSize,rotate,[steponex1,steponey1], 1);
-        step1((globalC2[window.variable-1][4]),stepSize,rotate,[steponex2,steponey2], 2);
-        step1((globalC2[window.variable-1][4]),stepSize,rotate,[steponex3,steponey3], 3);
-        step1((globalC2[window.variable-1][4]),stepSize,rotate,[steponex4,steponey4], 4);
+        //((globalC2[window.variable-1][4]),stepSize,rotate,[steponex1,steponey1], 1);
+        //step1((globalC2[window.variable-1][4]),stepSize,rotate,[steponex2,steponey2], 2);
+        //step1((globalC2[window.variable-1][4]),stepSize,rotate,[steponex3,steponey3], 3);
+        //step1((globalC2[window.variable-1][4]),stepSize,rotate,[steponex4,steponey4], 4);
 
         const gonzoArray = globalC2[window.variable-1][6];
 
@@ -289,26 +289,40 @@ function drawEverything() {
         let typeA = (findRank(typer[0][0], typer[0][1])).type;
         let typeB = (findRank(typer[0][2], typer[0][3])).type;
 
+        stepOneHelp = [];
+
         stepDiags(typer[0][0], typer[0][1], typeA, [typer[1][0],1], [stepSize, stepSize], [steponex2, steponey2], rotate, 1);
         stepDiags(typer[0][0], typer[0][1], typeA, [typer[1][0],1], [stepSize, stepSize], [steponex3, steponey3], rotate, 2);
         stepDiags(typer[0][2], typer[0][3], typeB, [typer[1][1],1], [-stepSize, stepSize], [steponex3, steponey3], rotate, 1);
         stepDiags(typer[0][2], typer[0][3], typeB, [typer[1][1],1], [-stepSize, stepSize], [steponex4, steponey4], rotate, 2);
         stepDiags(typer[0][0], typer[0][1], typeA, [typer[1][0],1], [stepSize, stepSize], [steponex4, steponey4], rotate, 3);
 
+        console.log(stepOneHelp)
+
+        stepOneRedo(stepOneHelp,[stepSize,stepSize],rotate,[steponex1,steponey1],1);
+        stepOneRedo(stepOneHelp,[stepSize,stepSize],rotate,[steponex2,steponey2],2);
+        stepOneRedo(stepOneHelp,[stepSize,stepSize],rotate,[steponex3,steponey3],3);
+        stepOneRedo(stepOneHelp,[stepSize,stepSize],rotate,[steponex4,steponey4],4);
+        
         var dSLs = new paper.Point();
         var dSLf = new paper.Point();
+        let valueText;
 
         if (xory == 'X') {
             dSLs.x = (steponex4 - (stepSize/2));
             dSLs.y = (steponey4 - stepSize/2 + targetElev*stepSize);
             dSLf.x = (steponex4 + (stepSize/2));
             dSLf.y = (steponey4 - stepSize/2 + targetElev*stepSize);
+            valueText = `y = ${1 - targetElev.toFixed(3)}`
         } else {
             dSLs.x = (steponex4 - (stepSize/2) + targetElev*stepSize);
             dSLs.y = (steponey4 - stepSize/2);
             dSLf.x = (steponex4 - (stepSize/2) + targetElev*stepSize);
             dSLf.y = (steponey4 + stepSize/2);
+            valueText = `x = ${targetElev.toFixed(3)}`
         }
+
+        //console.log(`${globalC2.length} references available.  Solution ${window.variable} ~ ${valueText}.  Rank: ${globalC2[window.variable-1][5]}.`)
 
         var desiredLine = new paper.Path.Line ({
             from: dSLs,
@@ -316,6 +330,7 @@ function drawEverything() {
             strokeColor: 'red',
             strokeWidth: 1,
         })
+
     }
 }
      
@@ -409,115 +424,147 @@ function searchVi(vi, searchValue, tolerance, scale, offsetX, offsetY) {
     }
 };
 
-function step1(type, scale, rotate, translate, time) {
-    let points1 = [];
-    
-    const rtTwoMinusOne = [
-        [0, 1, (Math.SQRT2 - 1), 0],
-        [0, 1, 1, 0],
-        [(Math.SQRT2 - 1), 0, (Math.SQRT2 - 1), 1]
-    ];
-    const twoMinusRtTwo = [
-        [1, 0, (2 - Math.SQRT2), 1],
-        [1, 0, 0, 1],
-        [(2 - Math.SQRT2), 1, (2 - Math.SQRT2), 0]
-    ];
-    const onePlusHalfRtTwo = [
-        [1, 0, 0, 1],
-        [0, 1, 1, (2 - Math.SQRT2)],
-        [0, (2 - Math.SQRT2), 1, (2 - Math.SQRT2)]
-    ];
-    const rtTwoPlusOne = [
-        [1, 0, 0, 1],
-        [1, 0, 0, (Math.SQRT2 - 1)],
-        [0, (Math.SQRT2 - 1), 1, (Math.SQRT2 - 1)]
-    ];
+function stepOneRedo(stepOneHelp, scale, rotate, translate, time) {
+    var ptOne = new paper.Point(0, 0);
+    var ptTwo = new paper.Point(stepOneHelp[0][0], stepOneHelp[0][1]);
+    var ptFour = new paper.Point(1 - stepOneHelp[1][0], stepOneHelp[1][1]);
+    //var lineOne = new paper.Path.Line(ptOne, ptTwo);
+    //var lineTwo = new paper.Path.Line(ptThree, ptFour);
+    var border = new paper.Path.Rectangle(ptOne, new paper.Point(1,1));
 
-    switch (type) {
-        case 'A':
-            points1.push(...rtTwoMinusOne);
-            break;
-        case 'B':
-            points1.push(...twoMinusRtTwo);
-            break;
-        case 'C':
-            points1.push(...onePlusHalfRtTwo);
-            break;
-        case 'D':
-            points1.push(...rtTwoPlusOne);
-            break;
-        case 'E':
-            points1.push(...twoMinusRtTwo);
-            break;
-        case 'F':
-            points1.push(...onePlusHalfRtTwo);
-            points1.push(...rtTwoMinusOne);
-            points1.splice(5, 1);
-            break;
-        case 'G':
-            points1.push(...twoMinusRtTwo);
-            points1.push([0, (Math.SQRT2 - 1), 1, (Math.SQRT2 - 1)]);
-            break;
-        case 'H':
-            points1.push(...onePlusHalfRtTwo);
-            points1.push([(Math.SQRT2 - 1), 0, (Math.SQRT2 - 1), 1]);
-            break;
-        case 'I':
-            points1.push(...twoMinusRtTwo);
-            points1.push([0, (Math.SQRT2 - 1), 1, (Math.SQRT2 - 1)]);
-            break;
-        case 'J':
-            points1.push(...onePlusHalfRtTwo);
-            points1.push(...rtTwoPlusOne);
-            break;
-    }
-    points1 = removeDuplicates(points1);
-    populate(points1, scale, rotate, translate, time);
-}
+    var bl = new paper.Point(0,0);
+    var tl = new paper.Point(0,1);
+    var tr = new paper.Point(1,1);
+    var br = new paper.Point(1,0);
+    var bo = new paper.Point(Math.SQRT2-1,0);
+    var bt = new paper.Point(2-Math.SQRT2,0);
+    var lo = new paper.Point(0,Math.SQRT2-1);
+    var lt = new paper.Point(0,2-Math.SQRT2);
+    var ro = new paper.Point(1,Math.SQRT2-1);
+    var rt = new paper.Point(1,2-Math.SQRT2);
+    var to = new paper.Point(Math.SQRT2-1,1);
+    var tt = new paper.Point(2-Math.SQRT2,1);
 
-function removeDuplicates(arr) {
-    // Create a Set to store unique points
-    const uniqueSet = new Set(arr.map(item => JSON.stringify(item)));
-    // Convert the Set back to an array of arrays
-    return Array.from(uniqueSet).map(item => JSON.parse(item));
-}
+    const tolerance = 10 ** -6;
 
-function populate(arr, scale, rotate, translate, time) {
-    const group = new paper.Group();  // Use paper.Group()
+    var diagGroup = new paper.Group(border);
 
-    var borderStyle = {
-        strokeColor: 'black',
-        strokeWidth: 1
+    function linePusher(arr) {
+        for (let i=0; i<arr.length; i++) {
+            var lineToBePushed = new paper.Path.Line(arr[i][0],arr[i][1]);
+            diagGroup.addChild(lineToBePushed);
+        }
     }
 
-    var border = new paper.Path.Rectangle(new paper.Point(0,0), new paper.Point(1,1));
-    border.style = borderStyle;
+    let pointBucket = [];
 
-    group.addChild(border);
-    
-    for (let i = 0; i < arr.length; i++) {
-        // Define 'from' and 'to' as arrays with x, y coordinates
-        let from = [arr[i][0], arr[i][1]];
-        let to = [arr[i][2], arr[i][3]];
-
-        // Create the line using Paper.js
-        var line = new paper.Path.Line({
-            from: from,
-            to: to,
-            strokeColor: 'black',
-            strokeWidth: 1
-        });
-
-        if (time == 1) {line.strokeColor = 'red'}
-
-        // Add the line to the group
-        group.addChild(line);
+    if (Math.abs(ptTwo.x-1)<tolerance && Math.abs(ptTwo.y-1)<tolerance) {
+        //A
+        if (Math.abs(ptFour.x-(2-Math.SQRT2))<tolerance) {
+            pointBucket.push(
+                [tl,br],
+                [br,tt],
+                [tt,bt]
+            )
+        }
+        //B
+        if (Math.abs(ptTwo.x-(Math.SQRT2-1))<tolerance) {
+            pointBucket.push(
+                [bl,tr],
+                [bl,to],
+                [to,bo]
+            )
+        }
     }
 
-    // Transformations on the group
-    group.scale(scale);
-    group.rotate(rotate);
-    group.position = new paper.Point(translate); // Use paper.Point()
+    if (Math.abs(ptFour.x-0)<tolerance && Math.abs(ptFour.y-1)<tolerance) {
+        //C
+        if (Math.abs(ptTwo.y-(2-Math.SQRT2))<tolerance) {
+            pointBucket.push(
+                [tl,br],
+                [tl,rt],
+                [lt,rt]
+            )
+        }
+        //D
+        if (Math.abs(ptTwo.y-(Math.SQRT2-1))<tolerance) {
+            pointBucket.push(
+                [bl,tr],
+                [bl,ro],
+                [lo,ro]
+            )
+        }
+    }
+
+    if (Math.abs(ptTwo.x-(2-Math.SQRT2))<tolerance && Math.abs(ptFour.x-(2-Math.SQRT2))<tolerance) {
+        //E
+        pointBucket.push(
+            [tl,br],
+            [br,tt],
+            [tt,bt]
+        )
+    }
+
+    if (Math.abs(ptTwo.y-(Math.SQRT2-1))<tolerance) {
+        //G
+        if (Math.abs(ptFour.x-(2-Math.SQRT2))<tolerance) {
+            pointBucket.push(
+                [tl,br],
+                [br,tt],
+                [tt,bt],
+                [lo,ro]
+            )
+        }
+        //I
+        if (Math.abs(ptFour.x-(Math.SQRT2-1))<tolerance) {
+            pointBucket.push(
+                [bl,tr],
+                [bo,to],
+                [lo,ro],
+                [bl,ro]
+            )
+        }
+        //J
+        if (Math.abs(ptFour.y-(2-Math.SQRT2))<tolerance) {
+            pointBucket.push(
+                [tl,br],
+                [lo,ro],
+                [lt,rt],
+                [tl,rt],
+                [br,lo]
+            )
+        }
+    }
+
+    if (Math.abs(ptTwo.y-(2-Math.SQRT2))<tolerance) {
+        //F
+        if (Math.abs(ptFour.x-(2-Math.SQRT2))<tolerance) {
+            pointBucket.push(
+                [tl,br],
+                [tl,rt],
+                [rt,lt],
+                [tt,bt]
+            )
+        }
+        //H
+        if (Math.abs(ptFour.x-(Math.SQRT2-1))<tolerance) {
+            pointBucket.push(
+                [tl,br],
+                [tl,rt],
+                [to,bo],
+                [rt,lt]
+            )
+        }
+    }
+    linePusher(pointBucket);
+
+    diagGroup.pivot = new paper.Point(0.5,0.5)
+    diagGroup.scale(scale[0], scale[1]);
+    diagGroup.rotate(rotate);
+    diagGroup.position = new paper.Point(translate[0], translate[1]);
+    diagGroup.strokeWidth = 1;
+    if (time == 1) {diagGroup.strokeColor = 'red'} else {diagGroup.strokeColor = 'black'};
+    border.strokeColor = 'black'
 }
 
 function clearCanvas() {
@@ -530,6 +577,8 @@ let elevX = null;
 let elevY = null;
 let circles = []; // Array to store circle paths
 
+let stepOneHelp = [];
+
 let xory = '';
 
 function stepDiags(a, b, type, end, scale, translate, rotate, time) {
@@ -538,6 +587,8 @@ function stepDiags(a, b, type, end, scale, translate, rotate, time) {
     const maxDim = Math.max(end[0],end[1]);
     end[0] /= maxDim;
     end[1] /= maxDim;
+
+    if (time == 1) {stepOneHelp.push(end)};
     
     const gcdAB = gcd(a,b);
     a /= gcdAB;
@@ -655,7 +706,7 @@ function stepDiags(a, b, type, end, scale, translate, rotate, time) {
             diagLabelPt = diagEnd;
             diagTest = true;
             break;
-        case 'diagB':
+        case 'diagC':
             diagLabel = '1/2';
             if (a>=b) {
                 vertStart.x = w*a/(a+2*b);
@@ -683,7 +734,7 @@ function stepDiags(a, b, type, end, scale, translate, rotate, time) {
             diagLabelPt = diagStart;
             diagTest = true;
             break;
-        case 'diagC':
+        case 'diagB':
             diagLabel = '1/2';
             if (a>=b) {
                 vertStart.x = w*a/(2*a+b);
