@@ -6,14 +6,16 @@
     <title>Refsinator</title>
     <!-- Include Paper.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js"></script>
-    <script type="module" src="./src/main-new.js"></script>
+    <script type="module" src="src\main-newtwo.js"></script>
     <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS file -->
 </head>
 <body>
     <div id="title">22.5° Refsinator</div>
 
     <div id="description">
-        Input a 22.5° Crease Pattern as a .FOLD file. REFSinator will iterate through a stupid number of possible reference-finding procedures, and spit out the quickest one. Use the + and - buttons at the bottom of the screen to scroll through multiple options.
+        Input a 22.5° Crease Pattern as a .FOLD file. Refsinator will provide a sequence of folds to exactly develop a reference line, shown in green. 
+        Use the + and - buttons at the bottom of the screen to scroll through multiple options.  The options are approximately ordered by number of creases required.
+        Note that in many cases, not all the creases shown must be folded, and oftentimes pinch-folds are sufficient.
     </div>
 
     <div id="inputContainer">
@@ -68,42 +70,6 @@
 
         // Initialize the canvas when the page loads
         window.onload = initializeCanvas;
-    </script>
-
-    <script>
-
-        // Reset variable when uploading a new CP
-            function handleFileUpload() {
-            // Your logic for handling file upload and processing goes here
-            
-            // Reset window.variable to 1
-            window.variable = 1;
-            updateDisplay(); // Update the display to reflect the new value
-        }
-
-        // Event listener for file input or submit button
-        document.getElementById('fileInput').addEventListener('change', handleFileUpload);
-        document.getElementById('submitButton').addEventListener('click', handleFileUpload);
-
-        window.variable = 1; // Starting value
-
-        window.updateDisplay = function() {
-            document.getElementById('variableValue').innerText = window.variable;
-        };
-
-        document.getElementById('decreaseButton').addEventListener('click', () => {
-            if (window.variable > 1) {
-                window.variable--;
-                window.updateDisplay();
-            }
-        });
-
-        document.getElementById('increaseButton').addEventListener('click', () => {
-            window.variable++;
-            window.updateDisplay();
-        });
-
-        window.updateDisplay();
     </script>
 </body>
 </html>
