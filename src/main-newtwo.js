@@ -194,17 +194,19 @@ function drawEverything() {
 
     if (globalC2.length > 0 && globalC2[window.variable-1][3].includes("default")) {
         const targetElev = (summup(
-            globalC2[window.variable-1][6][0],
-            globalC2[window.variable-1][6][1],
-            globalC2[window.variable-1][6][2]
+            globalC2[window.variable-1][0],
+            globalC2[window.variable-1][1],
+            globalC2[window.variable-1][2]
         )) ** -1
     
         searchVi(globalVi, targetElev, 10 ** -8, scale, offsetX, offsetY);
 
         let method = (globalC2[window.variable-1][3]);
+
         let rotate = 0;
 
         if (xory == 'Y') {rotate = -90};
+        if (method.includes("neg")) {rotate += 180};
 
         const stepSize = Math.min(canvasHeight,canvasWidth/6) * .8;
         const padding = Math.min(canvasHeight,canvasWidth/6) * .075;
