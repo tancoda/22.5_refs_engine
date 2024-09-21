@@ -194,9 +194,9 @@ function drawEverything() {
 
     if (globalC2.length > 0 && globalC2[window.variable-1][3].includes("default")) {
         const targetElev = (summup(
-            globalC2[window.variable-1][0],
-            globalC2[window.variable-1][1],
-            globalC2[window.variable-1][2]
+            globalC2[window.variable-1][6][0],
+            globalC2[window.variable-1][6][1],
+            globalC2[window.variable-1][6][2]
         )) ** -1
     
         searchVi(globalVi, targetElev, 10 ** -8, scale, offsetX, offsetY);
@@ -204,14 +204,7 @@ function drawEverything() {
         let method = (globalC2[window.variable-1][3]);
         let rotate = 0;
 
-        if (xory == 'X' && (method.includes("neg"))) {
-            rotate = 180;
-        }
-        if (xory == 'Y') {
-            if (method.includes("neg")) {
-                rotate = 90;
-            } else rotate = -90;
-        }
+        if (xory == 'Y') {rotate = -90};
 
         const stepSize = Math.min(canvasHeight,canvasWidth/6) * .8;
         const padding = Math.min(canvasHeight,canvasWidth/6) * .075;
@@ -227,11 +220,6 @@ function drawEverything() {
         const steponey5 = canvasHeight/2 + padding/2 + stepSize/2;
         const steponex6 = 3*canvasWidth/4 + stepSize + padding;
         const steponey6 = canvasHeight/2 + padding/2 + stepSize/2;
-
-        //((globalC2[window.variable-1][4]),stepSize,rotate,[steponex1,steponey1], 1);
-        //step1((globalC2[window.variable-1][4]),stepSize,rotate,[steponex2,steponey2], 2);
-        //step1((globalC2[window.variable-1][4]),stepSize,rotate,[steponex3,steponey3], 3);
-        //step1((globalC2[window.variable-1][4]),stepSize,rotate,[steponex4,steponey4], 4);
 
         const gonzoArray = globalC2[window.variable-1][6];
 
@@ -308,21 +296,25 @@ function drawEverything() {
         var dSLf = new paper.Point();
         let valueText;
 
+        const gonzotext = `(${gonzoArray[0]} + ${gonzoArray[1]}√2) / ${gonzoArray[2]}`
+
         if (xory == 'X') {
             dSLs.x = (steponex4 - (stepSize/2));
             dSLs.y = (steponey4 - stepSize/2 + targetElev*stepSize);
             dSLf.x = (steponex4 + (stepSize/2));
             dSLf.y = (steponey4 - stepSize/2 + targetElev*stepSize);
-            valueText = `y = ${1 - targetElev.toFixed(3)}`
+            valueText = `y = ${gonzotext} ~ ${1 - targetElev.toFixed(3)}`
         } else {
             dSLs.x = (steponex4 - (stepSize/2) + targetElev*stepSize);
             dSLs.y = (steponey4 - stepSize/2);
             dSLf.x = (steponex4 - (stepSize/2) + targetElev*stepSize);
             dSLf.y = (steponey4 + stepSize/2);
-            valueText = `x = ${targetElev.toFixed(3)}`
+            valueText = `x = ${gonzotext} ~ ${targetElev.toFixed(3)}`
         }
 
-        //console.log(`${globalC2.length} references available.  Solution ${window.variable} ~ ${valueText}.  Rank: ${globalC2[window.variable-1][5]}.`)
+        let displayInfo = (`${globalC2.length} references available.  Solution ${window.variable}: ${valueText}.  Rank: ${globalC2[window.variable-1][5]}.`)
+
+        console.log(displayInfo)
 
         var desiredLine = new paper.Path.Line ({
             from: dSLs,
@@ -706,7 +698,7 @@ function stepDiags(a, b, type, end, scale, translate, rotate, time) {
             diagLabelPt = diagEnd;
             diagTest = true;
             break;
-        case 'diagC':
+        case 'diagB':
             diagLabel = '1/2';
             if (a>=b) {
                 vertStart.x = w*a/(a+2*b);
@@ -734,7 +726,7 @@ function stepDiags(a, b, type, end, scale, translate, rotate, time) {
             diagLabelPt = diagStart;
             diagTest = true;
             break;
-        case 'diagB':
+        case 'diagC':
             diagLabel = '1/2';
             if (a>=b) {
                 vertStart.x = w*a/(2*a+b);
@@ -966,7 +958,7 @@ function stepDiags(a, b, type, end, scale, translate, rotate, time) {
         radius: 3/Math.max(scale[0],scale[1]),
         fillColor: 'black',
     });
-    if (time !== 1) intRef.visible = false;
+    intRef.visible = false;
 
     let group = new paper.Group([border, block, creaseLine, diagLine, horiLine, vertLine, horiText, vertText, intRef, diagText]);
 
@@ -1368,18 +1360,12 @@ function findRank(numerator, denominator) {
     numerator /= gcdND;
     denominator /= gcdND;
 
-    //performs regular search
-    if (numerator === 0) {
-        return 0;
-    } else if (numerator/denominator === 1){
-        return 1;
-    } else if (denominator/numerator > m || numerator/denominator > m){
-        return Infinity;
-    }
-    else {
-        let result = lookupTable.find(row => row.numerator === numerator && row.denominator === denominator);
-        return result ? result: null;
-    }
+    let result = lookupTable.find(row => row.numerator === numerator && row.denominator === denominator);
+    if (numerator === 0 || denominator === 0) {result.rank = 0};
+    if (numerator/denominator === 1) {result.rank = 1};
+    if (denominator/numerator > m || numerator/denominator > m) {result.rank = Infinity};
+
+    return result ? result: null;
 }
 
 // Function you can call later to search after data is loaded
