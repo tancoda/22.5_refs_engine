@@ -291,7 +291,7 @@ function revampAgain (a, b, w, h, type, meth, time, scaleX, scaleY, rotate, tran
     function dot(point) {
         return new paper.Path.Circle({
             center: point,
-            radius: 2/scale,
+            radius: dotsize,
             fillColor: 'black',
             visible: (time === 1)
         });
@@ -300,7 +300,9 @@ function revampAgain (a, b, w, h, type, meth, time, scaleX, scaleY, rotate, tran
     const fontSize = 12 / scale;
 
     function highLighter (from,to) {
-        return new paper.Path.Line({
+        var fromDot = dot(from);
+        var toDot = dot(to);
+        var line = new paper.Path.Line({
             from: from,
             to: to,
             strokeColor: 'black',
@@ -309,6 +311,8 @@ function revampAgain (a, b, w, h, type, meth, time, scaleX, scaleY, rotate, tran
             shadowColor: 'yellow',
             visible: (time === 1)
         })
+        let highLightLine = new paper.Group(fromDot, toDot, line);
+        return highLightLine;
     }
 
     const border = new paper.Path.Rectangle({
@@ -525,69 +529,100 @@ function revampAgain (a, b, w, h, type, meth, time, scaleX, scaleY, rotate, tran
     let parallelLabelSide;
 
     //returns relevant diagStart/Finish, diagDenom, diagLabelPt, diagLabelText
-    switch(type) {
-        case 'diagA':
-            if (isPowerTwo(a + b)) {
-                diagDenom = a+b;
-            } else throw new Error('diagA issue');
-            break;
-        case 'diagB':
-            if (isPowerTwo(a + 2*b)) {
-                diagStart.y = h/2;
-                diagDenom = a + 2*b;
-                diagLabelPt.y = h/2;
-                diagLabelText = '1/2';
-                diagLabelSide = 'left';
-            } else throw new Error('diagB issue');            
-            break;
-        case 'diagC':
-            if (isPowerTwo(2*a + b)) {
-                diagFinish.x = w/2;
-                diagDenom = 2*a + b;
-                diagLabelPt.x = w/2;
-                diagLabelText = '1/2';
-                diagLabelSide = 'bottom';
-            } else throw new Error('diagC issue');
-            break;
-        case 'diagD':
-            if (isPowerTwo(a + 4*b)) {
-                diagStart.y = h/4;
-                diagDenom = a + 4*b;
-                diagLabelPt.y = h/4;
-                diagLabelText = '1/4';
-                diagLabelSide = 'left';
-            } else throw new Error('diagD issue');
-            break;
-        case 'diagE':
-            if (isPowerTwo(4*a + b)) {
-                diagFinish.x = w/4;
-                diagDenom = 4*a + b;
-                diagLabelPt.x = w/4;
-                diagLabelText = '1/4';
-                diagLabelSide = 'bottom';
-            } else throw new Error('diagE issue');
-            break;
-        case 'diagF':
-            if (isPowerTwo(3*a + 4*b)) {
-                diagStart.y = 3*h/4;
-                diagDenom = 3*a + 4*b;
-                diagLabelPt.y = 3*h/4;
-                diagLabelText = '3/4';
-                diagLabelSide = 'left';
-            } else throw new Error('diagF issue');
-            break;
-        case 'diagG':
-            if (isPowerTwo(4*a + 3*b)) {
-                diagFinish.x = 3*w/4;
-                diagDenom = 4*a + 3*b;
-                diagLabelPt.x = 3*w/4;
-                diagLabelText = '3/4';
-                diagLabelSide = 'bottom';
-            } else throw new Error('diagG issue');
-            break;
-        default:
-            break;
+    if (type.includes('diag')) {
+        let typeFixed = type;
+        if (a>b) {
+            switch(type) {
+                case 'diagA':
+                    break;
+                case 'diagB':
+                    typeFixed = 'diagC';
+                    break;
+                case 'diagC':
+                    typeFixed = 'diagB';
+                    break;
+                case 'diagD':
+                    typeFixed = 'diagE';
+                    break;
+                case 'diagE':
+                    typeFixed = 'diagD';
+                    break;
+                case 'diagF':
+                    typeFixed = 'diagG';
+                    break;
+                case 'diagG':
+                    typeFixed = 'diagF';
+                    break;
+                default:
+                    break;
+            }
+        }
+        switch(typeFixed) {
+            case 'diagA':
+                if (isPowerTwo(a + b)) {
+                    diagDenom = a+b;
+                } else throw new Error('diagA issue');
+                break;
+            case 'diagB':
+                if (isPowerTwo(a + 2*b)) {
+                    diagStart.y = h/2;
+                    diagDenom = a + 2*b;
+                    diagLabelPt.y = h/2;
+                    diagLabelText = '1/2';
+                    diagLabelSide = 'left';
+                } else throw new Error('diagB issue');            
+                break;
+            case 'diagC':
+                if (isPowerTwo(2*a + b)) {
+                    diagFinish.x = w/2;
+                    diagDenom = 2*a + b;
+                    diagLabelPt.x = w/2;
+                    diagLabelText = '1/2';
+                    diagLabelSide = 'bottom';
+                } else throw new Error('diagC issue');
+                break;
+            case 'diagD':
+                if (isPowerTwo(a + 4*b)) {
+                    diagStart.y = h/4;
+                    diagDenom = a + 4*b;
+                    diagLabelPt.y = h/4;
+                    diagLabelText = '1/4';
+                    diagLabelSide = 'left';
+                } else throw new Error('diagD issue');
+                break;
+            case 'diagE':
+                if (isPowerTwo(4*a + b)) {
+                    diagFinish.x = w/4;
+                    diagDenom = 4*a + b;
+                    diagLabelPt.x = w/4;
+                    diagLabelText = '1/4';
+                    diagLabelSide = 'bottom';
+                } else throw new Error('diagE issue');
+                break;
+            case 'diagF':
+                if (isPowerTwo(3*a + 4*b)) {
+                    diagStart.y = 3*h/4;
+                    diagDenom = 3*a + 4*b;
+                    diagLabelPt.y = 3*h/4;
+                    diagLabelText = '3/4';
+                    diagLabelSide = 'left';
+                } else throw new Error('diagF issue');
+                break;
+            case 'diagG':
+                if (isPowerTwo(4*a + 3*b)) {
+                    diagFinish.x = 3*w/4;
+                    diagDenom = 4*a + 3*b;
+                    diagLabelPt.x = 3*w/4;
+                    diagLabelText = '3/4';
+                    diagLabelSide = 'bottom';
+                } else throw new Error('diagG issue');
+                break;
+            default:
+                break;
+        }
     }
+    
+    
 
     let diagInt = intersect(diagStart.x, diagStart.y, diagFinish.x, diagFinish.y, cstart.x, cstart.y, cblock.x, cblock.y);
     let diagIntDot = dot(diagInt);
@@ -755,10 +790,7 @@ function sloper(a,b,c,type) {
     return [slopePair, blockInfo];
 };
 
-function problem (a, b, w, h) {
-    if ((findRank(a, b)).type === 'powTwo') return true
-    else return false
-}
+function problem (a, b) {return ((findRank(a, b)).type === 'powTwo')};
 
 function isOne(w, h)                {return (Math.abs(w/h - 1) < 10 ** -6)};
 function isRtTwoPlusOne(w, h)       {return (Math.abs(w/h - (Math.SQRT2 + 1)) < 10 ** -6)};
@@ -864,7 +896,7 @@ function draw(a, b, c, name, meth, val, elev) {
 
     const screen = new paper.Group();
 
-    console.log("numSteps: " + numSteps);
+    //console.log("numSteps: " + numSteps);
 
     function borderFactory(numSteps) {
         const border = new paper.Path.Rectangle({
@@ -876,6 +908,8 @@ function draw(a, b, c, name, meth, val, elev) {
         return border;
     }
 
+    //console.log("stepsize: " + stepSize);
+
     let numAfterSteps = numSteps;
 
     if (name.includes("double") || name.includes("quadruple")) {
@@ -884,11 +918,13 @@ function draw(a, b, c, name, meth, val, elev) {
         numAfterSteps += 2;
     };
 
+    dotsize = 2/stepSize;
+
     if (numSteps === 1) {
         let stepone;
         if (zero2) {
             stepone =       revampAgain(a1, b1, w1, h1, typeA, meth, 1, stepSize,  stepSize, rotate,   [stepData[0][0] + stepSize/2, stepData[0][1] + stepSize/2])
-        } else stepone =    revampAgain(a2, b2, w2, h2, typeB, meth, 1, stepSize,  stepSize, rotate,   [stepData[0][0] + stepSize/2, stepData[0][1] + stepSize/2])
+        } else stepone = revampAgain(a2, b2, w2, h2, typeB, meth, 1, stepSize,  stepSize, rotate,   [stepData[0][0] + stepSize/2, stepData[0][1] + stepSize/2])
         let border = borderFactory(0);
         stepone._children[0].visible = false;
         screen.addChild(stepone);
@@ -927,12 +963,24 @@ function draw(a, b, c, name, meth, val, elev) {
             }
         }
         let ref3 = intersect(c1sx, c1sy, c1fx, c1fy, dSLs.x, dSLs.y, dSLf.x, dSLf.y);
-        let dotRef3 = new paper.Path.Circle({
-            center: ref3,
-            radius: 2,
-            fillColor: 'black',
-        });
-
+        if (ref3) {
+            let dotRef3 = new paper.Path.Circle({
+                center: ref3,
+                radius: 2,
+                fillColor: 'black',
+            });
+        } else {
+            let dotARef3 = new paper.Path.Circle({
+                center: dSLs,
+                radius: 2,
+                fillColor: 'black',
+            });
+            let dotBRef3 = new paper.Path.Circle({
+                center: dSLf,
+                radius: 2,
+                fillColor: 'black',
+            });
+        }
     } else if (numSteps === 4) {
         let c1sx, c1sy, c1fx, c1fy, c2sx, c2sy, c2fx, c2fy;
         for (let i = 0; i < numAfterSteps; i++) {
@@ -966,13 +1014,17 @@ function draw(a, b, c, name, meth, val, elev) {
             //encode the dot as an intersection!  bring the points home from creases
         }
         let ref4 = intersect(c1sx, c1sy, c1fx, c1fy, c2sx, c2sy, c2fx, c2fy);
-        let dotRef4 = new paper.Path.Circle({
-            center: ref4,
-            radius: 2,
-            fillColor: 'black',
-        });
+        if (ref4) {
+            let dotRef4 = new paper.Path.Circle({
+                center: ref4,
+                radius: 2,
+                fillColor: 'black',
+            });
+        }        
     }
 }
+
+let dotsize;
 
 function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2, b2) {
     
@@ -1008,42 +1060,63 @@ function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2,
         }
     }
 
-    let pointBucket = [];
+    let scaleOneNumb = Math.max(Math.abs(scale[0]), Math.abs(scale[1]))
 
+    function dotStepOne(pt1, pt2, pt3, pt4) {
+        let intersection = (intersect(pt1.x, pt1.y, pt2.x, pt2.y, pt3.x, pt3.y, pt4.x, pt4.y))
+        let dot = new paper.Path.Circle({
+            center: intersection,
+            radius: 2/3 * dotsize,
+            fillColor: 'black',
+            visible: time === 2
+        });
+        prelimGroup.addChild(dot);
+    }
+
+    let pointBucket = [];
     if (one1 && one2) {
         if (isOne(w1, h1)) {
             if (isRtTwoMinusOne(w2, h2)) {
                 pointBucket.push([bl,tr],[tl,br],[br,tt]);
+                dotStepOne(bl, tr, tt, br);
                 console.log("A, one & one");
             } else if (isTwoMinusRtTwo(w2, h2)) {
                 pointBucket.push([bl,tr], [bl,to], [br,to]);
+                dotStepOne(bl, tr, to, br);
                 console.log("B, one & one");
             }
         } else if (isOne(w2, h2)) {
             if (isOnePlusHalfRtTwo(w1, h1)) {
                 pointBucket.push([tl,br], [tl,rt], [bl,rt]);
+                dotStepOne(bl, rt, tl, br);
                 console.log("C, one & one");
             } else if (isRtTwoPlusOne(w1, h1)) {
-                pointBucket.push([tl,br], [lo,br], [bl,tr]);
+                pointBucket.push([tl,br], [bl,ro], [bl,tr]);
+                dotStepOne(bl, ro, tl, br);
                 console.log("D, one & one");
             }
         } else if (isRtTwoPlusOne(w1, h1)) {
             if (isRtTwoMinusOne(w2, h2)) {
                 pointBucket.push([bl,tr],[bl,ro],[tt,br]);
+                dotStepOne(bl, ro, tt, br);
                 console.log("G, one & one");
             } else if (isTwoMinusRtTwo(w2, h2)) {
                 pointBucket.push([bl,tr], [bl,to],[bl,ro],[to,br]);
+                dotStepOne(bl, ro, to, br);
                 console.log("I, one & one");
             } else if (isOnePlusHalfRtTwo(w2, h2)) {
                 pointBucket.push([tl,br], [tl,rt], [br,lo], [bl,rt]);
+                dotStepOne(br, lo, bl, rt);
                 console.log("J, one & one");
             }
         } else if (isOnePlusHalfRtTwo(w1, h1)) {
             if (isRtTwoMinusOne(w2, h2)) {
                 pointBucket.push([tl,br],[tl,rt],[br,tt],[bl,rt]);
+                dotStepOne(bl, rt, br, tt);
                 console.log("F, one & one");
             } else if (isTwoMinusRtTwo(w2, h2)) {
                 pointBucket.push([tl,br], [tl,rt], [bl,rt],[to,br]);
+                dotStepOne(bl, rt, to, br);
                 console.log("H, one & one");
             }
         }
@@ -1155,6 +1228,8 @@ function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2,
     if (time == 1) {prelimGroup.strokeColor = 'red'} else {prelimGroup.strokeColor = 'black'};
     border.strokeColor = 'black'
     prelimGroup.visible = true;
+    console.log("scaleonenumb: " + scaleOneNumb);
+    console.log(scale);
 }
 
 let elevX = null;
@@ -1505,62 +1580,19 @@ function powTwo(b) {
 }
 
 //if a+b is a power of 2, the reference may be developed in log2(a+b)+2 folds
-function diagA(a,b) {
-    if ((Math.log(a+b)/Math.log(2)) % 1 === 0) {
-        return Math.log(a+b)/Math.log(2) + 2;
-    } else {
-        return Infinity;
-    }
-}
+function diagA(a,b) {if (isPowerTwo(a+b)) {return Math.log(a+b)/Math.log(2) + 2} else {return Infinity}};
 
-//etc.
-function diagB(a,b) {
-    if ((Math.log((2*a)+b)/Math.log(2)) % 1 === 0) {
-        return Math.log((2*a)+b)/Math.log(2) + 3;
-    } else {
-        return Infinity;
-    }
-}
+function diagB(a,b) {if (isPowerTwo(a + 2*b)) {return Math.log(a + 2*b)/Math.log(2) + 3} else {return Infinity}};
 
-function diagC(a,b) {
-    if ((Math.log(a+(2*b))/Math.log(2)) % 1 === 0) {
-        return Math.log(a+(2*b))/Math.log(2) + 3;
-    } else {
-        return Infinity;
-    }
-}
+function diagC(a,b) {if (isPowerTwo(2*a + b)) {return Math.log(2*a + b)/Math.log(2) + 3} else {return Infinity}};
 
-function diagD (a,b) {
-    if ((Math.log((4*a)+b)/Math.log(2)) % 1 === 0) {
-        return Math.log((4*a)+b)/Math.log(2) + 4;
-    } else {
-        return Infinity;
-    }
-}
+function diagD (a,b) {if (isPowerTwo(a + 4*b)) {return Math.log(a + 4*b)/Math.log(2) + 4} else {return Infinity}};
 
-function diagE (a,b) {
-    if ((Math.log(a+(4*b))/Math.log(2)) % 1 === 0) {
-        return Math.log(a+(4*b))/Math.log(2) + 4;
-    } else {
-        return Infinity;
-    }
-}
+function diagE (a,b) {if (isPowerTwo(4*a + b)) {return Math.log(4*a + b)/Math.log(2) + 4} else {return Infinity}};
 
-function diagF (a,b) {
-    if ((Math.log(((4/3)*a)+b)/Math.log(2)) % 1 === 0) {
-        return Math.log(((4/3)*a)+b)/Math.log(2) + 4;
-    } else {
-        return Infinity;
-    }
-}
+function diagF (a,b) {if (isPowerTwo(3*a + 4*b)) {return Math.log(3*a + 4*b)/Math.log(2) + 4} else {return Infinity}};
 
-function diagG (a,b) {
-    if ((Math.log(a+((4/3)*b))/Math.log(2)) % 1 === 0) {
-        return Math.log(a+((4/3)*b))/Math.log(2) + 4;
-    } else {
-        return Infinity;
-    }
-}
+function diagG (a,b) {if (isPowerTwo(4*a + 3*b)) {return Math.log(4*a + 3*b)/Math.log(2) + 4} else {return Infinity}};
 
 function general(a,b) {
     if ((Math.log(b)/Math.log(2)) % 1 != 0) {
