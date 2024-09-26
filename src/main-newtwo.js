@@ -421,34 +421,12 @@ function revampAgain (a, b, w, h, type, meth, time, scaleX, scaleY, rotate, tran
         } else if (tall || square) {
             vertFar = true;
         }
-    } else if (isRtTwoMinusOne(w, h)) {
+    } else if (isRtTwoMinusOne(w, h) || isTwoMinusRtTwo(w, h)) {
         horiNear = true;
-        if (meth === 'A') {
-            vertNear = true;
-        } else {
-            vertFar = true;
-        }
-    } else if (isTwoMinusRtTwo(w, h)) {
-        horiNear = true;
-        if (meth === 'H') {
-            vertNear = true;
-        } else {
-            vertFar = true;
-        } 
-    } else if (isOnePlusHalfRtTwo(w, h)) {
+        vertFar = true;
+    } else if (isOnePlusHalfRtTwo(w, h) || isRtTwoPlusOne(w, h)) {
         vertNear = true;
-        if (meth === 'F') {
-            horiNear = true;
-        } else {
-            horiFar = true;
-        } 
-    } else if (isRtTwoPlusOne(w, h)) {
-        vertNear = true;
-        if (meth === 'G') {
-            horiNear = true;
-        } else {
-            horiFar = true;
-        } 
+        horiFar = true;
     } 
 
     if (horiFar) {
@@ -621,9 +599,7 @@ function revampAgain (a, b, w, h, type, meth, time, scaleX, scaleY, rotate, tran
                 break;
         }
     }
-    
-    
-
+      
     let diagInt = intersect(diagStart.x, diagStart.y, diagFinish.x, diagFinish.y, cstart.x, cstart.y, cblock.x, cblock.y);
     let diagIntDot = dot(diagInt);
     var parallelStart = bbl.clone();
@@ -1133,16 +1109,16 @@ function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2,
         } else {
             if ((zero2 && isRtTwoPlusOne(w1, h1)) || (zero1 && isRtTwoPlusOne(w2, h2))) {
                 pointBucket.push([tl,br], [lo,br], [lo,ro]);
-                console.log("standalone A");
+                console.log("standalone D");
             } else if ((zero2 && isOnePlusHalfRtTwo(w1, h1)) || (zero1 && isOnePlusHalfRtTwo(w2, h2))) {
                 pointBucket.push([tl,br], [tl,rt], [lt,rt]);
-                console.log("standalone B");
+                console.log("standalone C");
             } else if ((zero2 && isTwoMinusRtTwo(w1, h1)) || (zero1 && isTwoMinusRtTwo(w2, h2))) {
                 pointBucket.push([bl,tr], [bl,to], [to,bo]);
-                console.log("standalone C");
+                console.log("standalone B");
             } else if ((zero2 && isRtTwoMinusOne(w1, h1)) || (zero1 && isRtTwoMinusOne(w2, h2))) {
                 pointBucket.push([bl,tr], [tr,bt], [tt,bt]);
-                console.log("standaloneD");
+                console.log("standalone A");
             }
         }
     } else {
@@ -1150,33 +1126,34 @@ function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2,
             if (isRtTwoMinusOne(w2, h2)) {
                 pointBucket.push([tl, br], [br,tt]);
                 if (one1) {pointBucket.push([bl, tr])};
-                if (problem(a2, b2, w2, h2)) {pointBucket.push([tt, bt])};
+                if (problem(a2, b2)) {pointBucket.push([tt, bt])};
                 console.log("A");
             } else if (isTwoMinusRtTwo(w2, h2)) {
                 pointBucket.push([bl, tr], [bl, to]);
                 if (one2) {pointBucket.push([to, br])};
-                if (problem(a2, b2, w2, h2)) {pointBucket.push([to, bo])};
+                if (problem(a2, b2)) {pointBucket.push([to, bo])};
                 console.log("B");
             }
         } else if (isOne(w2, h2)) {
             if (isOnePlusHalfRtTwo(w1, h1)) {
                 pointBucket.push([tl, br], [tl, rt]);
                 if (one1) {pointBucket.push([bl, rt])};
-                if (problem(a1, b1, w1, h1)) {pointBucket.push([rt, lt])};
+                if (problem(a1, b1)) {pointBucket.push([rt, lt])};
                 console.log("C");
             } else if (isRtTwoPlusOne(w1, h1)) {
-                if (one1) {pointBucket.push([bl,ro],[bl,tr],[lo,ro])}
-                else {pointBucket.push([tl,br],[lo,br],[lo,ro])}
+                pointBucket.push([tl,br],[br,lo])
+                if (one2) {pointBucket.push([bl,tr])};
+                if (problem(a1, b1)) {pointBucket.push([lo,ro])}
                 console.log("D");
             }
         } else if (isTwoMinusRtTwo(w1, h1) && (isRtTwoMinusOne(w2, h2))) {
             pointBucket.push([tl, br], [br, tt]);
             if (one1) {pointBucket.push([bl,tt])};
-            if (problem(a1, b1, w1, h1) || problem(a2, b2, w2, h2)) {pointBucket.push([tt, bt])};
+            if (problem(a1, b1) || problem(a2, b2)) {pointBucket.push([tt, bt])};
             console.log("E");
         } else if (isRtTwoPlusOne(w1, h1)) {
             if (isRtTwoMinusOne(w2, h2)) {
-                if (!(problem(a1, b1, w1, h1) || problem(a2, b2, w2, h2))) {
+                if (!(problem(a1, b1) || problem(a2, b2))) {
                     pointBucket.push([tl, br], [br, tt], [br, lo]);
                     if (one1) {pointBucket.push([lo, ro], [bl, ro])};
                 } else {
@@ -1185,34 +1162,30 @@ function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2,
                 }
                 console.log("G");                
             } else if (isTwoMinusRtTwo(w2, h2)) {
-                if (!(problem(a1, b1, w1, h1) || problem(a2, b2, w2, h2))) {
-                    pointBucket.push([bl, tr], [bl, to], [bl, ro]);
-                } else {
-                    pointBucket.push([bl,tr], [bo,to], [lo,ro], [bl,ro]);
-                }
-                if (one2) {pointBucket.push([to, br])};
+                pointBucket.push([bl,tr],[bl,to],[bl,ro]);
+                if (one2) {pointBucket.push([to,br])};
+                if (problem(a1, b1)) {pointBucket.push([lo,ro])};
+                if (problem(a2, b2)) {pointBucket.push([to,bo])};
                 console.log("I");
             } else if (isOnePlusHalfRtTwo(w2, h2)) {
                 pointBucket.push([bl, tr], [bl, ro], [tr, lt]);
-                if (problem(a1, b1, w1, h1)) {pointBucket.push([lo, ro])};
-                if (problem(a2, b2, w2, h2)) {pointBucket.push([lt, rt])};
+                if (problem(a1, b1)) {pointBucket.push([lo, ro])};
+                if (problem(a2, b2)) {pointBucket.push([lt, rt])};
                 if (one2) {pointBucket.push([lt, br])};
                 console.log("J");
             }
         } else if (isOnePlusHalfRtTwo(w1, h1)) {
             if (isRtTwoMinusOne(w2, h2)) {
-                if (!(problem(a1, b1, w1, h1) || problem(a2, b2, w2, h2))) {
-                    pointBucket.push([tl, br], [tl,rt], [tt, br]);
-                } else pointBucket.push([bl, tr], [tr, bt], [tt, bt], [lt, rt]);
+                if (problem(a1, b1) && problem(a2, b2)) {
+                    pointBucket.push([bl,tr],[tr,bt],[lt,rt],[tt,bt]);
+                    if (one2) {pointBucket.push([tt, br])};
+                } else {pointBucket.push([tl,br],[tl,rt],[tt,br])}
                 if (one1) {pointBucket.push([bl, rt])};
-                if (one2) {pointBucket.push([tt, br])};
                 console.log("F");
             } else if (isTwoMinusRtTwo(w2, h2)) {
-                if (!(problem(a1, b1, w1, h1) || problem(a2, b2, w2, h2))) {
-                    pointBucket.push([tl, br], [tl, bo], [tl, rt]);
-                } else pointBucket.push([tl, br], [tl, bo], [to, bo], [lt, rt]);
-                if (one1) {pointBucket.push([bl, rt])};
-                if (one2) {pointBucket.push([to, br])};
+                pointBucket.push([tl,br],[tl,bo],[to,bo],[lt,rt]);
+                if (one1) {pointBucket.push([bl,rt])};
+                if (one2) {pointBucket.push([to,br])};
                 console.log("H");
             }
         }
