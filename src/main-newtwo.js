@@ -44,10 +44,10 @@ function setWindowVariable(value) {
 // Update the displayed variable value in the HTML
 function updateDisplay() {
     document.getElementById('variableValue').innerText = window.variable;
-    document.getElementById("value1Modal").value = 32;
-    document.getElementById("value2Modal").value = 0.1;
-    document.getElementById("constructibleToggle").value = false;
-    document.getElementById("constructibleToggle").checked = false;
+    document.getElementById("value1Modal").value = defaultValue1
+    document.getElementById("value2Modal").value = defaultValue2
+    document.getElementById("constructibleToggle").value = defaultConstructible
+    document.getElementById("constructibleToggle").checked = defaultConstructible
     updateInfoText(); // Update the status text
 }
 
@@ -74,6 +74,10 @@ function resetOtherVars() {
     defaultValue1 = 32; // Reset to default value
     defaultValue2 = 0.1; // Reset to default value
     defaultConstructible = false; // Reset to default value
+    document.getElementById("value1Modal").value = 32;
+    document.getElementById("value2Modal").value = 0.1;
+    document.getElementById("constructibleToggle").value = false;
+    document.getElementById("constructibleToggle").checked = false;
     updateDisplay(); // Update the display to reflect the new values
 }
 
@@ -170,6 +174,7 @@ document.getElementById('fileInput').addEventListener('change', resetOtherVars);
 
 const value1Input =     document.getElementById("value1Modal");
 const value2Input =     document.getElementById("value2Modal");
+const constructible=    document.getElementById("constructibleToggle");
 
 let defaultValue1 = 32;
 let defaultValue2 = 0.1;
@@ -178,6 +183,8 @@ let defaultConstructible = false;
 // Set default values to inputs
 value1Input.value = defaultValue1;
 value2Input.value = defaultValue2;
+constructible.value = defaultConstructible;
+constructible.checked = defaultConstructible;
 
 // Add event listener to button
 document.getElementById("saveSettingsButton").addEventListener("click", updateValues);
