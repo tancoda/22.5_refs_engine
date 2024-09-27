@@ -44,9 +44,10 @@ function setWindowVariable(value) {
 // Update the displayed variable value in the HTML
 function updateDisplay() {
     document.getElementById('variableValue').innerText = window.variable;
-    document.getElementById("value1Modal").value = 32
-    document.getElementById("value2Modal").value = 0.1
-    document.getElementById("constructibleToggle").value = false
+    document.getElementById("value1Modal").value = 32;
+    document.getElementById("value2Modal").value = 0.1;
+    document.getElementById("constructibleToggle").value = false;
+    document.getElementById("constructibleToggle").checked = false;
     updateInfoText(); // Update the status text
 }
 
