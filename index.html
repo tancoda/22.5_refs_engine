@@ -6,7 +6,7 @@
     <title>Refsinator</title>
     <!-- Include Paper.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js"></script>
-    <script type="module" src="src\main-newtwo.js"></script>
+    <script type="module" src="src/main-newtwo.js"></script>
     <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS file -->
 </head>
 <body>
@@ -14,22 +14,18 @@
 
     <div id="description">
         Input a 22.5° Crease Pattern as a .FOLD file. Refsinator will provide a sequence of folds to exactly develop a reference line, shown in green. 
-        Use the + and - buttons at the bottom of the screen to scroll through multiple options.  The options are approximately ordered by number of creases required.
+        Use the + and - buttons at the bottom of the screen to scroll through multiple options. The options are approximately ordered by number of creases required.
         Note that in many cases, not all the creases shown must be folded, and oftentimes pinch-folds are sufficient.
     </div>
+
+    <!-- Settings button -->
+    <button id="settingsButton">Settings</button>
+
+    <div id="fileStatus" style=>No file loaded</div>
 
     <div id="inputContainer">
         <div class="inputRow">
             <input type="file" id="fileInput" />
-            <button id="submitButton">Update Values</button>
-        </div>
-        <div class="inputRow">
-            <label for="value1">Avoid fractions having a denominator greater than:</label>
-            <input type="number" id="value1" value="100">
-        </div>
-        <div class="inputRow">
-            <label for="value2">Avoid refs within this distance of the edge (edge length = 1):</label>
-            <input type="number" id="value2" value="0.1">
         </div>
     </div>
 
@@ -39,6 +35,27 @@
         <button id="decreaseButton">-</button>
         <span id="variableValue">1</span>
         <button id="increaseButton">+</button>
+    </div>
+
+    <!-- Modal (Popup) for Settings -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Settings</h2>
+            <div class="inputRow">
+                <label for="value1Modal">Avoid fractions having a denominator greater than:</label>
+                <input type="number" id="value1Modal" step="1" min="1" value="32">
+            </div>
+            <div class="inputRow">
+                <label for="value2Modal">Avoid refs within this distance of the edge (edge length = 1):</label>
+                <input type="number" id="value2Modal" step = "0.01" min="0" max="0.5" value="0.1">
+            </div>
+            <div class="inputRow">
+                <label for="constructibleToggle">Filter for immediately constructible lines:</label>
+                <input type="checkbox" id="constructibleToggle" value="false">
+            </div>
+            <button id="saveSettingsButton">Save Settings</button>
+        </div>
     </div>
 
     <script type="module">
@@ -70,6 +87,39 @@
 
         // Initialize the canvas when the page loads
         window.onload = initializeCanvas;
+
+        // Modal (popup) functionality
+        const settingsButton = document.getElementById("settingsButton");
+        const modal = document.getElementById("settingsModal");
+        const closeModal = document.querySelector(".close");
+
+        // Open the modal
+        settingsButton.onclick = function() {
+            modal.style.display = "block";
+        };
+
+        // Close the modal
+        closeModal.onclick = function() {
+            modal.style.display = "none";
+        };
+
+        // Save settings from the modal
+        const saveSettingsButton = document.getElementById("saveSettingsButton");
+        saveSettingsButton.onclick = function() {
+            const denominatorLimit = document.getElementById("value1Modal").value;
+            const edgeDistance = document.getElementById("value2Modal").value;
+            const constructible = document.getElementById("constructibleToggle").checked;
+
+            // Close the modal
+            modal.style.display = "none";
+        };
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
     </script>
 </body>
 </html>

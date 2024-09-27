@@ -19,16 +19,16 @@ function initializeCanvas() {
 initializeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-document.getElementById("fileInput").addEventListener("change", (e) => {
-    if (e.target.files.length > 0) {
-        const fileReader = new FileReader();
-        fileReader.onload = (event) => {
-            processFile(event);
-        };
-        fileReader.readAsText(e.target.files[0]);
-        drawEverything();
-    }
-});
+//document.getElementById("fileInput").addEventListener("change", (e) => {
+//    if (e.target.files.length > 0) {
+//        const fileReader = new FileReader();
+//        fileReader.onload = (event) => {
+//            processFile(event);
+//        };
+//        fileReader.readAsText(e.target.files[0]);
+//        drawEverything();
+//    }
+//});
 
 // Function to ensure window.variable stays within range
 function setWindowVariable(value) {
@@ -44,45 +44,112 @@ function setWindowVariable(value) {
 // Update the displayed variable value in the HTML
 function updateDisplay() {
     document.getElementById('variableValue').innerText = window.variable;
+    document.getElementById("value1Modal").value = 32
+    document.getElementById("value2Modal").value = 0.1
+    document.getElementById("constructibleToggle").value = false
+    updateInfoText(); // Update the status text
 }
 
 // Function to handle file upload
 function handleFileUpload() {
-    window.variable = 1; // Reset window.variable to 1 when new file is uploaded
-    updateDisplay(); // Update the display to reflect the new value
+    
+    window.variable = 1; // Reset window.variable to 1
+    resetOtherVars(); // Call to reset other variables
+    console.log("Settings reset to defaults.");
+
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput.files.length > 0) {
+        const fileReader = new FileReader();
+        fileReader.onload = (event) => {
+            processFile(event); // Process the file after reading
+            updateInfoText(event); // Update the display after file processing
+        };
+        fileReader.readAsText(fileInput.files[0]);
+    }
+}
+
+// Function to reset other variables to default values
+function resetOtherVars() {
+    defaultValue1 = 32; // Reset to default value
+    defaultValue2 = 0.1; // Reset to default value
+    defaultConstructible = false; // Reset to default value
+    updateDisplay(); // Update the display to reflect the new values
+}
+
+function updateInfoText() {
+    const fileStatus = document.getElementById('fileStatus');
+    // Check if globalC2 has valid references after processing the file
+    if (globalC2.length > 0 && window.variable > 0 && window.variable <= globalC2.length) {
+        const reference = globalC2[window.variable - 1];
+        let xory2 = "x";
+        if (xory === 'X') { xory2 = 'y'; }
+
+        let inversed = inverse(reference[6][0], reference[6][1], reference[6][2]);
+
+        if (xory2 === 'y' ^ reference[3].includes('neg')) {
+            inversed[0] = inversed[2] - inversed[0];
+            inversed[1] = -inversed[1];
+        }
+
+        inversed = normalize(inversed[0], inversed[1], inversed[2]);
+
+        let value = (summup(inversed[0], inversed[1], inversed[2]));
+
+        let additional;
+        if (cIsPowTwoTest) {
+            additional = 'The c values are of the form 2^n, so the creases lie along a 22.5° grid.';
+        } else {
+            additional = 'The c values are not of the form 2^n, so a reference sequence is necessary.';
+        }
+
+        // Update the file status text
+        fileStatus.textContent = `${globalC2.length} references available. ${additional}
+        Reference ${window.variable}: ${xory2} = (${inversed[0]} + ${inversed[1]}√2) / ${inversed[2]} ≈ ${value.toFixed(3)}.
+        Approximate rank: ${reference[5]}.`;
+    } else {
+        fileStatus.textContent = "Upload a file to begin.";
+    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    window.variable = 1;
+    window.variable = 1; // Initialize variable on load
+    updateDisplay(); // Initial display update
 
-    updateDisplay();
-
-    document.getElementById('fileInput').addEventListener('change', handleFileUpload);
-    document.getElementById('submitButton').addEventListener('click', handleFileUpload);
-
+    // Event listeners for increase and decrease buttons
     document.getElementById('decreaseButton').addEventListener('click', () => {
         window.variable--;
-        setWindowVariable(window.variable); // Ensure it's within valid range
-        updateDisplay(); // Update the display
-        drawEverything(); // Redraw the canvas
+        setWindowVariable(window.variable);
+        updateDisplay();
+        drawEverything();
     });
 
     document.getElementById('increaseButton').addEventListener('click', () => {
         window.variable++;
-        setWindowVariable(window.variable); // Ensure it's within valid range
-        updateDisplay(); // Update the display
-        drawEverything(); // Redraw the canvas
+        setWindowVariable(window.variable);
+        updateDisplay();
+        drawEverything();
     });
 });
 
 // Function to update values based on user input
 function updateValues() {
-    const value1 = parseFloat(document.getElementById("value1").value);
-    const value2 = parseFloat(document.getElementById("value2").value);
+    window.variable = 1;
+    const value1 = parseInt(document.getElementById("value1Modal").value);
+    const value2 = parseFloat(document.getElementById("value2Modal").value);
+    const constructibleCheckbox = document.getElementById("constructibleToggle");
+    const isConstructible = constructibleCheckbox.checked; // true or false
 
-    // Validate and set values (you might want to add more validation)
-    if (Number.isInteger(value1) && value1 > 1) defaultValue1 = value1;
+    // Validate and set values
+    if (Number.isInteger(value1) && value1 >= 1) {
+        if (value1 > defaultValue1 && defaultValue1 >= 32) {
+            defaultValue1 = value1;
+            generateFarey();
+            console.log("farey generated");
+        } else defaultValue1 = value1;
+    }
     if (!isNaN(value2)) defaultValue2 = value2;
+
+    defaultConstructible = isConstructible;
 
     // Rerun file processing to recalculate C2
     const fileInput = document.getElementById("fileInput").files[0];
@@ -97,19 +164,24 @@ function updateValues() {
     };
 }
 
-const value1Input = document.getElementById("value1");
-const value2Input = document.getElementById("value2");
+document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+document.getElementById('fileInput').addEventListener('change', resetOtherVars);
 
-let defaultValue1 = 50;
+const value1Input =     document.getElementById("value1Modal");
+const value2Input =     document.getElementById("value2Modal");
+
+let defaultValue1 = 32;
 let defaultValue2 = 0.1;
+let defaultConstructible = false;
 
 // Set default values to inputs
 value1Input.value = defaultValue1;
 value2Input.value = defaultValue2;
 
 // Add event listener to button
-document.getElementById("submitButton").addEventListener("click", updateValues);
-document.getElementById("submitButton").addEventListener("click", drawEverything);
+document.getElementById("saveSettingsButton").addEventListener("click", updateValues);
+document.getElementById("saveSettingsButton").addEventListener("click", drawEverything);
+document.getElementById("saveSettingsButton").addEventListener("click", updateDisplay);
 
 // Function to resize the canvas
 function resizeCanvas() {
@@ -153,7 +225,8 @@ function drawEverything() {
     const colorMap = {
         'B': 'black',
         'V': 'blue',
-        'M': 'red'
+        'M': 'red',
+        'A': 'cyan'
     };
 
     let drawFrom = formatEdges(globalVi, globalEvi, globalEAi);
@@ -180,6 +253,15 @@ function drawEverything() {
     cPOffsetX = offsetX;
     cPOffSetY = offsetY;
 
+    if (defaultConstructible) {
+        drawFrom.push([0, 0, 1, 1, 'A'], [0, 1, 1, 0, 'A'],
+            [0, 0, ro.x, ro.y, 'A'], [0, 0, to.x, to.y, 'A'], 
+            [0, 1, bo.x, bo.y, 'A'], [0, 1, rt.x, rt.y, 'A'],
+            [1, 1, lt.x, lt.y, 'A'], [1, 1, bt.x, bt.y, 'A'],
+            [1, 0, lo.x, lo.y, 'A'], [1, 0, tt.x, tt.y, 'A']
+        )
+    }
+
     // Scale and translate coordinates
     drawFrom = drawFrom.map(([x1, y1, x2, y2, type]) => [
         (x1 * scale) + offsetX,
@@ -189,10 +271,24 @@ function drawEverything() {
         type
     ]);
 
+    drawFrom.sort((a, b) => {
+        if (a[4] === 'A' || a[4] === undefined) {
+            return -1; // Move 'A' or undefined to the beginning
+        } else if (b[4] === 'A' || b[4] === undefined) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
+
     drawFrom.forEach(([x1, y1, x2, y2, type]) => {
         const color = colorMap[type] || 'cyan';
         const line = new paper.Path.Line(new paper.Point(x1, y1), new paper.Point(x2, y2));
         line.strokeColor = color;
+        if (color === 'cyan') {
+            //line.opacity = 0.5;
+            line.strokeWidth = 0.5;
+        }
     });
 
     if (globalC2.length > 0 && globalC2[window.variable-1][3].includes('default')) {
@@ -766,13 +862,13 @@ function sloper(a,b,c,type) {
     return [slopePair, blockInfo];
 };
 
-function problem (a, b) {return ((findRank(a, b)).type === 'powTwo')};
+function problem (a, b) {return ((findRank(a, b)).type === 'powTwo' || (findRank(a, b)).type.includes('diag'))};
 
-function isOne(w, h)                {return (Math.abs(w/h - 1) < 10 ** -6)};
-function isRtTwoPlusOne(w, h)       {return (Math.abs(w/h - (Math.SQRT2 + 1)) < 10 ** -6)};
-function isRtTwoMinusOne(w, h)      {return (Math.abs(w/h - (Math.SQRT2 - 1)) < 10 ** -6)};
-function isOnePlusHalfRtTwo(w,h)    {return (Math.abs(w/h - (1 + Math.SQRT2/2)) < 10 ** -6)};
-function isTwoMinusRtTwo(w,h)       {return (Math.abs(w/h - (2 - Math.SQRT2)) < 10 ** -6)};
+function isOne(w, h)                {return (Math.abs(w/h - 1) <                    10 ** -8)};
+function isRtTwoPlusOne(w, h)       {return (Math.abs(w/h - (Math.SQRT2 + 1)) <     10 ** -8)};
+function isRtTwoMinusOne(w, h)      {return (Math.abs(w/h - (Math.SQRT2 - 1)) <     10 ** -8)};
+function isOnePlusHalfRtTwo(w,h)    {return (Math.abs(w/h - (1 + Math.SQRT2/2)) <   10 ** -8)};
+function isTwoMinusRtTwo(w,h)       {return (Math.abs(w/h - (2 - Math.SQRT2)) <     10 ** -8)};
 
 // Function to draw rectangles based on the number of steps
 function draw(a, b, c, name, meth, val, elev) {
@@ -847,6 +943,8 @@ function draw(a, b, c, name, meth, val, elev) {
     let targetElev = elevationFinalCoord;
 
     searchVi(globalVi, elevationFinalCoord, 10 ** -8, cPScale, cPOffsetX, cPOffSetY);
+
+    updateInfoText();
 
     if (xory === 'X') {
         dSLs.x = (stepData[numSteps-1][0]);
@@ -1002,23 +1100,23 @@ function draw(a, b, c, name, meth, val, elev) {
 
 let dotsize;
 
+var bl = new paper.Point(0,0);
+var tl = new paper.Point(0,1);
+var tr = new paper.Point(1,1);
+var br = new paper.Point(1,0);
+var bo = new paper.Point(Math.SQRT2-1,0);
+var bt = new paper.Point(2-Math.SQRT2,0);
+var lo = new paper.Point(0,Math.SQRT2-1);
+var lt = new paper.Point(0,2-Math.SQRT2);
+var ro = new paper.Point(1,Math.SQRT2-1);
+var rt = new paper.Point(1,2-Math.SQRT2);
+var to = new paper.Point(Math.SQRT2-1,1);
+var tt = new paper.Point(2-Math.SQRT2,1);
+
 function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2, b2) {
     
     var ptOne = new paper.Point(0, 0);
     var border = new paper.Path.Rectangle(ptOne, new paper.Point(1,1));
-
-    var bl = new paper.Point(0,0);
-    var tl = new paper.Point(0,1);
-    var tr = new paper.Point(1,1);
-    var br = new paper.Point(1,0);
-    var bo = new paper.Point(Math.SQRT2-1,0);
-    var bt = new paper.Point(2-Math.SQRT2,0);
-    var lo = new paper.Point(0,Math.SQRT2-1);
-    var lt = new paper.Point(0,2-Math.SQRT2);
-    var ro = new paper.Point(1,Math.SQRT2-1);
-    var rt = new paper.Point(1,2-Math.SQRT2);
-    var to = new paper.Point(Math.SQRT2-1,1);
-    var tt = new paper.Point(2-Math.SQRT2,1);
 
     const tolerance = 10 ** -6;
 
@@ -1141,8 +1239,8 @@ function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2,
                 if (problem(a1, b1)) {pointBucket.push([rt, lt])};
                 console.log("C");
             } else if (isRtTwoPlusOne(w1, h1)) {
-                pointBucket.push([tl,br],[br,lo])
-                if (one2) {pointBucket.push([bl,tr])};
+                pointBucket.push([bl,tr],[bl,ro])
+                if (one2) {pointBucket.push([tl,br])};
                 if (problem(a1, b1)) {pointBucket.push([lo,ro])}
                 console.log("D");
             }
@@ -1154,8 +1252,7 @@ function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2,
         } else if (isRtTwoPlusOne(w1, h1)) {
             if (isRtTwoMinusOne(w2, h2)) {
                 if (!(problem(a1, b1) || problem(a2, b2))) {
-                    pointBucket.push([tl, br], [br, tt], [br, lo]);
-                    if (one1) {pointBucket.push([lo, ro], [bl, ro])};
+                    pointBucket.push([tl, br], [br, tt], [bl, ro]);
                 } else {
                     pointBucket.push([tl,br], [br,tt], [tt,bt], [lo,ro]);
                     if (one1) {pointBucket.push([bl, ro])};
@@ -1201,8 +1298,8 @@ function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2,
     if (time == 1) {prelimGroup.strokeColor = 'red'} else {prelimGroup.strokeColor = 'black'};
     border.strokeColor = 'black'
     prelimGroup.visible = true;
-    console.log("scaleonenumb: " + scaleOneNumb);
-    console.log(scale);
+    //console.log("scaleonenumb: " + scaleOneNumb);
+    //console.log(scale);
 }
 
 let elevX = null;
@@ -1350,7 +1447,7 @@ function V_2_C_VC(V, eps) {
         }
     }
     Ci.sort(([a, ai, aj], [b, bi, bj]) => a - b);
-    const C = [];
+    let C = [];
     const VC = V.map(() => [undefined, undefined]);
     C.push(Ci[0][0]);
     VC[Ci[0][1]][Ci[0][2]] = 0;
@@ -1362,6 +1459,40 @@ function V_2_C_VC(V, eps) {
         }
         VC[i2][j2] = C.length - 1;
     }
+
+    if (defaultConstructible) {
+
+        function test (x,y) {
+            return (isOne(x, y) || isOne(x, 1-y) || 
+            (Math.abs(x) < 10 ** -8) || (Math.abs(x - 1) < 10 ** -8) || 
+            (Math.abs(y) < 10 ** -8) || (Math.abs(y - 1) < 10 ** -8) ||
+            isRtTwoPlusOne(x, y) || isRtTwoMinusOne(x, y) || 
+            isRtTwoPlusOne(1-x, y) || isRtTwoMinusOne(1-x, y) || 
+            isRtTwoPlusOne(x, 1-y) || isRtTwoMinusOne(x, 1-y) || 
+            isRtTwoPlusOne(1-x, 1-y) || isRtTwoMinusOne(1-x, 1-y))
+        } 
+
+        function laysOnGrid(element) {
+            const index = C.indexOf(element);
+            let trutherBucket = [];
+            for (let i = 0; i < VC.length; i++) {
+                const [s, f] = VC[i];
+
+                const sElement = C[s];
+                const fElement = C[f];
+
+                if (Math.abs(sElement - element) < 10 ** -8) {
+                    trutherBucket.push(test(element, fElement))
+                } else if (Math.abs(fElement - element) < 10 ** -8) {
+                    trutherBucket.push(test(sElement, element))
+                }
+            }
+            return trutherBucket.includes(true);
+        }
+
+        C = C.filter(laysOnGrid);
+    }
+
     return [C, VC];
 }
 
@@ -1369,6 +1500,8 @@ function V_2_C_VC(V, eps) {
 function update(target, eps) {
     const { C, VC, EV, EA, FV, C2 } = target;
 }
+
+let cIsPowTwoTest = true;
 
 // Function to process C2 with a Promise
 function processC2(C, eps) {
@@ -1395,6 +1528,7 @@ function processC2(C, eps) {
 
             if (C2con.length > C2.length/2){
                 C2 = C2con;
+                cIsPowTwoTest = false;
             }
 
             C2.forEach(([a, b, c], index) => {
@@ -1600,21 +1734,26 @@ function type (a,b) {
     } else return error
 }
 
-// Generate the Farey sequence
-for (let b = 1; b <= defaultValue1; b++) {
-    for (let a = 0; a <= b; a++) {
-        if (gcd(a, b) === 1) {  // Check if gcd(a, b) == 1 (i.e., they are coprime)
-            lookupTable.push({ 
-                numerator: a, 
-                denominator: b, 
-                weight: a/b, 
-                rank: Math.min(powTwo(b), diagA(a,b), diagB(a,b), diagC(a,b), diagD(a,b), diagE(a,b), diagF(a,b), diagG(a,b), general(a,b)),
-                type: type(a,b),
-            },
-        );
+function generateFarey () {
+    lookupTable = [];
+    // Generate the Farey sequence
+    for (let b = 1; b <= defaultValue1; b++) {
+        for (let a = 0; a <= b; a++) {
+            if (gcd(a, b) === 1) {  // Check if gcd(a, b) == 1 (i.e., they are coprime)
+                lookupTable.push({ 
+                    numerator: a, 
+                    denominator: b, 
+                    weight: a/b, 
+                    rank: Math.min(powTwo(b), diagA(a,b), diagB(a,b), diagC(a,b), diagD(a,b), diagE(a,b), diagF(a,b), diagG(a,b), general(a,b)),
+                    type: type(a,b),
+                },
+            );
+            }
         }
     }
 }
+
+generateFarey();
 
 // Sort the fractions by their value (numerator/denominator)
 lookupTable.sort((frac1, frac2) => (frac1.numerator / frac1.denominator) - (frac2.numerator / frac2.denominator));
@@ -1639,7 +1778,12 @@ function findRank(numerator, denominator) {
     if (numerator/denominator === 1) {result.rank = 1};
     if (denominator/numerator > m || numerator/denominator > m) {result.rank = Infinity};
 
-    return result ? result: null;
+    if (result) {return result}
+    else {
+        console.log(numerator+"/"+denominator)
+        console.log(result);
+        return null;
+    }
 }
 
 // Function you can call later to search after data is loaded
