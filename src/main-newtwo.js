@@ -118,160 +118,18 @@ function abcRender () {
 
     [a, b, c] = normalize(a,b,c)
 
-    console.log(a);
-    console.log(b);
-    console.log(c);
-    console.log(summup(a,b,c))
-
     if (summup(a,b,c) > 0) {
         if (summup(a,b,c) <= defaultValue2 ** -1) {
-            console.log(c);
-            console.log(defaultValue1);
             if (c <= defaultValue1) {
                 let inputC2 = [];
 
-                let alphadef =  a
-                let betadef =   b
-                let gammadef =  c;
+                let types = ['default', 'negdefault']
     
-                let alphaneg, betaneg, gammaneg;
-                [alphaneg, betaneg, gammaneg] = normalize(( (a * (a - c)) - 2 * b ** 2),
-                                                            (-b * c),
-                                                            ((a - c) ** 2 - 2 * b ** 2))
-    
-                if (Math.abs(1 - (summup(alphaneg, betaneg, gammaneg) ** -1) + (summup(alphaneg, betaneg, gammaneg) ** -1)) < 10 ** -8) {
-                    console.error("Learn to do math, Travis.")
+                for(let i = 0; i < types.length; i++) {
+                    let globular = rankIt(a, b, c, types[i], 'abcRender');
+                    inputC2.push(...globular);
                 }
-    
-                let defaultNegDefault =[[alphadef, betadef, gammadef], 
-                [alphaneg, betaneg, gammaneg]]
-    
-                console.log(defaultNegDefault);
-    
-                for(let i = 0; i<defaultNegDefault.length; i++) {
-                    let alpha, beta, gamma;
-                    alpha = defaultNegDefault[i][0];
-                    beta = defaultNegDefault[i][1];
-                    gamma = defaultNegDefault[i][2];
-    
-                    console.log(alpha)
-    
-                    let type;
-                    if (i === 0) {type = 'default'} else {type = 'negdefault'};
-    
-                    let rankA = Infinity, rankB = Infinity, rankC = Infinity, rankD = Infinity;
-                    let rankE = Infinity, rankF = Infinity, rankG = Infinity, rankH = Infinity;
-                    let rankI = Infinity, rankJ = Infinity;
-    
-                    // Perform the checks and calculations
-                    if (beta >= 0 && alpha + beta >= 0) {
-                        const rank1 = searchForFraction(beta, gamma);
-                        const rank2 = searchForFraction(alpha + beta, gamma);
-                        if (rank1 !== undefined && rank2 !== undefined) {
-                            rankA = rank1 + rank2;
-                            if (rank1 !== 0) {
-                                rankA += 3;
-                            }
-                        }
-                        inputC2.push([alphadef, betadef, gammadef, type, 'A', rankA, [alpha, beta, gamma]])
-                    } 
-                    if (beta <= 0 && alpha + 2 * beta >= 0) {
-                        const rank1 = searchForFraction(-beta, gamma);
-                        const rank2 = searchForFraction(alpha + 2 * beta, gamma);
-                        if (rank1 !== undefined && rank2 !== undefined) {
-                            rankB = rank1 + rank2;
-                            if (rank1 !== 0) {
-                                rankB += 3;
-                            }
-                        }
-                        inputC2.push([alphadef, betadef, gammadef, type, 'B', rankB, [alpha, beta, gamma]])
-                    }
-                    if (beta >= 0 && alpha - 2 * beta >= 0) {
-                        const rank1 = searchForFraction(2 * beta, gamma);
-                        const rank2 = searchForFraction(alpha - 2 * beta, gamma);
-                        if (rank1 !== undefined && rank2 !== undefined) {
-                            rankC = rank1 + rank2;
-                            if (rank1 !== 0) {
-                                rankC += 3;
-                            }
-                        }
-                        inputC2.push([alphadef, betadef, gammadef, type, 'C', rankC, [alpha, beta, gamma]])
-                    }
-                    if (beta >= 0 && alpha - beta >= 0) {
-                        const rank1 = searchForFraction(beta, gamma);
-                        const rank2 = searchForFraction(alpha - beta, gamma);
-                        if (rank1 !== undefined && rank2 !== undefined) {
-                            rankD = rank1 + rank2;
-                            if (rank1 !== 0) {
-                                rankD += 3;
-                            }
-                        }
-                        inputC2.push([alphadef, betadef, gammadef, type, 'D', rankD, [alpha, beta, gamma]])
-                    }
-                    if (alpha + beta >= 0 && alpha + 2 * beta >= 0) {
-                        const rank1 = searchForFraction(alpha + beta, gamma);
-                        const rank2 = searchForFraction(alpha + 2 * beta, gamma);
-                        if (rank1 !== undefined && rank2 !== undefined) {
-                            rankE = rank1 + rank2 + 3;
-                        }
-                        inputC2.push([alphadef, betadef, gammadef, type, 'E', rankE, [alpha, beta, gamma]])
-                    }
-                    if (alpha + beta >= 0 && -alpha + 2 * beta >= 0) {
-                        const rank1 = searchForFraction(2 * alpha + 2 * beta, 3 * gamma);
-                        const rank2 = searchForFraction(-alpha + 2 * beta, 3 * gamma);
-                        if (rank1 !== undefined && rank2 !== undefined) {
-                            rankF = rank1 + rank2 + 3;
-                            if (rank1 !== 0 && rank2 !== 0) {
-                                rankF += 1;
-                            }
-                        }
-                        inputC2.push([alphadef, betadef, gammadef, type, 'F', rankF, [alpha, beta, gamma]])
-                    }
-                    if (alpha + beta >= 0 && -alpha + beta >= 0) {
-                        const rank1 = searchForFraction(alpha + beta, 2 * gamma);
-                        const rank2 = searchForFraction(-alpha + beta, 2 * gamma);
-                        if (rank1 !== undefined && rank2 !== undefined) {
-                            rankG = rank1 + rank2 + 3;
-                            if (rank1 !== 0 && rank2 !== 0) {
-                                rankG += 1;
-                            }
-                        }
-                        inputC2.push([alphadef, betadef, gammadef, type, 'G', rankG, [alpha, beta, gamma]])
-                    }
-                    if (alpha + 2 * beta >= 0 && alpha - 2 * beta >= 0) {
-                        const rank1 = searchForFraction(alpha + 2 * beta, 2 * gamma);
-                        const rank2 = searchForFraction(alpha - 2 * beta, 4 * gamma);
-                        if (rank1 !== undefined && rank2 !== undefined) {
-                            rankH = rank1 + rank2 + 3;
-                            if (rank1 !== 0 && rank2 !== 0) {
-                                rankH += 1;
-                            }
-                        }
-                        inputC2.push([alphadef, betadef, gammadef, type, 'H', rankH, [alpha, beta, gamma]])
-                    }
-                    if (alpha + 2 * beta >= 0 && alpha - beta >= 0) {
-                        const rank1 = searchForFraction(alpha + 2 * beta, 3 * gamma);
-                        const rank2 = searchForFraction(alpha - beta, 3 * gamma);
-                        if (rank1 !== undefined && rank2 !== undefined) {
-                            rankI = rank1 + rank2 + 3;
-                            if (rank1 !== 0 && rank2 !== 0) {
-                                rankI += 1;
-                            }
-                        }
-                        inputC2.push([alphadef, betadef, gammadef, type, 'I', rankI, [alpha, beta, gamma]])
-                    }
-                    if (-alpha + 2 * beta >= 0 && alpha - beta >= 0) {
-                        const rank1 = searchForFraction(-alpha + 2 * beta, gamma);
-                        const rank2 = searchForFraction(2 * alpha - 2 * beta, gamma);
-                        if (rank1 !== undefined && rank2 !== undefined) {
-                            rankJ = rank1 + rank2 + 3;
-                            if (rank1 !== 0 && rank2 !== 0) {
-                                rankJ += 2;
-                            }
-                        }
-                        inputC2.push([alphadef, betadef, gammadef, type, 'J', rankJ, [alpha, beta, gamma]])
-                    }
-                }
+                    
                 //function isReasonable (element) {
                 //    return ((summup (element[0], element[1], element[2]) < (defaultValue2 ** -1)) && (summup (element[0], element[1], element[2]) > ((1 - defaultValue2) ** -1)))
                 //}
@@ -282,6 +140,12 @@ function abcRender () {
                     if (a === undefined || b === undefined) return Infinity;
                     return (a[5] || 0) - (b[5] || 0);
                 });
+
+                function isNotInfinity (arr) {
+                    return (arr[5] !== Infinity)
+                }
+
+                inputC2 = inputC2.filter(isNotInfinity);
     
                 globalC2 = inputC2;
     
@@ -310,7 +174,7 @@ function abcRender () {
                 updateDisplay();
             } else alert ("Either choose a less convoluted value or increase the maximum allowable denominator.")
         } else alert ("Either choose a larger value, or decrease the minimum allowable distance from the edge.")
-    } else alert("ax + bx√2 and ay + by√2 must both be greater than zero.")
+    } else alert("aₓ + bₓ√2 and aᵧ + bᵧ√2 must both be greater than zero.")
 }
 
 // Function to reset other variables to default values
@@ -362,7 +226,7 @@ function updateInfoText() {
         Reference ${window.variable}: ${xory2} = (${inversed[0]} + ${inversed[1]}√2) / ${inversed[2]} ≈ ${value.toFixed(3)}.
         Approximate rank: ${reference[5]}.`;
     } else {
-        fileStatus.textContent = "Upload a file to begin, or input a, b, and c corresponding to a reference y = (a + b√2) / c.";
+        fileStatus.textContent = "Upload a file to begin, or input a, b, and c corresponding to a reference having width (aₓ + bₓ√2) / cₓ and height (aᵧ + bᵧ√2) / cᵧ.";
     }
 }
 
@@ -1541,7 +1405,9 @@ function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2,
                 if (problem(a1, b1) && problem(a2, b2)) {
                     pointBucket.push([bl,tr],[tr,bt],[lt,rt],[tt,bt]);
                     if (one2) {pointBucket.push([tt, br])};
-                } else {pointBucket.push([tl,br],[tl,rt],[tt,br])}
+                } else if (problem(a1, b1) || problem (a2, b2)) {
+                    pointBucket.push([bl,tr],[tr,bt],[lt,rt],[tt,bt]);
+                }else {pointBucket.push([tl,br],[tl,rt],[tt,br])}
                 if (one1) {pointBucket.push([bl, rt])};
                 console.log("F");
             } else if (isTwoMinusRtTwo(w2, h2)) {
@@ -1943,34 +1809,25 @@ let lookupTable = [];
 const m = (1/defaultValue2);
 
 // if b is a power of 2, the reference may be developed in log2(b)+1 folds
-function powTwo(b) {
-    if ((Math.log(b)/Math.log(2)) % 1 === 0) {
-        return Math.log(b)/Math.log(2) + 1;
-    } else {
-        return Infinity;
-    }
-}
+function powTwo(b) {if (isPowerTwo(b)) {return Math.log2(b) + 1} else {return Infinity}};
 
-//if a+b is a power of 2, the reference may be developed in log2(a+b)+2 folds
-function diagA(a,b) {if (isPowerTwo(a+b)) {return Math.log(a+b)/Math.log(2) + 2} else {return Infinity}};
+function diagA(a,b) {if (isPowerTwo(a+b))           {return Math.log2(a+b) + 2} else {return Infinity}};
 
-function diagB(a,b) {if (isPowerTwo(a + 2*b)) {return Math.log(a + 2*b)/Math.log(2) + 3} else {return Infinity}};
+function diagB(a,b) {if (isPowerTwo(a + 2*b))       {return Math.log2(a + 2*b) + 3} else {return Infinity}};
 
-function diagC(a,b) {if (isPowerTwo(2*a + b)) {return Math.log(2*a + b)/Math.log(2) + 3} else {return Infinity}};
+function diagC(a,b) {if (isPowerTwo(2*a + b))       {return Math.log2(2*a + b) + 3} else {return Infinity}};
 
-function diagD (a,b) {if (isPowerTwo(a + 4*b)) {return Math.log(a + 4*b)/Math.log(2) + 4} else {return Infinity}};
+function diagD (a,b) {if (isPowerTwo(a + 4*b))      {return Math.log2(a + 4*b) + 4} else {return Infinity}};
 
-function diagE (a,b) {if (isPowerTwo(4*a + b)) {return Math.log(4*a + b)/Math.log(2) + 4} else {return Infinity}};
+function diagE (a,b) {if (isPowerTwo(4*a + b))      {return Math.log2(4*a + b) + 4} else {return Infinity}};
 
-function diagF (a,b) {if (isPowerTwo(3*a + 4*b)) {return Math.log(3*a + 4*b)/Math.log(2) + 4} else {return Infinity}};
+function diagF (a,b) {if (isPowerTwo(3*a + 4*b))    {return Math.log2(3*a + 4*b) + 4} else {return Infinity}};
+    
+function diagG (a,b) {if (isPowerTwo(4*a + 3*b))    {return Math.log2(4*a + 3*b) + 4} else {return Infinity}};
 
-function diagG (a,b) {if (isPowerTwo(4*a + 3*b)) {return Math.log(4*a + 3*b)/Math.log(2) + 4} else {return Infinity}};
-
-function general(a,b) {
-    if ((Math.log(b)/Math.log(2)) % 1 != 0) {
-        let c = Math.floor((Math.log(b)/Math.log(2)))+1;
-        return Math.log((Math.pow(2,c))/(gcd((Math.pow(2,c)),a)))/Math.log(2) + 
-        Math.log((Math.pow(2,c))/(gcd((Math.pow(2,c)),b)))/Math.log(2) + 1;
+function general(a,b) {if (!isPowerTwo(b)) {
+        let c = Math.ceil(Math.log2(b));
+        return Math.log2((2 ** c) / (gcd((2 ** c), a))) + Math.log2((2 ** c) / (gcd((2 ** c), b))) + 1;
     } else {
         return Infinity;
     }
@@ -2039,9 +1896,11 @@ function findRank(numerator, denominator) {
     denominator /= gcdND;
 
     let result = lookupTable.find(row => row.numerator === numerator && row.denominator === denominator);
-    if (numerator === 0 || denominator === 0) {result.rank = 0};
-    if (numerator/denominator === 1) {result.rank = 1};
-    if (denominator/numerator > m || numerator/denominator > m) {result.rank = Infinity};
+
+    if (numerator === 0 && denominator === 0) {result.rank = Infinity}
+    else if (numerator === 0 || denominator === 0) {result.rank = 0}
+    else if (numerator/denominator === 1) {result.rank = 1}
+    else if (denominator/numerator > m || numerator/denominator > m) {result.rank = Infinity};
 
     if (result) {return result}
     else {
@@ -2065,21 +1924,19 @@ function searchForFraction(numerator, denominator) {
 // This section calculates the number of creases required for each situation, and reports the most efficient option,
 // and the corresponding number of creases.
 
-function rankIt(alpha, beta, gamma) {
+function rankIt(alpha, beta, gamma, type, callSpot) {
+    let alphadef, betadef, gammadef;
 
-    if (summup(alpha, beta, gamma) < 0 || (gamma < 0 && (alpha + (beta * Math.SQRT2))) < 0){
-        alpha = -alpha;
-        beta = -beta;
-        gamma = -gamma;
-    }
+    [alpha, beta, gamma] = normalize(alpha, beta, gamma);
 
-    let grcodi = gcd(gcd(alpha, beta), gamma);
+    if (type === 'default') {
+        [alphadef, betadef, gammadef] = [alpha, beta, gamma];
+    } else if (type === 'negdefault') {
+        [alphadef, betadef, gammadef] = normalize(( (alpha * (alpha - gamma)) - 2 * beta ** 2), (-beta * gamma), ((alpha - gamma) ** 2 - 2 * beta ** 2))
+    } else console.error("unknown type");
 
-    alpha = alpha/grcodi;
-    beta = beta/grcodi;
-    gamma = gamma/grcodi;
+    let inputC2 = [];
 
-    // Initialize ranks with default values
     let rankA = Infinity, rankB = Infinity, rankC = Infinity, rankD = Infinity;
     let rankE = Infinity, rankF = Infinity, rankG = Infinity, rankH = Infinity;
     let rankI = Infinity, rankJ = Infinity;
@@ -2094,7 +1951,8 @@ function rankIt(alpha, beta, gamma) {
                 rankA += 3;
             }
         }
-    }
+        inputC2.push([alpha, beta, gamma, type, 'A', rankA, [alphadef, betadef, gammadef]])
+    } 
     if (beta <= 0 && alpha + 2 * beta >= 0) {
         const rank1 = searchForFraction(-beta, gamma);
         const rank2 = searchForFraction(alpha + 2 * beta, gamma);
@@ -2104,6 +1962,7 @@ function rankIt(alpha, beta, gamma) {
                 rankB += 3;
             }
         }
+        inputC2.push([alpha, beta, gamma, type, 'B', rankB, [alphadef, betadef, gammadef]])
     }
     if (beta >= 0 && alpha - 2 * beta >= 0) {
         const rank1 = searchForFraction(2 * beta, gamma);
@@ -2113,7 +1972,8 @@ function rankIt(alpha, beta, gamma) {
             if (rank1 !== 0) {
                 rankC += 3;
             }
-        }
+        } 
+        inputC2.push([alpha, beta, gamma, type, 'C', rankC, [alphadef, betadef, gammadef]])
     }
     if (beta >= 0 && alpha - beta >= 0) {
         const rank1 = searchForFraction(beta, gamma);
@@ -2124,6 +1984,7 @@ function rankIt(alpha, beta, gamma) {
                 rankD += 3;
             }
         }
+        inputC2.push([alpha, beta, gamma, type, 'D', rankD, [alphadef, betadef, gammadef]])
     }
     if (alpha + beta >= 0 && alpha + 2 * beta >= 0) {
         const rank1 = searchForFraction(alpha + beta, gamma);
@@ -2131,6 +1992,7 @@ function rankIt(alpha, beta, gamma) {
         if (rank1 !== undefined && rank2 !== undefined) {
             rankE = rank1 + rank2 + 3;
         }
+        inputC2.push([alpha, beta, gamma, type, 'E', rankE, [alphadef, betadef, gammadef]])
     }
     if (alpha + beta >= 0 && -alpha + 2 * beta >= 0) {
         const rank1 = searchForFraction(2 * alpha + 2 * beta, 3 * gamma);
@@ -2141,6 +2003,7 @@ function rankIt(alpha, beta, gamma) {
                 rankF += 1;
             }
         }
+        inputC2.push([alpha, beta, gamma, type, 'F', rankF, [alphadef, betadef, gammadef]])
     }
     if (alpha + beta >= 0 && -alpha + beta >= 0) {
         const rank1 = searchForFraction(alpha + beta, 2 * gamma);
@@ -2151,6 +2014,7 @@ function rankIt(alpha, beta, gamma) {
                 rankG += 1;
             }
         }
+        inputC2.push([alpha, beta, gamma, type, 'G', rankG, [alphadef, betadef, gammadef]])
     }
     if (alpha + 2 * beta >= 0 && alpha - 2 * beta >= 0) {
         const rank1 = searchForFraction(alpha + 2 * beta, 2 * gamma);
@@ -2161,6 +2025,7 @@ function rankIt(alpha, beta, gamma) {
                 rankH += 1;
             }
         }
+        inputC2.push([alpha, beta, gamma, type, 'H', rankH, [alphadef, betadef, gammadef]])
     }
     if (alpha + 2 * beta >= 0 && alpha - beta >= 0) {
         const rank1 = searchForFraction(alpha + 2 * beta, 3 * gamma);
@@ -2171,6 +2036,7 @@ function rankIt(alpha, beta, gamma) {
                 rankI += 1;
             }
         }
+        inputC2.push([alpha, beta, gamma, type, 'I', rankI, [alphadef, betadef, gammadef]])
     }
     if (-alpha + 2 * beta >= 0 && alpha - beta >= 0) {
         const rank1 = searchForFraction(-alpha + 2 * beta, gamma);
@@ -2181,6 +2047,7 @@ function rankIt(alpha, beta, gamma) {
                 rankJ += 2;
             }
         }
+        inputC2.push([alpha, beta, gamma, type, 'J', rankJ, [alphadef, betadef, gammadef]])
     }
 
     const types = [
@@ -2207,7 +2074,11 @@ function rankIt(alpha, beta, gamma) {
     const minType = types.reduce((min, current) => current.value < min.value ? current : min, types[0]);
     
     // Return the type corresponding to the minimum value
-    return [minType.name, minType.value];
+    if (callSpot === 'regular') {
+        return [minType.name, minType.value];
+    } else if (callSpot === 'abcRender') {
+        return inputC2;
+    }
 }
 
 //---------------------------------------------------------------------------------------------------------------
@@ -2332,9 +2203,9 @@ function alts(a, b, c) {
     }
 
     function createRankType(name, values, rankIncrement = 0) {
-        const rank = rankIt(values[0], values[1], values[2]);
+        const rank = rankIt(values[0], values[1], values[2], name, 'regular');
         const negValues = neg(values[0], values[1], values[2]);
-        const rankNeg = rankIt(negValues[0], negValues[1], negValues[2]);
+        const rankNeg = rankIt(negValues[0], negValues[1], negValues[2], "neg"+name, 'regular');
         
         return [
             { name: name, meth: rank[0], value: rank[1] + rankIncrement, elev: values },
@@ -2345,27 +2216,27 @@ function alts(a, b, c) {
     // Default and negdefault
     const defaultType = createRankType('default', [a, b, c]);
 
-    // Double and negdouble (only calculate if summup > 2)
-    const doubleType = summup(a, b, c) > 2 ? createRankType('double', [a, b, 2 * c], 1) : [{ name: 'double', meth: 'N/A', value: Infinity }, { name: 'negdouble', meth: 'N/A', value: Infinity }];
-
-    // Quadruple and negquadruple (only calculate if summup > 4)
-    const quadrupleType = summup(a, b, c) > 4 ? createRankType('quadruple', [a, b, 4 * c], 2) : [{ name: 'quadruple', meth: 'N/A', value: Infinity }, { name: 'negquadruple', meth: 'N/A', value: Infinity }];
-
-    // Bisector and negbisector
-    const bisectorValues = findBisector(a, b, c);
-    const bisectorType = createRankType('bisector', bisectorValues, 2);
-
-    // SwitchIt and negSwitchIt
-    const switchItValues = findSwitchIt(a, b, c);
-    const switchItType = createRankType('switchIt', switchItValues, 2);
-
-    // HSA and negHSA
-    const hsaValues = findHSA(a, b, c);
-    const hsaType = createRankType('HSA', hsaValues, 2);
-
-    // HSB and negHSB
-    const hsbValues = findHSB(a, b, c);
-    const hsbType = createRankType('HSB', hsbValues, 2)
+    //// Double and negdouble (only calculate if summup > 2)
+    //const doubleType = summup(a, b, c) > 2 ? createRankType('double', [a, b, 2 * c], 1) : [{ name: 'double', meth: 'N/A', value: Infinity }, { name: 'negdouble', meth: 'N/A', value: Infinity }];
+//
+    //// Quadruple and negquadruple (only calculate if summup > 4)
+    //const quadrupleType = summup(a, b, c) > 4 ? createRankType('quadruple', [a, b, 4 * c], 2) : [{ name: 'quadruple', meth: 'N/A', value: Infinity }, { name: 'negquadruple', meth: 'N/A', value: Infinity }];
+//
+    //// Bisector and negbisector
+    //const bisectorValues = findBisector(a, b, c);
+    //const bisectorType = createRankType('bisector', bisectorValues, 2);
+//
+    //// SwitchIt and negSwitchIt
+    //const switchItValues = findSwitchIt(a, b, c);
+    //const switchItType = createRankType('switchIt', switchItValues, 2);
+//
+    //// HSA and negHSA
+    //const hsaValues = findHSA(a, b, c);
+    //const hsaType = createRankType('HSA', hsaValues, 2);
+//
+    //// HSB and negHSB
+    //const hsbValues = findHSB(a, b, c);
+    //const hsbType = createRankType('HSB', hsbValues, 2)
 
     // Combine all rank types into one array
     const types = [
