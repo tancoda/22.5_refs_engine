@@ -118,6 +118,12 @@ function abcRender () {
 
     [a, b, c] = normalize(a,b,c)
 
+    //let nega, negb, negc;
+    //[nega, negb, negc] = normalize(((a ** 2) - (a * c) - (2 * (b ** 2))), (-b * c), (((a - c) ** 2) - (2 * (b ** 2))))
+//
+    //let typesArr = [[a, b, c], [nega, negb, negc]]
+    //console.log(typesArr)
+
     if (summup(a,b,c) > 0) {
         if (summup(a,b,c) <= defaultValue2 ** -1) {
             if (c <= defaultValue1) {
@@ -324,7 +330,6 @@ window.addEventListener('resize', () => {
         drawEverything();
     }
 });
-
 
 // Function to format the edges with coordinates and type
 function formatEdges(V, EV, EA) {
@@ -1924,16 +1929,16 @@ function searchForFraction(numerator, denominator) {
 // This section calculates the number of creases required for each situation, and reports the most efficient option,
 // and the corresponding number of creases.
 
-function rankIt(alpha, beta, gamma, type, callSpot) {
-    let alphadef, betadef, gammadef;
-
-    [alpha, beta, gamma] = normalize(alpha, beta, gamma);
+function rankIt(alphadef, betadef, gammadef, type, callSpot) {
+    let alpha, beta, gamma;
 
     if (type === 'default') {
-        [alphadef, betadef, gammadef] = [alpha, beta, gamma];
+        [alpha, beta, gamma] = [alphadef, betadef, gammadef];
     } else if (type === 'negdefault') {
-        [alphadef, betadef, gammadef] = normalize(( (alpha * (alpha - gamma)) - 2 * beta ** 2), (-beta * gamma), ((alpha - gamma) ** 2 - 2 * beta ** 2))
+        [alpha, beta, gamma] = normalize(( (alphadef * (alphadef - gammadef)) - 2 * betadef ** 2), (-betadef * gammadef), ((alphadef - gammadef) ** 2 - 2 * betadef ** 2))
     } else console.error("unknown type");
+
+    [alpha, beta, gamma] = normalize(alpha, beta, gamma);
 
     let inputC2 = [];
 
@@ -1951,7 +1956,7 @@ function rankIt(alpha, beta, gamma, type, callSpot) {
                 rankA += 3;
             }
         }
-        inputC2.push([alpha, beta, gamma, type, 'A', rankA, [alphadef, betadef, gammadef]])
+        inputC2.push([alphadef, betadef, gammadef, type, 'A', rankA, [alpha, beta, gamma]])
     } 
     if (beta <= 0 && alpha + 2 * beta >= 0) {
         const rank1 = searchForFraction(-beta, gamma);
@@ -1962,7 +1967,7 @@ function rankIt(alpha, beta, gamma, type, callSpot) {
                 rankB += 3;
             }
         }
-        inputC2.push([alpha, beta, gamma, type, 'B', rankB, [alphadef, betadef, gammadef]])
+        inputC2.push([alphadef, betadef, gammadef, type, 'B', rankB, [alpha, beta, gamma]])
     }
     if (beta >= 0 && alpha - 2 * beta >= 0) {
         const rank1 = searchForFraction(2 * beta, gamma);
@@ -1973,7 +1978,7 @@ function rankIt(alpha, beta, gamma, type, callSpot) {
                 rankC += 3;
             }
         } 
-        inputC2.push([alpha, beta, gamma, type, 'C', rankC, [alphadef, betadef, gammadef]])
+        inputC2.push([alphadef, betadef, gammadef, type, 'C', rankC, [alpha, beta, gamma]])
     }
     if (beta >= 0 && alpha - beta >= 0) {
         const rank1 = searchForFraction(beta, gamma);
@@ -1984,7 +1989,7 @@ function rankIt(alpha, beta, gamma, type, callSpot) {
                 rankD += 3;
             }
         }
-        inputC2.push([alpha, beta, gamma, type, 'D', rankD, [alphadef, betadef, gammadef]])
+        inputC2.push([alphadef, betadef, gammadef, type, 'D', rankD, [alpha, beta, gamma]])
     }
     if (alpha + beta >= 0 && alpha + 2 * beta >= 0) {
         const rank1 = searchForFraction(alpha + beta, gamma);
@@ -1992,7 +1997,7 @@ function rankIt(alpha, beta, gamma, type, callSpot) {
         if (rank1 !== undefined && rank2 !== undefined) {
             rankE = rank1 + rank2 + 3;
         }
-        inputC2.push([alpha, beta, gamma, type, 'E', rankE, [alphadef, betadef, gammadef]])
+        inputC2.push([alphadef, betadef, gammadef, type, 'E', rankE, [alpha, beta, gamma]])
     }
     if (alpha + beta >= 0 && -alpha + 2 * beta >= 0) {
         const rank1 = searchForFraction(2 * alpha + 2 * beta, 3 * gamma);
@@ -2003,7 +2008,7 @@ function rankIt(alpha, beta, gamma, type, callSpot) {
                 rankF += 1;
             }
         }
-        inputC2.push([alpha, beta, gamma, type, 'F', rankF, [alphadef, betadef, gammadef]])
+        inputC2.push([alphadef, betadef, gammadef, type, 'F', rankF, [alpha, beta, gamma]])
     }
     if (alpha + beta >= 0 && -alpha + beta >= 0) {
         const rank1 = searchForFraction(alpha + beta, 2 * gamma);
@@ -2014,7 +2019,7 @@ function rankIt(alpha, beta, gamma, type, callSpot) {
                 rankG += 1;
             }
         }
-        inputC2.push([alpha, beta, gamma, type, 'G', rankG, [alphadef, betadef, gammadef]])
+        inputC2.push([alphadef, betadef, gammadef, type, 'G', rankG, [alpha, beta, gamma]])
     }
     if (alpha + 2 * beta >= 0 && alpha - 2 * beta >= 0) {
         const rank1 = searchForFraction(alpha + 2 * beta, 2 * gamma);
@@ -2025,7 +2030,7 @@ function rankIt(alpha, beta, gamma, type, callSpot) {
                 rankH += 1;
             }
         }
-        inputC2.push([alpha, beta, gamma, type, 'H', rankH, [alphadef, betadef, gammadef]])
+        inputC2.push([alphadef, betadef, gammadef, type, 'H', rankH, [alpha, beta, gamma]])
     }
     if (alpha + 2 * beta >= 0 && alpha - beta >= 0) {
         const rank1 = searchForFraction(alpha + 2 * beta, 3 * gamma);
@@ -2036,7 +2041,7 @@ function rankIt(alpha, beta, gamma, type, callSpot) {
                 rankI += 1;
             }
         }
-        inputC2.push([alpha, beta, gamma, type, 'I', rankI, [alphadef, betadef, gammadef]])
+        inputC2.push([alphadef, betadef, gammadef, type, 'I', rankI, [alpha, beta, gamma]])
     }
     if (-alpha + 2 * beta >= 0 && alpha - beta >= 0) {
         const rank1 = searchForFraction(-alpha + 2 * beta, gamma);
@@ -2047,7 +2052,7 @@ function rankIt(alpha, beta, gamma, type, callSpot) {
                 rankJ += 2;
             }
         }
-        inputC2.push([alpha, beta, gamma, type, 'J', rankJ, [alphadef, betadef, gammadef]])
+        inputC2.push([alphadef, betadef, gammadef, type, 'J', rankJ, [alpha, beta, gamma]])
     }
 
     const types = [
