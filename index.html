@@ -24,11 +24,37 @@
     <div id="fileStatus" style=>No file loaded</div>
 
     <div id="inputContainer">
-        <div class="inputRow">
-            <input type="file" id="fileInput" />
+        <input type="file" id="fileInput" />        
+        <img src="images\Screenshot 2024-09-28 012138.png" alt="abc relative to square" id="abcImage" style="height: 130px; margin-right: 10px;"> <!-- Adjust height as needed -->
+        <div id="abcInputsBox">
+            <div class="inputGroup">
+                <label for="inputAX">a<sub>x</sub></label>
+                <input type="number" id="inputAX" placeholder="aₓ" step="1" value="0">
+            </div>
+            <div class="inputGroup">
+                <label for="inputBX">b<sub>x</sub></label>
+                <input type="number" id="inputBX" placeholder="bₓ" step="1" value="0">
+            </div>
+            <div class="inputGroup">
+                <label for="inputCX">c<sub>x</sub></label>
+                <input type="number" id="inputCX" placeholder="cₓ" step="1" value="1">
+            </div>
+            <div class="inputGroup">
+                <label for="inputAY">a<sub>y</sub></label>
+                <input type="number" id="inputAY" placeholder="aᵧ" step="1" value="0">
+            </div>
+            <div class="inputGroup">
+                <label for="inputBY">b<sub>y</sub></label>
+                <input type="number" id="inputBY" placeholder="bᵧ" step="1" value="0">
+            </div>
+            <div class="inputGroup">
+                <label for="inputCY">c<sub>y</sub></label>
+                <input type="number" id="inputCY" placeholder="cᵧ" step="1" value="1">
+            </div>
         </div>
+        <button id="submitABC">Submit a, b, c</button>
     </div>
-
+   
     <canvas id="myCanvas" resize></canvas>
 
     <div id="controls">
@@ -81,6 +107,9 @@
                                                      document.getElementById('controls').offsetHeight);
                 canvas.width = window.innerWidth;
                 canvas.height = height;
+
+                canvas.style.transform = `translateY(-${controls.offsetHeight}px)`;
+
                 paper.view.viewSize = new paper.Size(canvas.width, canvas.height);
             }
         }

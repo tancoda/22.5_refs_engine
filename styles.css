@@ -34,41 +34,58 @@ body {
 
 #inputContainer {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 10px;
-}
-
-.inputRow {
-    display: flex;
+    flex-wrap: nowrap;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: nowrap; /* Ensure no wrapping */
+    margin: 10px 0;
+    gap: 20px;
 }
 
-.inputRow label {
-    flex: 1;
-    margin-right: 10px;
+#fileInput {
+    flex: 1 1 auto;
+    margin-left: 30px;
+}
+
+#abcInputsBox {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 10px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    z-index: 1;
+}
+
+#abcContainer {
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Vertically center items */
+}
+
+#abcImage {
+    height: 50px; /* Adjust to match the height of your input box */
+    margin-right: 10px; /* Space between the image and the inputs */
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.inputGroup label {
     font-size: 0.9em;
+    margin-bottom: 5px;
 }
 
-.inputRow input {
-    flex: 0 0 100px; /* Ensure input width is fixed */
+.inputGroup input {
+    width: 60px;
 }
 
-#fileInput,
-#submitButton {
-    margin-top: 10px;
-}
-
-#submitButton {
-    margin-top: 10px;
+#submitABC {
     padding: 5px 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
     cursor: pointer;
-    font-family: inherit; /* Use the same font as the rest of the page */
+    font-family: inherit;
+    margin-right: 30px;
 }
 
 #controls {
@@ -102,7 +119,7 @@ body {
 /* Ensure the canvas fills the available space */
 #myCanvas {
     width: 100%;
-    height: calc(100vh - 120px); /* Adjust height to fit the space after accounting for other elements */
+    height: calc(100vh - px); /* Adjust height to fit the space after accounting for other elements */
     display: block; /* Ensures no extra space around the canvas */
 }
 

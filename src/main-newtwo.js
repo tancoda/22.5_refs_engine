@@ -19,17 +19,6 @@ function initializeCanvas() {
 initializeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-//document.getElementById("fileInput").addEventListener("change", (e) => {
-//    if (e.target.files.length > 0) {
-//        const fileReader = new FileReader();
-//        fileReader.onload = (event) => {
-//            processFile(event);
-//        };
-//        fileReader.readAsText(e.target.files[0]);
-//        drawEverything();
-//    }
-//});
-
 // Function to ensure window.variable stays within range
 function setWindowVariable(value) {
     if (value < 1) {
@@ -69,6 +58,261 @@ function handleFileUpload() {
     }
 }
 
+let defaultAX = 0;
+let defaultBX = 0;
+let defaultCX = 1;
+let defaultAY = 0;
+let defaultBY = 0;
+let defaultCY = 1;
+
+const inputAX = document.getElementById("inputAX");
+const inputBX = document.getElementById("inputBX");
+const inputCX = document.getElementById("inputCX");
+const inputAY = document.getElementById("inputAY");
+const inputBY = document.getElementById("inputBY");
+const inputCY = document.getElementById("inputCY");
+
+inputAX.value = defaultAX;
+inputBX.value = defaultBX;
+inputCX.value = defaultCX;
+inputAY.value = defaultAY;
+inputBY.value = defaultBY;
+inputCY.value = defaultCY;
+
+document.getElementById('submitABC').addEventListener('click', abcRender);
+
+function abcRender () {
+    defaultValue1 = 32; // Reset to default value
+    defaultValue2 = 0.1; // Reset to default value
+    defaultConstructible = false; // Reset to default value
+    document.getElementById("value1Modal").value = 32;
+    document.getElementById("value2Modal").value = 0.1;
+    document.getElementById("constructibleToggle").value = false;
+    document.getElementById("constructibleToggle").checked = false;
+    window.variable = 1;
+
+    let ax = parseFloat(inputAX.value);
+    let bx = parseFloat(inputBX.value);
+    let cx = parseFloat(inputCX.value);
+    let ay = parseFloat(inputAY.value);
+    let by = parseFloat(inputBY.value);
+    let cy = parseFloat(inputCY.value);
+
+    console.log (ax)
+    console.log (bx)
+    console.log (cx)
+    console.log (ay)
+    console.log (by)
+    console.log (cy)
+
+    let a = cy * (ax * ay - 2 * bx * by);
+    let b = cy * (ay * bx - ax * by);
+    let c = cx * (ay ** 2 - 2 * by ** 2);
+
+    let localxory = 'Y'
+
+    if (summup(a, b, c) < 1) {
+        [a, b, c] = inverse(a,b,c);
+        localxory = 'X'
+    }
+
+    [a, b, c] = normalize(a,b,c)
+
+    console.log(a);
+    console.log(b);
+    console.log(c);
+    console.log(summup(a,b,c))
+
+    if (summup(a,b,c) > 0) {
+        if (summup(a,b,c) <= defaultValue2 ** -1) {
+            console.log(c);
+            console.log(defaultValue1);
+            if (c <= defaultValue1) {
+                let inputC2 = [];
+
+                let alphadef =  a
+                let betadef =   b
+                let gammadef =  c;
+    
+                let alphaneg, betaneg, gammaneg;
+                [alphaneg, betaneg, gammaneg] = normalize(( (a * (a - c)) - 2 * b ** 2),
+                                                            (-b * c),
+                                                            ((a - c) ** 2 - 2 * b ** 2))
+    
+                if (Math.abs(1 - (summup(alphaneg, betaneg, gammaneg) ** -1) + (summup(alphaneg, betaneg, gammaneg) ** -1)) < 10 ** -8) {
+                    console.error("Learn to do math, Travis.")
+                }
+    
+                let defaultNegDefault =[[alphadef, betadef, gammadef], 
+                [alphaneg, betaneg, gammaneg]]
+    
+                console.log(defaultNegDefault);
+    
+                for(let i = 0; i<defaultNegDefault.length; i++) {
+                    let alpha, beta, gamma;
+                    alpha = defaultNegDefault[i][0];
+                    beta = defaultNegDefault[i][1];
+                    gamma = defaultNegDefault[i][2];
+    
+                    console.log(alpha)
+    
+                    let type;
+                    if (i === 0) {type = 'default'} else {type = 'negdefault'};
+    
+                    let rankA = Infinity, rankB = Infinity, rankC = Infinity, rankD = Infinity;
+                    let rankE = Infinity, rankF = Infinity, rankG = Infinity, rankH = Infinity;
+                    let rankI = Infinity, rankJ = Infinity;
+    
+                    // Perform the checks and calculations
+                    if (beta >= 0 && alpha + beta >= 0) {
+                        const rank1 = searchForFraction(beta, gamma);
+                        const rank2 = searchForFraction(alpha + beta, gamma);
+                        if (rank1 !== undefined && rank2 !== undefined) {
+                            rankA = rank1 + rank2;
+                            if (rank1 !== 0) {
+                                rankA += 3;
+                            }
+                        }
+                        inputC2.push([alphadef, betadef, gammadef, type, 'A', rankA, [alpha, beta, gamma]])
+                    } 
+                    if (beta <= 0 && alpha + 2 * beta >= 0) {
+                        const rank1 = searchForFraction(-beta, gamma);
+                        const rank2 = searchForFraction(alpha + 2 * beta, gamma);
+                        if (rank1 !== undefined && rank2 !== undefined) {
+                            rankB = rank1 + rank2;
+                            if (rank1 !== 0) {
+                                rankB += 3;
+                            }
+                        }
+                        inputC2.push([alphadef, betadef, gammadef, type, 'B', rankB, [alpha, beta, gamma]])
+                    }
+                    if (beta >= 0 && alpha - 2 * beta >= 0) {
+                        const rank1 = searchForFraction(2 * beta, gamma);
+                        const rank2 = searchForFraction(alpha - 2 * beta, gamma);
+                        if (rank1 !== undefined && rank2 !== undefined) {
+                            rankC = rank1 + rank2;
+                            if (rank1 !== 0) {
+                                rankC += 3;
+                            }
+                        }
+                        inputC2.push([alphadef, betadef, gammadef, type, 'C', rankC, [alpha, beta, gamma]])
+                    }
+                    if (beta >= 0 && alpha - beta >= 0) {
+                        const rank1 = searchForFraction(beta, gamma);
+                        const rank2 = searchForFraction(alpha - beta, gamma);
+                        if (rank1 !== undefined && rank2 !== undefined) {
+                            rankD = rank1 + rank2;
+                            if (rank1 !== 0) {
+                                rankD += 3;
+                            }
+                        }
+                        inputC2.push([alphadef, betadef, gammadef, type, 'D', rankD, [alpha, beta, gamma]])
+                    }
+                    if (alpha + beta >= 0 && alpha + 2 * beta >= 0) {
+                        const rank1 = searchForFraction(alpha + beta, gamma);
+                        const rank2 = searchForFraction(alpha + 2 * beta, gamma);
+                        if (rank1 !== undefined && rank2 !== undefined) {
+                            rankE = rank1 + rank2 + 3;
+                        }
+                        inputC2.push([alphadef, betadef, gammadef, type, 'E', rankE, [alpha, beta, gamma]])
+                    }
+                    if (alpha + beta >= 0 && -alpha + 2 * beta >= 0) {
+                        const rank1 = searchForFraction(2 * alpha + 2 * beta, 3 * gamma);
+                        const rank2 = searchForFraction(-alpha + 2 * beta, 3 * gamma);
+                        if (rank1 !== undefined && rank2 !== undefined) {
+                            rankF = rank1 + rank2 + 3;
+                            if (rank1 !== 0 && rank2 !== 0) {
+                                rankF += 1;
+                            }
+                        }
+                        inputC2.push([alphadef, betadef, gammadef, type, 'F', rankF, [alpha, beta, gamma]])
+                    }
+                    if (alpha + beta >= 0 && -alpha + beta >= 0) {
+                        const rank1 = searchForFraction(alpha + beta, 2 * gamma);
+                        const rank2 = searchForFraction(-alpha + beta, 2 * gamma);
+                        if (rank1 !== undefined && rank2 !== undefined) {
+                            rankG = rank1 + rank2 + 3;
+                            if (rank1 !== 0 && rank2 !== 0) {
+                                rankG += 1;
+                            }
+                        }
+                        inputC2.push([alphadef, betadef, gammadef, type, 'G', rankG, [alpha, beta, gamma]])
+                    }
+                    if (alpha + 2 * beta >= 0 && alpha - 2 * beta >= 0) {
+                        const rank1 = searchForFraction(alpha + 2 * beta, 2 * gamma);
+                        const rank2 = searchForFraction(alpha - 2 * beta, 4 * gamma);
+                        if (rank1 !== undefined && rank2 !== undefined) {
+                            rankH = rank1 + rank2 + 3;
+                            if (rank1 !== 0 && rank2 !== 0) {
+                                rankH += 1;
+                            }
+                        }
+                        inputC2.push([alphadef, betadef, gammadef, type, 'H', rankH, [alpha, beta, gamma]])
+                    }
+                    if (alpha + 2 * beta >= 0 && alpha - beta >= 0) {
+                        const rank1 = searchForFraction(alpha + 2 * beta, 3 * gamma);
+                        const rank2 = searchForFraction(alpha - beta, 3 * gamma);
+                        if (rank1 !== undefined && rank2 !== undefined) {
+                            rankI = rank1 + rank2 + 3;
+                            if (rank1 !== 0 && rank2 !== 0) {
+                                rankI += 1;
+                            }
+                        }
+                        inputC2.push([alphadef, betadef, gammadef, type, 'I', rankI, [alpha, beta, gamma]])
+                    }
+                    if (-alpha + 2 * beta >= 0 && alpha - beta >= 0) {
+                        const rank1 = searchForFraction(-alpha + 2 * beta, gamma);
+                        const rank2 = searchForFraction(2 * alpha - 2 * beta, gamma);
+                        if (rank1 !== undefined && rank2 !== undefined) {
+                            rankJ = rank1 + rank2 + 3;
+                            if (rank1 !== 0 && rank2 !== 0) {
+                                rankJ += 2;
+                            }
+                        }
+                        inputC2.push([alphadef, betadef, gammadef, type, 'J', rankJ, [alpha, beta, gamma]])
+                    }
+                }
+                //function isReasonable (element) {
+                //    return ((summup (element[0], element[1], element[2]) < (defaultValue2 ** -1)) && (summup (element[0], element[1], element[2]) > ((1 - defaultValue2) ** -1)))
+                //}
+        //
+                //inputC2 = inputC2.filter(isReasonable);
+        //
+                inputC2.sort((a, b) => {
+                    if (a === undefined || b === undefined) return Infinity;
+                    return (a[5] || 0) - (b[5] || 0);
+                });
+    
+                globalC2 = inputC2;
+    
+                let startTester = new paper.Point(0,0);
+                let finishTester = new paper.Point(1,1);
+    
+                if (localxory === 'Y') {
+                    startTester.y = summup(a, b, c) ** -1;
+                    finishTester.y = summup(a, b, c) ** -1;
+                } else {
+                    startTester.x = summup(a, b, c) ** -1;
+                    finishTester.x = summup(a, b, c) ** -1;
+                }
+    
+                globalVi = [[0,0], [0,1], [1,1], [1,0], [startTester.x, startTester.y], [finishTester.x, finishTester.y]];
+    
+                console.log(globalVi)
+    
+                console.log(globalC2)
+    
+                globalEvi = [[0,1],[1,2],[2,3],[0,3],[4,5]]
+    
+                globalEAi = ['B', 'B', 'B', 'B', 'M']
+    
+                drawEverything();
+                updateDisplay();
+            } else alert ("Either choose a less convoluted value or increase the maximum allowable denominator.")
+        } else alert ("Either choose a larger value, or decrease the minimum allowable distance from the edge.")
+    } else alert("ax + bx√2 and ay + by√2 must both be greater than zero.")
+}
+
 // Function to reset other variables to default values
 function resetOtherVars() {
     defaultValue1 = 32; // Reset to default value
@@ -78,6 +322,12 @@ function resetOtherVars() {
     document.getElementById("value2Modal").value = 0.1;
     document.getElementById("constructibleToggle").value = false;
     document.getElementById("constructibleToggle").checked = false;
+    document.getElementById("inputAX").value = 0;
+    document.getElementById("inputBX").value = 0;
+    document.getElementById("inputCX").value = 1;
+    document.getElementById("inputAY").value = 0;
+    document.getElementById("inputBY").value = 0;
+    document.getElementById("inputCY").value = 1;
     updateDisplay(); // Update the display to reflect the new values
 }
 
@@ -112,7 +362,7 @@ function updateInfoText() {
         Reference ${window.variable}: ${xory2} = (${inversed[0]} + ${inversed[1]}√2) / ${inversed[2]} ≈ ${value.toFixed(3)}.
         Approximate rank: ${reference[5]}.`;
     } else {
-        fileStatus.textContent = "Upload a file to begin.";
+        fileStatus.textContent = "Upload a file to begin, or input a, b, and c corresponding to a reference y = (a + b√2) / c.";
     }
 }
 
@@ -164,6 +414,8 @@ function updateValues() {
             processFile(event);  // Call processFile with the file content
         };
         fileReader.readAsText(fileInput);
+    } else if (inputAX.value !== 0 || inputBX.value !== 0 || inputAY.value !== 0 || inputBY.value !== 0) {
+        abcRender();
     } else {
         alert("Please select a file before updating values.");
     };
@@ -203,7 +455,12 @@ function resizeCanvas() {
 
 window.addEventListener('load', resizeCanvas);
 window.addEventListener('resize', resizeCanvas);
-window.addEventListener('resize', drawEverything);
+window.addEventListener('resize', () => {
+    if (globalC2) {
+        drawEverything();
+    }
+});
+
 
 // Function to format the edges with coordinates and type
 function formatEdges(V, EV, EA) {
@@ -1589,7 +1846,7 @@ function processC2(C, eps) {
 
 //below is the maths stuff, which for now is working FINE don't mess with it.  The ranking equations will need to be updated.
 function summup(a,b,c) {
-    return (a + (b * Math.SQRT2)) / c
+    return ((a + (b * Math.SQRT2)) / c)
 }
 
 function normalize(a,b,c) {
