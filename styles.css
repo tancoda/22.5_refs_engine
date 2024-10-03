@@ -61,11 +61,6 @@ body {
     align-items: center; /* Vertically center items */
 }
 
-#abcImage {
-    height: 50px; /* Adjust to match the height of your input box */
-    margin-right: 10px; /* Space between the image and the inputs */
-}
-
 .inputGroup {
     display: flex;
     flex-direction: column;
@@ -78,7 +73,7 @@ body {
 }
 
 .inputGroup input {
-    width: 60px;
+    width: 35px;
 }
 
 #submitABC {
@@ -156,3 +151,13 @@ body {
     cursor: pointer;
 }
 
+#buttonBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+#buttonBar button {
+    flex: 1;
+}

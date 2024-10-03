@@ -3,40 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Refsinator</title>
-    <!-- Include Paper.js -->
+    <title>22.5° Refs Engine</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js"></script>
     <script type="module" src="src/main-newtwo.js"></script>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS file -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="title">22.5° Refsinator</div>
+    <div id="title">22.5° Refs Engine</div>
 
     <div id="description">
-        Input a 22.5° Crease Pattern as a .FOLD file. Refsinator will provide a sequence of folds to exactly develop a reference line, shown in green. 
-        Use the + and - buttons at the bottom of the screen to scroll through multiple options. The options are approximately ordered by number of creases required.
-        Note that in many cases, not all the creases shown must be folded, and oftentimes pinch-folds are sufficient.
+        Input a 22.5° Crease Pattern as a .FOLD file. The engine will provide a sequence of folds to exactly develop a reference line, shown in green. 
+        Use the + and - buttons at the bottom of the screen to scroll through multiple options (ordered approximately by number of creases required), or select one directly on the crease pattern.
+        Alternatively, input the a, b, and c values corresponding to a particular reference.  In many cases, not all the creases shown must be folded, and oftentimes pinch-folds are sufficient.
     </div>
 
-    <!-- Settings button -->
-    <button id="settingsButton">Settings</button>
+    <div id="buttonBar">
+        <button id="infoButton">Info</button>
+        <button id="helpButton">Help</button>
+        <button id="settingsButton">Settings</button>
+    </div>
+    
 
     <div id="fileStatus" style=>No file loaded</div>
 
     <div id="inputContainer">
         <input type="file" id="fileInput" />        
-        <img src="images\Screenshot 2024-09-28 012138.png" alt="abc relative to square" id="abcImage" style="height: 130px; margin-right: 10px;"> <!-- Adjust height as needed -->
         <div id="abcInputsBox">
             <div class="inputGroup">
                 <label for="inputAX">( a<sub>x</sub> +</label>
                 <input type="number" id="inputAX" placeholder="aₓ" step="1" value="0">
             </div>
             <div class="inputGroup">
-                <label for="inputBX">b<sub>x</sub>√2 ) /</label>
+                <label for="inputBX">b<sub>x</sub>√2 ) </label>
                 <input type="number" id="inputBX" placeholder="bₓ" step="1" value="0">
             </div>
             <div class="inputGroup">
-                <label for="inputCX">c<sub>x</sub></label>
+                <label for="inputCX">/ c<sub>x</sub></label>
                 <input type="number" id="inputCX" placeholder="cₓ" step="1" value="1">
             </div>
             <div class="inputGroup">
@@ -44,11 +46,11 @@
                 <input type="number" id="inputAY" placeholder="aᵧ" step="1" value="0">
             </div>
             <div class="inputGroup">
-                <label for="inputBY">b<sub>y</sub>√2 ) /</label>
+                <label for="inputBY">b<sub>y</sub>√2 ) </label>
                 <input type="number" id="inputBY" placeholder="bᵧ" step="1" value="0">
             </div>
             <div class="inputGroup">
-                <label for="inputCY">c<sub>y</sub></label>
+                <label for="inputCY">/ c<sub>y</sub></label>
                 <input type="number" id="inputCY" placeholder="cᵧ" step="1" value="1">
             </div>
         </div>
@@ -63,24 +65,72 @@
         <button id="increaseButton">+</button>
     </div>
 
-    <!-- Modal (Popup) for Settings -->
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Settings</h2>
             <div class="inputRow">
-                <label for="value1Modal">Avoid fractions having a denominator greater than:</label>
+                <label for="value1Modal"><b>Avoid fractions having a denominator greater than:</b></label>
                 <input type="number" id="value1Modal" step="1" min="1" value="32">
+                <br>
+                The engine makes use of binary fractions to solve the crease pattern.  This sets the maximum denominator of these fractions.
             </div>
+            <br>
             <div class="inputRow">
-                <label for="value2Modal">Avoid refs within this distance of the edge (edge length = 1):</label>
+                <label for="value2Modal"><b>Avoid refs within this distance of the edge (edge length = 1):</b></label>
                 <input type="number" id="value2Modal" step = "0.01" min="0" max="0.5" value="0.1">
+                <br> Since it is difficult in practice to fold reference lines particularly close to the edge, 
+                this setting allows you to exclude references within a certain distance of the edge.  
             </div>
+            <br>
             <div class="inputRow">
-                <label for="constructibleToggle">Filter for immediately constructible lines:</label>
-                <input type="checkbox" id="constructibleToggle" value="false">
+                <label for="constructibleToggle"><b>Filter for immediately constructible lines:</b></label>
+                <input type="checkbox" id="constructibleToggle" value="true">
+                <br> This setting restricts the available reference lines to those having at least one vertex laying either on the 
+                edges of the square or the easy-to-fold 22.5° aux lines.  These vertices are shown in blue on the crease pattern.
             </div>
+            <br>
             <button id="saveSettingsButton">Save Settings</button>
+        </div>
+    </div>
+
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Help</h2>
+            <b>From crease pattern: </b> <br>
+            Upload a 22.5° crease pattern as a .FOLD file.  The crease pattern will be rendered
+            on the left side of the screen.  The engine will analyze all the vertices within the crease
+            pattern and sort them approximately (the ranking system needs some work) by difficulty.  The first-ranked
+            reference will be highlighted in green on the crease pattern, and the steps to develop it will be displayed
+            on the right side of the screen.  To move through the list of references in order of difficulty, use the
+            + and - buttons at the bottom of the screen.  <br>Alternatively, select direcly on the crease pattern
+            which line you would like to solve. <br><br>
+            <b>From a, b, c: </b> <br>
+            The right side of the header has a field for input of custom a, b, c values.  
+            The values correspond to a pair of sums, having the form (a+b√2)/c.  In the image below,
+            (a<sub>x</sub>+b<sub>x</sub>√2)/c<sub>x</sub> is shown in red, and (a<sub>y</sub>+b<sub>y</sub>√2)/c<sub>y</sub> in green.
+            The larger value is scaled to the side-length of the square, making the reference to be found the ratio of the smaller value to the larger.
+            <br>
+            <img src="images\Screenshot 2024-09-28 012138.png" alt="abc relative to square" id="abcImage" style="height: 130px; margin-right: 10px;">
+            <br><br>
+            <b>Interpreting the steps: </b> <br>
+            Unless the desired reference is simply a binary fraction of the edge length, the first step will involve folding a few 22.5° lines as foundation for
+            the following steps.  Those creases not laying at 22.5° degrees (the "Kamiya reference") are constructed by making a crease through a pair of existing points.
+            In certain cases there are creases which appear to follow neither of these conventions - they lay perpendicular to an existing line.  
+            <br>In the following steps, black dots indicate important landmarks used to construct creases.  Binary fractions are also used.  The fraction itself
+            is printed, the line along which the fraction is taken is highlighted.  The crease emanating from the fraction lays perpendicular to the highlighted line.
+        </div>
+    </div>
+    
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Info</h2>
+            This program was developed by Travis Nolan (@tankoda on <a href="https://www.instagram.com/tankoda/">Instagram</a>), stemming from a talk he gave at OSME 8 in Melbourne (2024).  A recording of the talk is available 
+            <a href="https://youtu.be/O3LPRcx3y1E?si=2ZxFhs29pyXTkHwo">here</a>, and the paper itself will be available when the proceedings of OSME 8 are published.
+            The talk may give insight into the math behind the application, although the project has developed considerably since the talk was given.
+            <br><br>Special thanks to the following amazing people:
         </div>
     </div>
 
@@ -119,34 +169,54 @@
 
         // Modal (popup) functionality
         const settingsButton = document.getElementById("settingsButton");
-        const modal = document.getElementById("settingsModal");
-        const closeModal = document.querySelector(".close");
+        const helpButton = document.getElementById("helpButton");
+        const infoButton = document.getElementById("infoButton");
 
-        // Open the modal
+        const settingsModal = document.getElementById("settingsModal");
+        const helpModal = document.getElementById("helpModal");
+        const infoModal = document.getElementById("infoModal");
+
+        const closeButtons = document.querySelectorAll(".close");
+
+        // Open the corresponding modal
         settingsButton.onclick = function() {
-            modal.style.display = "block";
+            settingsModal.style.display = "block";
+        };
+        helpButton.onclick = function() {
+            helpModal.style.display = "block";
+        };
+        infoButton.onclick = function() {
+            infoModal.style.display = "block";
         };
 
-        // Close the modal
-        closeModal.onclick = function() {
-            modal.style.display = "none";
-        };
+        // Close the modal when clicking the close button
+        closeButtons.forEach(button => {
+            button.onclick = function() {
+                button.parentElement.parentElement.style.display = "none";
+            };
+        });
 
-        // Save settings from the modal
+        // Save settings from the settings modal
         const saveSettingsButton = document.getElementById("saveSettingsButton");
         saveSettingsButton.onclick = function() {
             const denominatorLimit = document.getElementById("value1Modal").value;
             const edgeDistance = document.getElementById("value2Modal").value;
             const constructible = document.getElementById("constructibleToggle").checked;
 
-            // Close the modal
-            modal.style.display = "none";
+            // Close the settings modal
+            settingsModal.style.display = "none";
         };
 
         // Close modal when clicking outside of it
         window.onclick = function(event) {
-            if (event.target === modal) {
-                modal.style.display = "none";
+            if (event.target === settingsModal) {
+                settingsModal.style.display = "none";
+            }
+            if (event.target === helpModal) {
+                helpModal.style.display = "none";
+            }
+            if (event.target === infoModal) {
+                infoModal.style.display = "none";
             }
         };
     </script>

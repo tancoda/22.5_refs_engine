@@ -187,11 +187,11 @@ function abcRender () {
 function resetOtherVars() {
     defaultValue1 = 32; // Reset to default value
     defaultValue2 = 0.1; // Reset to default value
-    defaultConstructible = false; // Reset to default value
+    defaultConstructible = true; // Reset to default value
     document.getElementById("value1Modal").value = 32;
     document.getElementById("value2Modal").value = 0.1;
     document.getElementById("constructibleToggle").value = false;
-    document.getElementById("constructibleToggle").checked = false;
+    document.getElementById("constructibleToggle").checked = true;
     document.getElementById("inputAX").value = 0;
     document.getElementById("inputBX").value = 0;
     document.getElementById("inputCX").value = 1;
@@ -243,6 +243,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // Event listeners for increase and decrease buttons
     document.getElementById('decreaseButton').addEventListener('click', () => {
         window.variable--;
+        xorycommand = '';
         setWindowVariable(window.variable);
         updateDisplay();
         drawEverything();
@@ -250,6 +251,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('increaseButton').addEventListener('click', () => {
         window.variable++;
+        xorycommand = '';
         setWindowVariable(window.variable);
         updateDisplay();
         drawEverything();
@@ -300,7 +302,7 @@ const constructible=    document.getElementById("constructibleToggle");
 
 let defaultValue1 = 32;
 let defaultValue2 = 0.1;
-let defaultConstructible = false;
+let defaultConstructible = true;
 
 // Set default values to inputs
 value1Input.value = defaultValue1;
@@ -433,30 +435,121 @@ function drawEverything() {
 
 let cPScale, cPOffsetX, cPOffSetY;
 
+function draw (a, b, c, name, meth, val, elev) {
+    let sloped = sloper(elev[0], elev[1], elev[2], meth);
+
+    let a1 = sloped[0][0], b1 = sloped[0][1], a2 = sloped[0][2], b2 = sloped[0][3];
+
+    let w1 = sloped[1][0], w2 = sloped[1][1];
+    let h1 = 1, h2 = 1;
+
+    let typeA = (findRank(a1, b1)).type;
+    let typeB = (findRank(a2, b2)).type;
+
+    let aFinal = a, bFinal = b, cFinal = c;
+
+    const elevationFinal = inverse(aFinal, bFinal, cFinal);
+    const elevationFinalCoord = summup(elevationFinal[0], elevationFinal[1], elevationFinal[2])
+
+    searchVi(globalVi, elevationFinalCoord, 10 ** -8, cPScale, cPOffsetX, cPOffSetY);
+
+    let lineArr = [];
+
+    globalC2.forEach(element => {
+        let elementA = element[0], elementB = element[1], elementC = element[2];
+        let searchValueABC = inverse(elementA, elementB, elementC);
+        let searchValue = summup(searchValueABC[0], searchValueABC[1], searchValueABC[2]);
+
+        for (let i = 0; i < globalVi.length; i++) {
+            const [x, y] = globalVi[i];
+
+            // Check for y value with tolerance
+            if (Math.abs(y - searchValue) < tolerance) {
+                lineArr.push([new paper.Point(cPOffsetX, (searchValue * cPScale) + cPOffSetY), 
+                    new paper.Point(cPScale + cPOffsetX, (searchValue * cPScale) + cPOffSetY)])
+            }
+
+            // Check for x value with tolerance
+            if (Math.abs(x - searchValue) < tolerance) {
+                lineArr.push([new paper.Point((searchValue * cPScale) + cPOffsetX, cPOffSetY), 
+                    new paper.Point((searchValue * cPScale) + cPOffsetX, cPScale + cPOffSetY)])
+            }
+        }
+    })
+
+    lineArr = uniq_fast(lineArr);
+
+    console.log(lineArr);
+    
+    lineArr.forEach(element => {
+        var magicLine = new paper.Path.Line(element[0], element[1]);
+        magicLine.strokeColor = 'green';
+        magicLine.strokeWidth = 2;
+        magicLine.opacity = 0.1;
+        magicLine.onMouseEnter = function(event) {magicLine.opacity = 1};
+        magicLine.onMouseLeave = function(event) {magicLine.opacity = 0.1};
+        let localxorycommand;
+
+        let c2index;
+
+        for (let i = 0; i < globalC2.length; i++) {
+            let sum = summup(globalC2[i][0], globalC2[i][1], globalC2[i][2]);
+            let goal = sum ** -1;
+            //console.log(goal);
+
+            const s = element[0];
+            let reverseSearchVal;
+            if ((s.x - cPOffsetX)/cPScale === 0 || (s.x - cPOffsetX)/cPScale === 1) {
+                reverseSearchVal = (s.y - cPOffSetY)/cPScale;
+                localxorycommand = 'X'
+            } else {
+                reverseSearchVal = (s.x - cPOffsetX)/cPScale;
+                localxorycommand = 'Y'
+            }
+            //console.log(reverseSearchVal);
+    
+            if (tolerantSame(reverseSearchVal, goal)) {
+                c2index = i;
+                break;
+            }
+        }
+
+        magicLine.onClick = function(event) {
+            setWindowVariable(c2index + 1);
+            xorycommand = localxorycommand;
+            updateDisplay();
+            drawEverything();
+        };
+    });
+    
+    rotate = 0;
+    if (xory === 'Y') {rotate -= 90};
+    if (name.includes('neg')) {rotate += 180};
+    console.log(rotate);
+
+    scrawler(a1, b1, w1, h1, typeA, a2, b2, w2, h2, typeB);
+}
+
+let xorycommand = '';
+
+//pulled from a stackoverflow https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
+function uniq_fast(a) {
+    var seen = {};
+    var out = [];
+    var len = a.length;
+    var j = 0;
+    for(var i = 0; i < len; i++) {
+         var item = a[i];
+         if(seen[item] !== 1) {
+               seen[item] = 1;
+               out[j++] = item;
+         }
+    }
+    return out;
+}
+
 function isPowerTwo(x) {
     return (Math.log(x) / Math.log(2)) % 1 === 0;
-}
-
-//reduces n and d by their gcd
-function simplify(n, d) {
-    if (n !== 0 && d !== 0) {
-        const gcdND = gcd(n, d);
-        n /= gcdND;
-        d /= gcdND;
-    } else if (n === 0) {
-        d = 1;
-    } else {
-        n = 1;
-    }
-    return [n, d];
-}
-
-//a pair of numbers are scaled so that the larger equals one, but proportionality is maintained
-function scaler(n, d) {
-    const maxND = Math.max(n, d);
-    n /= maxND;
-    d /= maxND;
-    return [n, d];
 }
 
 // line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
@@ -489,954 +582,11 @@ function intersect(x1, y1, x2, y2, x3, y3, x4, y4) {
     return new paper.Point(x,y);
 }
 
-function revampAgain (a, b, w, h, type, meth, time, scaleX, scaleY, rotate, translate) {
-    //corners of square
-    var usbl = new paper.Point(0, 0);
-
-    let scale = Math.max(Math.abs(scaleX), Math.abs(scaleY));
-    
-    [w, h] = scaler(w, h);
-    let [ascale, bscale] = scaler(a, b);
-    [a, b] = simplify(a, b);
-
-    //corners of block
-    var bbl = usbl.clone();
-    var bbr = new paper.Point(w, 0);
-    var btr = new paper.Point(w, h);
-    var btl = new paper.Point(0, h);
-
-    let timeColor = time === 1 ? 'red' : 'black';
-    var creaseStyle = {
-        strokeColor: timeColor,
-        strokeWidth: 1,
-    } 
-
-    var cstart = usbl;
-    var cblock = new paper.Point(ascale * w, bscale * h);
-    var csquare = new paper.Point(a * w, b * h);
-    [csquare.x, csquare.y] = scaler(csquare.x, csquare.y);
-    var crease = new paper.Path(cstart, csquare);
-    crease.style = creaseStyle;
-
-    function dot(point) {
-        return new paper.Path.Circle({
-            center: point,
-            radius: dotsize,
-            fillColor: 'black',
-            visible: (time === 1)
-        });
-    }
-
-    const fontSize = 12 / scale;
-
-    function highLighter (from,to) {
-        var fromDot = dot(from);
-        var toDot = dot(to);
-        var line = new paper.Path.Line({
-            from: from,
-            to: to,
-            strokeColor: 'black',
-            strokeWidth: 1,
-            shadowBlur: 4,
-            shadowColor: 'yellow',
-            visible: (time === 1)
-        })
-        let highLightLine = new paper.Group(fromDot, toDot, line);
-        return highLightLine;
-    }
-
-    const border = new paper.Path.Rectangle({
-            from: new paper.Point(0,0),
-            to: new paper.Point(1,1),
-            strokeColor: 'black',
-            strokeWidth: 1,
-    });
-
-    //powTwo
-    
-    let tall = false, wide = false, square = false;
-    if (w > h) {wide = true;}
-    if (w === h) {square = true;}
-    if (w < h) {tall = true;}   
-
-    let powTwoHighLight, powTwoDot, powTwoDotPt, powTwoLabelText, powTwoBlockDot, powTwoTextPt;
-    let powTwoTextJust = 'center';
-
-    if (isPowerTwo(Math.max(a,b))) {
-        if (square) {
-            powTwoDotPt = csquare;
-            powTwoDot = dot(csquare);
-            powTwoLabelText = `${Math.min(a,b)}/${Math.max(a,b)}`;
-            powTwoTextPt = csquare.clone();
-            if (a < b) {
-                powTwoHighLight = highLighter(btl, btr);
-                powTwoTextPt.y += fontSize;
-            } else if (a > b) {
-                powTwoHighLight = highLighter(btr, bbr);
-                powTwoTextJust = 'left'
-            } else {
-                powTwoTextPt.y += fontSize;
-            }
-        } else {
-            powTwoBlockDot = dot(btr);
-            if (a < b) {
-                powTwoHighLight = highLighter(btl,btr);
-                powTwoDotPt = new paper.Point(w*a/b, h);
-                powTwoLabelText = `${a}/${b}`;
-                powTwoTextPt = powTwoDotPt.clone();
-                powTwoTextPt.y += fontSize;
-            } else if (b < a) {
-                powTwoHighLight = highLighter(btr,bbr);
-                powTwoDotPt = new paper.Point(w,h*b/a);
-                powTwoLabelText = `${b}/${a}`;
-                powTwoTextPt = powTwoDotPt.clone();
-                powTwoTextJust = 'left';
-            }
-            powTwoDot = dot(powTwoDotPt);
-        }
-        if (a === b) {powTwoLabelText = ''};
-    }
-
-    var powTwoLabel = new paper.PointText({
-        point: powTwoTextPt,
-        content: powTwoLabelText,
-        fontSize: fontSize,
-        fillColor: 'black',
-        justification: powTwoTextJust
-    })
-
-    let creasePowTwo = crease.clone();
-
-    var validPowTwoItems = [creasePowTwo, powTwoHighLight, powTwoLabel, powTwoDot, powTwoBlockDot]
-    .filter(item => item instanceof paper.Item); // Only keep valid Paper.js items
-
-    var powTwoGroup = new paper.Group(validPowTwoItems);
-    powTwoGroup.visible = false;
-    
-    //general
-    
-    const smallestPowTwo = 2 ** Math.ceil(Math.log2(Math.max(a, b)));
-
-    const vertX = w*a/smallestPowTwo;
-    const horiY = h*b/smallestPowTwo;
-
-    var genInt = new paper.Point(vertX, horiY);
-    var genIntPt = dot(genInt);
-
-    let vertY = 0;
-    let horiX = 0;
-    let vertTexY = vertY;
-    
-    let horiJust = 'right';
-    let vertJust = 'center';
-    
-    let horiHighLightStart = new paper.Point(0,0);
-    let vertHighLightStart = new paper.Point(0,0);
-    let horiHighLightFinish = new paper.Point(w,0);
-    let vertHighLightFinish = new paper.Point(0,h);
-
-    let horiNear = false;
-    let horiFar = false;
-    let vertNear = false;
-    let vertFar = false;
-
-    if (isOne(w, h)) {
-        if (a <= smallestPowTwo/2) {
-            horiNear = true;
-        } else if (wide || square) {
-            horiFar = true;
-        }
-        if (b <= smallestPowTwo/2) {
-            vertNear = true;
-        } else if (tall || square) {
-            vertFar = true;
-        }
-    } else if (isRtTwoMinusOne(w, h) || isTwoMinusRtTwo(w, h)) {
-        horiNear = true;
-        vertFar = true;
-    } else if (isOnePlusHalfRtTwo(w, h) || isRtTwoPlusOne(w, h)) {
-        vertNear = true;
-        horiFar = true;
-    } 
-
-    if (horiFar) {
-        horiX = 1;
-        horiJust = 'left';
-        vertHighLightStart.x = 1;
-        vertHighLightFinish.x = 1;
-    } else {
-        horiX = 0;
-    }
-
-    if (vertFar) {
-        vertY = 1;
-        vertTexY = 1;
-        vertTexY += fontSize;
-        horiHighLightStart.y = 1;
-        horiHighLightFinish.y = 1;
-    } else {
-        vertY = 0;
-        vertTexY -= fontSize;
-    }
-
-    let generalA = a;
-    let generalB = b;
-    let generalADenom = smallestPowTwo;
-    let generalBDenom = smallestPowTwo;
-    
-    [generalA, generalADenom] = simplify(generalA, generalADenom);
-    [generalB, generalBDenom] = simplify(generalB, generalBDenom);
-    let vertTextLabel = `${generalA}/${generalADenom}`;
-    let horiTextLabel = `${generalB}/${generalBDenom}`;
-
-    var vertStart = new paper.Point(vertX, vertY);
-    var horiStart = new paper.Point(horiX, horiY);
-    
-    var vertLine = new paper.Path(vertStart, genInt);
-    vertLine.style = creaseStyle;
-    var horiLine = new paper.Path(horiStart, genInt);
-    horiLine.style = creaseStyle;
-    let vertDot = dot(vertStart);
-    let horiDot = dot(horiStart);
-    let vertHighLight = highLighter(vertHighLightStart, vertHighLightFinish);
-    let horiHighLight = highLighter(horiHighLightStart, horiHighLightFinish);
-
-    let horiText = new paper.PointText({
-        point: new paper.Point(horiX, horiY),
-        content: horiTextLabel,
-        fillColor: 'black',
-        fontSize: fontSize,
-        justification: horiJust
-    })
-
-    let vertText = new paper.PointText({
-        point: new paper.Point(vertX, vertTexY),
-        content: vertTextLabel,
-        fillColor: 'black',
-        fontSize: fontSize,
-        justification: vertJust
-    })
-
-    let creaseGen = crease.clone();
-
-    var validGenItems = [creaseGen, vertHighLight, horiHighLight, vertDot, horiDot, vertLine, horiLine, genIntPt, vertText, horiText]
-    .filter(item => item instanceof paper.Item); // Only keep valid Paper.js items
-
-    var genGroup = new paper.Group(validGenItems);
-    genGroup.visible = false;
-
-    //diags
-    
-    var diagStart = btl.clone();
-    var diagFinish = bbr.clone();
-    let diagNumA = a, diagNumB = b, diagDenom = Math.max(a,b);
-    let diagLabelPt = bbl.clone();
-    let diagLabelText = '';
-
-    let diagLabelSide;
-    let parallelLabelSide;
-
-    //returns relevant diagStart/Finish, diagDenom, diagLabelPt, diagLabelText
-    if (type.includes('diag')) {
-        let typeFixed = type;
-        if (a>b) {
-            switch(type) {
-                case 'diagA':
-                    break;
-                case 'diagB':
-                    typeFixed = 'diagC';
-                    break;
-                case 'diagC':
-                    typeFixed = 'diagB';
-                    break;
-                case 'diagD':
-                    typeFixed = 'diagE';
-                    break;
-                case 'diagE':
-                    typeFixed = 'diagD';
-                    break;
-                case 'diagF':
-                    typeFixed = 'diagG';
-                    break;
-                case 'diagG':
-                    typeFixed = 'diagF';
-                    break;
-                default:
-                    break;
-            }
-        }
-        switch(typeFixed) {
-            case 'diagA':
-                if (isPowerTwo(a + b)) {
-                    diagDenom = a+b;
-                } else throw new Error('diagA issue');
-                break;
-            case 'diagB':
-                if (isPowerTwo(a + 2*b)) {
-                    diagStart.y = h/2;
-                    diagDenom = a + 2*b;
-                    diagLabelPt.y = h/2;
-                    diagLabelText = '1/2';
-                    diagLabelSide = 'left';
-                } else throw new Error('diagB issue');            
-                break;
-            case 'diagC':
-                if (isPowerTwo(2*a + b)) {
-                    diagFinish.x = w/2;
-                    diagDenom = 2*a + b;
-                    diagLabelPt.x = w/2;
-                    diagLabelText = '1/2';
-                    diagLabelSide = 'bottom';
-                } else throw new Error('diagC issue');
-                break;
-            case 'diagD':
-                if (isPowerTwo(a + 4*b)) {
-                    diagStart.y = h/4;
-                    diagDenom = a + 4*b;
-                    diagLabelPt.y = h/4;
-                    diagLabelText = '1/4';
-                    diagLabelSide = 'left';
-                } else throw new Error('diagD issue');
-                break;
-            case 'diagE':
-                if (isPowerTwo(4*a + b)) {
-                    diagFinish.x = w/4;
-                    diagDenom = 4*a + b;
-                    diagLabelPt.x = w/4;
-                    diagLabelText = '1/4';
-                    diagLabelSide = 'bottom';
-                } else throw new Error('diagE issue');
-                break;
-            case 'diagF':
-                if (isPowerTwo(3*a + 4*b)) {
-                    diagStart.y = 3*h/4;
-                    diagDenom = 3*a + 4*b;
-                    diagLabelPt.y = 3*h/4;
-                    diagLabelText = '3/4';
-                    diagLabelSide = 'left';
-                } else throw new Error('diagF issue');
-                break;
-            case 'diagG':
-                if (isPowerTwo(4*a + 3*b)) {
-                    diagFinish.x = 3*w/4;
-                    diagDenom = 4*a + 3*b;
-                    diagLabelPt.x = 3*w/4;
-                    diagLabelText = '3/4';
-                    diagLabelSide = 'bottom';
-                } else throw new Error('diagG issue');
-                break;
-            default:
-                break;
-        }
-    }
-      
-    let diagInt = intersect(diagStart.x, diagStart.y, diagFinish.x, diagFinish.y, cstart.x, cstart.y, cblock.x, cblock.y);
-    let diagIntDot = dot(diagInt);
-    var parallelStart = bbl.clone();
-    let parallelText  = '';
-    var highLightX = highLighter(bbl,bbr);
-    var highLightY = highLighter(bbl,btl);
-    let diagDot = dot(diagLabelPt);
-    
-    [diagNumA, diagDenom] = simplify(diagNumA, diagDenom);
-    [diagNumB, diagDenom] = simplify(diagNumB, diagDenom);
-
-    let parallelLabelPt;
-    let parallelLabelJust = 'center';
-
-    if (diagFinish.x > diagStart.y){
-        parallelStart.x = diagInt.x;
-        parallelText = `${diagNumA}/${diagDenom}`;
-        parallelLabelPt = parallelStart.clone();
-        parallelLabelPt.y -= fontSize;
-    } else if (diagFinish.x < diagStart.y){
-        parallelStart.y = diagInt.y;
-        parallelText = `${diagNumB}/${diagDenom}`;
-        parallelLabelPt = parallelStart.clone();
-        parallelLabelJust = 'right';
-    } else if (diagFinish.x === diagStart.y) {
-        diagDot.visible = false;
-        if (a*w >= b*h) {
-            parallelStart.x = diagInt.x;
-            parallelText = `${diagNumA}/${diagDenom}`;
-            highLightY.visible = false;
-            parallelLabelPt = parallelStart.clone();
-            parallelLabelPt.y -= fontSize;
-        } else {
-            parallelStart.y = diagInt.y;
-            parallelText = `${diagNumB}/${diagDenom}`;
-            highLightX.visible = false;
-            parallelLabelPt = parallelStart.clone();
-            parallelLabelJust = 'right';
-        }
-    }
-    
-    let parallelDot = dot(parallelStart)
-    var parallelLine = new paper.Path(parallelStart, diagInt);
-    parallelLine.style = creaseStyle;
-
-    let diagJust;
-    if (diagLabelSide === 'left') {diagJust = 'right'} else {diagJust = 'center'};
-    if (diagLabelSide === 'bottom') {diagLabelPt.y -= fontSize};
-
-    var diagText = new paper.PointText({
-        point: diagLabelPt,
-        content: diagLabelText,
-        fillColor: 'black',
-        fontSize: fontSize,
-        justification: diagJust
-    })
-
-    var parallelTextObj = new paper.PointText({
-        point: parallelLabelPt,
-        content: parallelText,
-        fillColor: 'black',
-        fontSize: fontSize,
-        justification: parallelLabelJust
-    })
-
-    let diagLine = new paper.Path(diagStart, diagFinish);
-    diagLine.style = creaseStyle;
-    
-    let anotherDot;
-    if (w > h) {
-        anotherDot = dot(new paper.Point(0, h));
-    } else if (h > w) {
-        anotherDot = dot(new paper.Point(w, 0));
-    }
-    
-    let creaseDiag = crease.clone();
-
-    var validDiagItems = [creaseDiag, anotherDot, highLightX, highLightY, parallelLine, diagIntDot, diagLine, diagDot, parallelDot, parallelTextObj, diagText]
-    .filter(item => item instanceof paper.Item); // Only keep valid Paper.js items
-
-    var diagGroup = new paper.Group(validDiagItems);
-    diagGroup.visible = false;
-    
-    //processing, display:
-    function orient(group) {
-        group.pivot = new paper.Point(0.5,0.5)
-        group.scale(scaleX, scaleY);
-        group.rotate(rotate);
-        group.position = new paper.Point(translate[0], translate[1]);
-    }
-
-    function scaleTextIfNegative(textObj) {
-        if (scaleX < 0) {textObj.scale(-1, 1)};
-        if (scaleY < 0) {textObj.scale(1, -1)};
-        textObj.rotation = 0;
-        textObj.visible = (time === 1);
-    }
-
-    if (type === 'powTwo' && time >= 1) {
-        powTwoGroup.visible = true;
-        orient(powTwoGroup);
-        scaleTextIfNegative(powTwoLabel);
-        return powTwoGroup;
-    } else if (type.includes('diag') && time >= 1) {
-        diagGroup.visible = true;
-        orient(diagGroup);
-        scaleTextIfNegative(parallelTextObj);
-        scaleTextIfNegative(diagText);
-        return diagGroup;
-    } else if (time >= 1) {
-        genGroup.visible = true;
-        orient(genGroup);
-        scaleTextIfNegative(vertText);
-        scaleTextIfNegative(horiText);
-        return genGroup;
-    }
-}
-
-function sloper(a,b,c,type) {
-    let slopePair = [];
-    let blockInfo = [];
-    switch (type) {
-        case 'A':
-            slopePair = [a+b, c, b, c];
-            blockInfo = [1, Math.SQRT2 -1];
-            break;
-        case 'B':
-            slopePair = [a + 2*b, c, -b, c];
-            blockInfo = [1, 2 - Math.SQRT2];
-            break;
-        case 'C':
-            slopePair = [2*b, c, a - 2*b, c];
-            blockInfo = [1 + Math.SQRT2/2, 1];
-            break;
-        case 'D':
-            slopePair = [b, c, a - b, c];
-            blockInfo = [Math.SQRT2 + 1, 1];
-            break;
-        case 'E':
-            slopePair = [a + b, c, a + 2*b, c];
-            blockInfo = [2 - Math.SQRT2, Math.SQRT2 - 1];
-            break;
-        case 'F':
-            slopePair = [2 * (a + b), 3 * c, -a + 2 * b, 3 * c];
-            blockInfo = [1 + Math.SQRT2/2, Math.SQRT2 - 1];
-            break;
-        case 'G':
-            slopePair = [a + b, 2 * c, -a + b, 2 * c];
-            blockInfo = [Math.SQRT2 + 1, Math.SQRT2 - 1];
-            break;
-        case 'H':
-            slopePair = [a + 2*b, 2 * c, a - 2*b, 4 * c];
-            blockInfo = [1 + Math.SQRT2/2, 2 - Math.SQRT2];
-            break;
-        case 'I':
-            slopePair = [a + 2*b, 3 * c, a - b, 3 * c]
-            blockInfo = [Math.SQRT2 + 1, 2 - Math.SQRT2];
-            break;
-        case 'J':
-            slopePair = [-a + 2*b, c, 2*a - 2*b, c]
-            blockInfo = [Math.SQRT2 + 1, 1 + Math.SQRT2/2];
-            break;
-    }
-    return [slopePair, blockInfo];
-};
-
-function problem (a, b) {return ((findRank(a, b)).type === 'powTwo' || (findRank(a, b)).type.includes('diag'))};
-
 function isOne(w, h)                {return (Math.abs(w/h - 1) <                    10 ** -8)};
 function isRtTwoPlusOne(w, h)       {return (Math.abs(w/h - (Math.SQRT2 + 1)) <     10 ** -8)};
 function isRtTwoMinusOne(w, h)      {return (Math.abs(w/h - (Math.SQRT2 - 1)) <     10 ** -8)};
 function isOnePlusHalfRtTwo(w,h)    {return (Math.abs(w/h - (1 + Math.SQRT2/2)) <   10 ** -8)};
 function isTwoMinusRtTwo(w,h)       {return (Math.abs(w/h - (2 - Math.SQRT2)) <     10 ** -8)};
-
-// Function to draw rectangles based on the number of steps
-function draw(a, b, c, name, meth, val, elev) {
-
-    let sloped = sloper(elev[0], elev[1], elev[2], meth);
-
-    let a1 = sloped[0][0], b1 = sloped[0][1], a2 = sloped[0][2], b2 = sloped[0][3];
-
-    let w1 = sloped[1][0], w2 = sloped[1][1];
-    let h1 = 1, h2 = 1;
-
-    let zero1 = (a1 === 0 || b1 === 0 || a1 === -0 || b1 === -0);
-    let one1 = (a1/b1 === 1);
-    let zero2 = (a2 === 0 || b2 === 0 || a2 === -0 || b2 === -0);
-    let one2 = (a2/b2 === 1);
-
-    let typeA = (findRank(a1, b1)).type;
-    let typeB = (findRank(a2, b2)).type;
-
-    let numSteps;
-    if      (zero1 && w2/h2 === 1 && typeB === 'powTwo') {numSteps = 1}
-    else if (zero2 && w1/h1 === 1 && typeA === 'powTwo') {numSteps = 1}
-    else if ((zero1 && one2) || (one1 && zero2)) {numSteps = 2}
-    else if (one2 && one1) {numSteps = 2}
-    else if ((zero1 && !one2) || (zero2 && !one1)) {numSteps = 3}
-    else if ((one1 && !one2) || (one2 && !one1)) {numSteps = 3}
-    else if (!zero1 && !one1 && !zero2 && !one2) {numSteps = 4}
-
-    // Get the canvas size
-    const canvas = document.getElementById('myCanvas');
-    const canvasWidth = canvas.clientWidth;
-    const canvasHeight = canvas.clientHeight;
-
-    // Adjust the step size based on the canvas dimensions
-    const stepSize = Math.min(canvasHeight / 2, canvasWidth / 6) * 0.8;
-
-    const y1 = canvasHeight / 2 - canvasWidth / 12 - stepSize / 2;
-    const y2 = canvasHeight / 2 - stepSize / 2;
-    const y3 = canvasHeight / 2 + canvasWidth / 12 - stepSize / 2;
-
-    const x1 = 7 * canvasWidth / 12 - stepSize / 2;
-    const x2 = 2 * canvasWidth / 3 - stepSize / 2;
-    const x3 = 3 * canvasWidth / 4 - stepSize / 2;
-    const x4 = 5 * canvasWidth / 6 - stepSize / 2;
-    const x5 = 11 * canvasWidth / 12 - stepSize / 2;
-
-    const stepData = [
-        //[[x3, y2]], 
-        //[[x2, y2], [x4, y2]], 
-        //[[x1, y2], [x3, y2], [x5, y2]],
-        //[[x2, y1], [x4, y1], [x2, y3], [x4, y3]],
-        //[[x1, y1], [x3, y1], [x5, y1], [x2, y3], [x4, y3]],
-        [x1, y1], [x3, y1], [x5, y1], [x1, y3], [x3, y3], [x5, y3]
-    ];
-
-    let rotate = 0;
-
-    let aFinal = a, bFinal = b, cFinal = c;
-    let aInt = elev[0], bInt = elev[1], cInt = elev[2];
-
-    [aFinal, bFinal, cFinal] = normalize(aFinal, bFinal, cFinal);
-    [aInt, bInt, cInt] = normalize(aInt, bInt, cInt);
-
-    const elevationFinal = inverse(aFinal, bFinal, cFinal);
-    const elevationFinalCoord = summup(elevationFinal[0], elevationFinal[1], elevationFinal[2])
-    const elevInt = inverse(aInt, bInt, cInt);
-    const elevIntCoord = summup(elevInt[0], elevInt[1], elevInt[2]);
-
-    var dSLs = new paper.Point(0,0);
-    var dSLf = new paper.Point(1,1);
-
-    let targetElev = elevationFinalCoord;
-
-    searchVi(globalVi, elevationFinalCoord, 10 ** -8, cPScale, cPOffsetX, cPOffSetY);
-
-    updateInfoText();
-
-    if (xory === 'X') {
-        dSLs.x = (stepData[numSteps-1][0]);
-        dSLs.y = (stepData[numSteps-1][1]) + targetElev*stepSize;
-        dSLf.x = (stepData[numSteps-1][0] + stepSize);
-        dSLf.y = (stepData[numSteps-1][1]) + targetElev*stepSize;
-    } else {
-        dSLs.x = (stepData[numSteps-1][0] + targetElev*stepSize);
-        dSLs.y = (stepData[numSteps-1][1] );
-        dSLf.x = (stepData[numSteps-1][0] + targetElev*stepSize);
-        dSLf.y = (stepData[numSteps-1][1] + stepSize);
-    }
-
-    var desiredLine = new paper.Path.Line ({
-        from: dSLs,
-        to: dSLf,
-        strokeColor: 'red',
-        strokeWidth: 1
-    });
-
-    if (xory === 'Y') {rotate -= 90};
-    if (name.includes('neg')) {rotate += 180};
-
-    const screen = new paper.Group();
-
-    //console.log("numSteps: " + numSteps);
-
-    function borderFactory(numSteps) {
-        const border = new paper.Path.Rectangle({
-            from: new paper.Point(stepData[numSteps][0], stepData[numSteps][1]),
-            to: new paper.Point(stepData[numSteps][0] + stepSize, stepData[numSteps][1] + stepSize),
-            strokeColor: 'black',
-            strokeWidth: 1,
-        });
-        return border;
-    }
-
-    //console.log("stepsize: " + stepSize);
-
-    let numAfterSteps = numSteps;
-
-    if (name.includes("double") || name.includes("quadruple")) {
-        numAfterSteps += 1;
-    } else if (!(name.includes("default"))) {
-        numAfterSteps += 2;
-    };
-
-    dotsize = 2/stepSize;
-
-    if (numSteps === 1) {
-        let stepone;
-        if (zero2) {
-            stepone =       revampAgain(a1, b1, w1, h1, typeA, meth, 1, stepSize,  stepSize, rotate,   [stepData[0][0] + stepSize/2, stepData[0][1] + stepSize/2])
-        } else stepone = revampAgain(a2, b2, w2, h2, typeB, meth, 1, stepSize,  stepSize, rotate,   [stepData[0][0] + stepSize/2, stepData[0][1] + stepSize/2])
-        let border = borderFactory(0);
-        stepone._children[0].visible = false;
-        screen.addChild(stepone);
-        screen.addChild(border);
-    } else if (numSteps === 2) {
-        for (let i = 0; i < numAfterSteps; i++) {
-            const translate = stepData[i];
-            let border = borderFactory(i);
-            let stepone = stepOneRedo(w1, h1, w2, h2, [stepSize, stepSize], rotate, [stepData[i][0] + stepSize/2, stepData[i][1] + stepSize/2], i+1, a1, b1, a2, b2);
-            screen.addChild(border);
-            screen.addChild(stepone);
-        }
-    } else if (numSteps === 3) {
-        let c1sx, c1sy, c1fx, c1fy;
-        for (let i = 0; i < numAfterSteps; i++) {
-            const translate = stepData[i];
-            let border = borderFactory(i);
-            let stepone = stepOneRedo(w1, h1, w2, h2, [stepSize, stepSize], rotate, [stepData[i][0] + stepSize/2, stepData[i][1] + stepSize/2], i+1, a1, b1, a2, b2);
-            let stepTwo;
-            if (one2 || zero2) {
-                stepTwo = revampAgain(a1, b1, w1, h1, typeA, meth, i, stepSize,  stepSize, rotate, [stepData[i][0] + stepSize/2, stepData[i][1] + stepSize/2]);
-            } else {
-                stepTwo = revampAgain(a2, b2, w2, h2, typeB, meth, i, -stepSize,  stepSize, rotate, [stepData[i][0] + stepSize/2, stepData[i][1] + stepSize/2]);
-            }
-            screen.addChild(border);
-            screen.addChild(stepone);
-            screen.addChild(stepTwo);
-            if (stepTwo && stepTwo._children) {
-                let path = stepTwo._children[0];
-                let startPoint =    path.segments[0].point;  // Start point
-                let endPoint =      path.segments[path.segments.length - 1].point;  // End point
-                c1sx = startPoint.x;
-                c1sy = startPoint.y;
-                c1fx = endPoint.x;
-                c1fy = endPoint.y;
-            }
-        }
-        let ref3 = intersect(c1sx, c1sy, c1fx, c1fy, dSLs.x, dSLs.y, dSLf.x, dSLf.y);
-        if (ref3) {
-            let dotRef3 = new paper.Path.Circle({
-                center: ref3,
-                radius: 2,
-                fillColor: 'black',
-            });
-        } else {
-            let dotARef3 = new paper.Path.Circle({
-                center: dSLs,
-                radius: 2,
-                fillColor: 'black',
-            });
-            let dotBRef3 = new paper.Path.Circle({
-                center: dSLf,
-                radius: 2,
-                fillColor: 'black',
-            });
-        }
-    } else if (numSteps === 4) {
-        let c1sx, c1sy, c1fx, c1fy, c2sx, c2sy, c2fx, c2fy;
-        for (let i = 0; i < numAfterSteps; i++) {
-            const translate = stepData[i];
-            let border = borderFactory(i);
-            let stepone = stepOneRedo(w1, h1, w2, h2, [stepSize, stepSize], rotate, [stepData[i][0] + stepSize/2, stepData[i][1] + stepSize/2], i+1, a1, b1, a2, b2);
-            let stepTwo = revampAgain(a1, b1, w1, h1, typeA, meth, i, stepSize,  stepSize, rotate, [stepData[i][0] + stepSize/2, stepData[i][1] + stepSize/2]);
-            let stepThr = revampAgain(a2, b2, w2, h2, typeB, meth, i-1, -stepSize,  stepSize, rotate, [stepData[i][0] + stepSize/2, stepData[i][1] + stepSize/2]);
-            if (stepTwo && stepTwo._children) {
-                let path = stepTwo._children[0];
-                let startPoint =    path.segments[0].point;  // Start point
-                let endPoint =      path.segments[path.segments.length - 1].point;  // End point
-                c1sx = startPoint.x;
-                c1sy = startPoint.y;
-                c1fx = endPoint.x;
-                c1fy = endPoint.y;
-            }
-            if (stepThr && stepThr._children) {
-                let path = stepThr._children[0];
-                let startPoint = path.segments[0].point;
-                let endPoint =   path.segments[path.segments.length - 1].point;
-                c2sx = startPoint.x;
-                c2sy = startPoint.y;
-                c2fx = endPoint.x;
-                c2fy = endPoint.y;
-            }
-            screen.addChild(border);
-            screen.addChild(stepone);
-            screen.addChild(stepTwo);
-            screen.addChild(stepThr);
-            //encode the dot as an intersection!  bring the points home from creases
-        }
-        let ref4 = intersect(c1sx, c1sy, c1fx, c1fy, c2sx, c2sy, c2fx, c2fy);
-        if (ref4) {
-            let dotRef4 = new paper.Path.Circle({
-                center: ref4,
-                radius: 2,
-                fillColor: 'black',
-            });
-        }        
-    }
-}
-
-let dotsize;
-
-var bl = new paper.Point(0,0);
-var tl = new paper.Point(0,1);
-var tr = new paper.Point(1,1);
-var br = new paper.Point(1,0);
-var bo = new paper.Point(Math.SQRT2-1,0);
-var bt = new paper.Point(2-Math.SQRT2,0);
-var lo = new paper.Point(0,Math.SQRT2-1);
-var lt = new paper.Point(0,2-Math.SQRT2);
-var ro = new paper.Point(1,Math.SQRT2-1);
-var rt = new paper.Point(1,2-Math.SQRT2);
-var to = new paper.Point(Math.SQRT2-1,1);
-var tt = new paper.Point(2-Math.SQRT2,1);
-
-function stepOneRedo(w1, h1, w2, h2, scale, rotate, translate, time, a1, b1, a2, b2) {
-    
-    var ptOne = new paper.Point(0, 0);
-    var border = new paper.Path.Rectangle(ptOne, new paper.Point(1,1));
-
-    const tolerance = 10 ** -6;
-
-    let zero1 = (a1 === 0 || b1 === 0 || a1 === -0 || b1 === -0);
-    let one1 = (a1/b1 === 1);
-    let zero2 = (a2 === 0 || b2 === 0 || a2 === -0 || b2 === -0);
-    let one2 = (a2/b2 === 1);
-
-    var prelimGroup = new paper.Group(border);
-
-    function linePusher(arr) {
-        for (let i=0; i<arr.length; i++) {
-            var lineToBePushed = new paper.Path.Line(arr[i][0],arr[i][1]);
-            prelimGroup.addChild(lineToBePushed);
-        }
-    }
-
-    let scaleOneNumb = Math.max(Math.abs(scale[0]), Math.abs(scale[1]))
-
-    function dotStepOne(pt1, pt2, pt3, pt4) {
-        let intersection = (intersect(pt1.x, pt1.y, pt2.x, pt2.y, pt3.x, pt3.y, pt4.x, pt4.y))
-        let dot = new paper.Path.Circle({
-            center: intersection,
-            radius: 2/3 * dotsize,
-            fillColor: 'black',
-            visible: time === 2
-        });
-        prelimGroup.addChild(dot);
-    }
-
-    let pointBucket = [];
-    if (one1 && one2) {
-        if (isOne(w1, h1)) {
-            if (isRtTwoMinusOne(w2, h2)) {
-                pointBucket.push([bl,tr],[tl,br],[br,tt]);
-                dotStepOne(bl, tr, tt, br);
-                console.log("A, one & one");
-            } else if (isTwoMinusRtTwo(w2, h2)) {
-                pointBucket.push([bl,tr], [bl,to], [br,to]);
-                dotStepOne(bl, tr, to, br);
-                console.log("B, one & one");
-            }
-        } else if (isOne(w2, h2)) {
-            if (isOnePlusHalfRtTwo(w1, h1)) {
-                pointBucket.push([tl,br], [tl,rt], [bl,rt]);
-                dotStepOne(bl, rt, tl, br);
-                console.log("C, one & one");
-            } else if (isRtTwoPlusOne(w1, h1)) {
-                pointBucket.push([tl,br], [bl,ro], [bl,tr]);
-                dotStepOne(bl, ro, tl, br);
-                console.log("D, one & one");
-            }
-        } else if (isRtTwoPlusOne(w1, h1)) {
-            if (isRtTwoMinusOne(w2, h2)) {
-                pointBucket.push([bl,tr],[bl,ro],[tt,br]);
-                dotStepOne(bl, ro, tt, br);
-                console.log("G, one & one");
-            } else if (isTwoMinusRtTwo(w2, h2)) {
-                pointBucket.push([bl,tr], [bl,to],[bl,ro],[to,br]);
-                dotStepOne(bl, ro, to, br);
-                console.log("I, one & one");
-            } else if (isOnePlusHalfRtTwo(w2, h2)) {
-                pointBucket.push([tl,br], [tl,rt], [br,lo], [bl,rt]);
-                dotStepOne(br, lo, bl, rt);
-                console.log("J, one & one");
-            }
-        } else if (isOnePlusHalfRtTwo(w1, h1)) {
-            if (isRtTwoMinusOne(w2, h2)) {
-                pointBucket.push([tl,br],[tl,rt],[br,tt],[bl,rt]);
-                dotStepOne(bl, rt, br, tt);
-                console.log("F, one & one");
-            } else if (isTwoMinusRtTwo(w2, h2)) {
-                pointBucket.push([tl,br], [tl,rt], [bl,rt],[to,br]);
-                dotStepOne(bl, rt, to, br);
-                console.log("H, one & one");
-            }
-        }
-    } else if (zero1 || zero2) {
-        if (one1 || one2) {
-            if ((one1 && isRtTwoPlusOne(w1, h1)) || (one2 && isRtTwoPlusOne(w2, h2))) {
-                pointBucket.push([bl,tr],[bl,ro]);
-                console.log("zero & one(rt2+1)");
-            }
-            else if ((one1 && isOnePlusHalfRtTwo(w1, h1)) || (one2 && isOnePlusHalfRtTwo(w2, h2))) {
-                pointBucket.push([bl,tr],[tr,lt]);
-                console.log("zero & one(1+rt2/2)")
-            }
-        } else {
-            if ((zero2 && isRtTwoPlusOne(w1, h1)) || (zero1 && isRtTwoPlusOne(w2, h2))) {
-                pointBucket.push([tl,br], [lo,br], [lo,ro]);
-                console.log("standalone D");
-            } else if ((zero2 && isOnePlusHalfRtTwo(w1, h1)) || (zero1 && isOnePlusHalfRtTwo(w2, h2))) {
-                pointBucket.push([tl,br], [tl,rt], [lt,rt]);
-                console.log("standalone C");
-            } else if ((zero2 && isTwoMinusRtTwo(w1, h1)) || (zero1 && isTwoMinusRtTwo(w2, h2))) {
-                pointBucket.push([bl,tr], [bl,to], [to,bo]);
-                console.log("standalone B");
-            } else if ((zero2 && isRtTwoMinusOne(w1, h1)) || (zero1 && isRtTwoMinusOne(w2, h2))) {
-                pointBucket.push([bl,tr], [tr,bt], [tt,bt]);
-                console.log("standalone A");
-            }
-        }
-    } else {
-        if (isOne(w1, h1)) {
-            if (isRtTwoMinusOne(w2, h2)) {
-                pointBucket.push([tl, br], [br,tt]);
-                if (one1) {pointBucket.push([bl, tr])};
-                if (problem(a2, b2)) {pointBucket.push([tt, bt])};
-                console.log("A");
-            } else if (isTwoMinusRtTwo(w2, h2)) {
-                pointBucket.push([bl, tr], [bl, to]);
-                if (one2) {pointBucket.push([to, br])};
-                if (problem(a2, b2)) {pointBucket.push([to, bo])};
-                console.log("B");
-            }
-        } else if (isOne(w2, h2)) {
-            if (isOnePlusHalfRtTwo(w1, h1)) {
-                pointBucket.push([tl, br], [tl, rt]);
-                if (one1) {pointBucket.push([bl, rt])};
-                if (problem(a1, b1)) {pointBucket.push([rt, lt])};
-                console.log("C");
-            } else if (isRtTwoPlusOne(w1, h1)) {
-                pointBucket.push([bl,tr],[bl,ro])
-                if (one2) {pointBucket.push([tl,br])};
-                if (problem(a1, b1)) {pointBucket.push([lo,ro])}
-                console.log("D");
-            }
-        } else if (isTwoMinusRtTwo(w1, h1) && (isRtTwoMinusOne(w2, h2))) {
-            pointBucket.push([tl, br], [br, tt]);
-            if (one1) {pointBucket.push([bl,tt])};
-            if (problem(a1, b1) || problem(a2, b2)) {pointBucket.push([tt, bt])};
-            console.log("E");
-        } else if (isRtTwoPlusOne(w1, h1)) {
-            if (isRtTwoMinusOne(w2, h2)) {
-                if (!(problem(a1, b1) || problem(a2, b2))) {
-                    pointBucket.push([tl, br], [br, tt], [bl, ro]);
-                } else {
-                    pointBucket.push([tl,br], [br,tt], [tt,bt], [lo,ro]);
-                    if (one1) {pointBucket.push([bl, ro])};
-                }
-                console.log("G");                
-            } else if (isTwoMinusRtTwo(w2, h2)) {
-                pointBucket.push([bl,tr],[bl,to],[bl,ro]);
-                if (one2) {pointBucket.push([to,br])};
-                if (problem(a1, b1)) {pointBucket.push([lo,ro])};
-                if (problem(a2, b2)) {pointBucket.push([to,bo])};
-                console.log("I");
-            } else if (isOnePlusHalfRtTwo(w2, h2)) {
-                pointBucket.push([bl, tr], [bl, ro], [tr, lt]);
-                if (problem(a1, b1)) {pointBucket.push([lo, ro])};
-                if (problem(a2, b2)) {pointBucket.push([lt, rt])};
-                if (one2) {pointBucket.push([lt, br])};
-                console.log("J");
-            }
-        } else if (isOnePlusHalfRtTwo(w1, h1)) {
-            if (isRtTwoMinusOne(w2, h2)) {
-                if (problem(a1, b1) && problem(a2, b2)) {
-                    pointBucket.push([bl,tr],[tr,bt],[lt,rt],[tt,bt]);
-                    if (one2) {pointBucket.push([tt, br])};
-                } else if (problem(a1, b1) || problem (a2, b2)) {
-                    pointBucket.push([bl,tr],[tr,bt],[lt,rt],[tt,bt]);
-                }else {pointBucket.push([tl,br],[tl,rt],[tt,br])}
-                if (one1) {pointBucket.push([bl, rt])};
-                console.log("F");
-            } else if (isTwoMinusRtTwo(w2, h2)) {
-                pointBucket.push([tl,br],[tl,bo],[to,bo],[lt,rt]);
-                if (one1) {pointBucket.push([bl,rt])};
-                if (one2) {pointBucket.push([to,br])};
-                console.log("H");
-            }
-        }
-    }
-    
-    linePusher(pointBucket);
-
-    prelimGroup.pivot = new paper.Point(0.5,0.5)
-    prelimGroup.scale(scale[0], scale[1]);
-    prelimGroup.rotate(rotate);
-    prelimGroup.position = new paper.Point(translate[0], translate[1]);
-    prelimGroup.strokeWidth = 1;
-    if (time == 1) {prelimGroup.strokeColor = 'red'} else {prelimGroup.strokeColor = 'black'};
-    border.strokeColor = 'black'
-    prelimGroup.visible = true;
-    //console.log("scaleonenumb: " + scaleOneNumb);
-    //console.log(scale);
-}
 
 let elevX = null;
 let elevY = null;
@@ -1495,27 +645,27 @@ function searchVi(vi, searchValue, tolerance, scale, offsetX, offsetY) {
     }
 
     // Decide which line to draw based on counts
-    if (foundYval.length >= foundXval.length) {
+    if ((foundYval.length >= foundXval.length && !xorycommand) || xorycommand === 'X') {
         foundValues = foundYval;
         elevY = new paper.Path.Line(
             new paper.Point(scaleX(0), scaleY(searchValue)),
             new paper.Point(scaleX(1), scaleY(searchValue))
         );
         elevY.strokeColor = '#00ff00';
-        elevY.strokeWidth = 4;
+        elevY.strokeWidth = 2;
         elevY.shadowColor = 'black';
-        elevY.shadowBlur = 10;
+        elevY.shadowBlur = 5;
         xory = 'X';
-    } else if (foundXval.length > foundYval.length) {
+    } else if ((foundXval.length > foundYval.length && !xorycommand) || xorycommand === 'Y') {
         foundValues = foundXval;
         elevX = new paper.Path.Line(
             new paper.Point(scaleX(searchValue), scaleY(0)),
             new paper.Point(scaleX(searchValue), scaleY(1))
         );
         elevX.strokeColor = '#00ff00';
-        elevX.strokeWidth = 4;
+        elevX.strokeWidth = 2;
         elevX.shadowColor = 'black';
-        elevX.shadowBlur = 10;
+        elevX.shadowBlur = 5;
         xory = 'Y';
     }
 
@@ -1523,9 +673,16 @@ function searchVi(vi, searchValue, tolerance, scale, offsetX, offsetY) {
     for (let i = 0; i < foundValues.length; i++) {
         let circle = new paper.Path.Circle({
             center: [scaleX(foundValues[i][0]), scaleY(foundValues[i][1])],
-            radius: 4,
-            fillColor: 'green',
+            radius: 3,
+            fillColor: '#00ff00',
+            strokeColor: 'green'
         });
+
+        if (test(foundValues[i][0], foundValues[i][1]) && defaultConstructible) {
+            circle.fillColor = 'cyan';
+            circle.strokeColor = 'blue'
+        }
+
         circles.push(circle); // Add circle to the list
     }
 
@@ -1597,17 +754,6 @@ function V_2_C_VC(V, eps) {
     }
 
     if (defaultConstructible) {
-
-        function test (x,y) {
-            return (isOne(x, y) || isOne(x, 1-y) || 
-            (Math.abs(x) < 10 ** -8) || (Math.abs(x - 1) < 10 ** -8) || 
-            (Math.abs(y) < 10 ** -8) || (Math.abs(y - 1) < 10 ** -8) ||
-            isRtTwoPlusOne(x, y) || isRtTwoMinusOne(x, y) || 
-            isRtTwoPlusOne(1-x, y) || isRtTwoMinusOne(1-x, y) || 
-            isRtTwoPlusOne(x, 1-y) || isRtTwoMinusOne(x, 1-y) || 
-            isRtTwoPlusOne(1-x, 1-y) || isRtTwoMinusOne(1-x, 1-y))
-        } 
-
         function laysOnGrid(element) {
             const index = C.indexOf(element);
             let trutherBucket = [];
@@ -1631,6 +777,16 @@ function V_2_C_VC(V, eps) {
 
     return [C, VC];
 }
+
+function test (x,y) {
+    return (isOne(x, y) || isOne(x, 1-y) || 
+    (Math.abs(x) < 10 ** -8) || (Math.abs(x - 1) < 10 ** -8) || 
+    (Math.abs(y) < 10 ** -8) || (Math.abs(y - 1) < 10 ** -8) ||
+    isRtTwoPlusOne(x, y) || isRtTwoMinusOne(x, y) || 
+    isRtTwoPlusOne(1-x, y) || isRtTwoMinusOne(1-x, y) || 
+    isRtTwoPlusOne(x, 1-y) || isRtTwoMinusOne(x, 1-y) || 
+    isRtTwoPlusOne(1-x, 1-y) || isRtTwoMinusOne(1-x, 1-y))
+} 
 
 // Function to update the display or data structure
 function update(target, eps) {
@@ -2270,4 +1426,1378 @@ function alts(a, b, c) {
          value: minType.value, 
          elev: minType.elev
     };
+}
+
+//----------------------------------------------------------------------------------------------------------------
+
+var bl = new paper.Point(0,            0);
+var tl = new paper.Point(0,            1);
+var tr = new paper.Point(1,            1);
+var br = new paper.Point(1,            0);
+var bo = new paper.Point(Math.SQRT2-1, 0);
+var bt = new paper.Point(2-Math.SQRT2, 0);
+var lo = new paper.Point(0,            Math.SQRT2-1);
+var lt = new paper.Point(0,            2-Math.SQRT2);
+var ro = new paper.Point(1,            Math.SQRT2-1);
+var rt = new paper.Point(1,            2-Math.SQRT2);
+var to = new paper.Point(Math.SQRT2-1, 1);
+var tt = new paper.Point(2-Math.SQRT2, 1);
+
+let rotation1 = [bo, bt, br, ro, rt, tr, tt, to, tl, lt, lo, bl];
+
+let flip1 = [bt, br, ro, rt, tr, tt, bo, bl, lo, lt, tl, to];
+
+function findTransformation (point) {
+    let transArr = [];
+
+    console.log(point);
+ 
+    if (!tolerantSame(point[1], 0)) {
+
+        point[0] -= 0.5, point[1] -= 0.5;
+
+        do {
+            [point[0], point[1]] = [-point[1], point[0]];
+            transArr.push("rotCC90");
+        } while (point[1] !== -0.5)
+
+        point[0] += 0.5, point[1] += 0.5    
+    }
+
+    if (!tolerantSame(point[0], bo.x)) {
+        transArr.push("flipX")
+    }
+
+    console.log(transArr);
+    return transArr;
+}
+
+function distance (point1, point2) {
+    let x1 = point1[0];
+    let y1 = point1[1];
+    let x2 = point2[0];
+    let y2 = point2[1];
+    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+}
+
+function doTransform (point, transArr) {
+    //console.log("original point: " + point);
+    for (let i = 0; i < transArr.length; i++) {
+        if (transArr[i] === 'rotCC90') {
+            point[0] -= 0.5, point[1] -= 0.5;
+            [point[0], point[1]] = [-point[1], point[0]];
+            point[0] += 0.5, point[1] += 0.5;
+            //console.log(point);
+        } else if (transArr[i] === 'flipX') {
+            [point[0], point[1]] = [1-point[0], point[1]];
+            //console.log(point);
+        }
+    }
+    //console.log("messed up point: " + point);
+    return point;
+}
+
+function undoTransform (point, transArr) {
+    //console.log("original point: " + point);
+    for (let i = transArr.length; i >= 0; i--) {
+        if (transArr[i] === 'flipX') {
+            [point[0], point[1]] = [1-point[0], point[1]];
+            //console.log(point);
+        } else if (transArr[i] === 'rotCC90') {
+            point[0] -= 0.5, point[1] -= 0.5;
+            [point[0], point[1]] = [point[1], -point[0]];
+            point[0] += 0.5, point[1] += 0.5;
+            //console.log(point);
+        }
+    }
+    //console.log("messed up point: " + point);
+    return point;
+}
+
+function point (point1) {
+    let transArr = findTransformation(point1);
+    console.log(transArr);
+
+    let creaseArr = [[tl, br], [tl, bo]];
+    let rotatedFlippedCreaseArr = []
+
+    for (let i = 0; i < creaseArr.length; i++) {
+        let start = undoTransform([creaseArr[i][0].x, creaseArr[i][0].y], transArr);
+        let finish = undoTransform([creaseArr[i][1].x, creaseArr[i][1].y], transArr);
+        rotatedFlippedCreaseArr.push([start, finish]);
+    }
+    
+    console.log(rotatedFlippedCreaseArr)
+
+    return rotatedFlippedCreaseArr;
+}
+
+function pointPoint (point1, point2) {
+
+    console.log("point1: " + point1);
+    console.log("point2: " + point2);
+
+    let transArr = findTransformation(point1);
+    console.log(transArr);
+
+    console.log(point2);
+
+    let point2new = doTransform(point2, transArr);
+    console.log(point2new);
+    
+    for (let i = 0; i < rotation1.length; i ++) {
+        if (tolerantSame(point2new[0], rotation1[i].x) && tolerantSame(point2new[1], rotation1[i].y)) {
+            point2new = rotation1[i];
+            break;
+        }
+    }
+
+    let creaseArr = [[tl, br], [tl, bo]];
+
+    switch(point2new) {
+        case bo:
+            break;
+        case bt:
+            creaseArr.push ([bl, tr], [tr, bt]);
+            break;
+        case ro:
+            creaseArr.push ([bl, ro]);
+            // perp symbol
+            break;
+        case rt:
+            creaseArr.push ([tl, rt]);
+            break;
+        case tt:
+            creaseArr.push ([br, tt]);
+            break;
+        case to:
+            creaseArr.push ([to, bo]);
+            break;
+        case lt:
+            creaseArr.push ([lt, tr]);
+            //perp symbol
+            break;
+        case lo:
+            creaseArr.push ([lo, br]);
+            break;   
+    }
+    
+    console.log(creaseArr);
+
+    let rotatedFlippedCreaseArr = []
+
+    for (let i = 0; i < creaseArr.length; i++) {
+        let start = undoTransform([creaseArr[i][0].x, creaseArr[i][0].y], transArr);
+        let finish = undoTransform([creaseArr[i][1].x, creaseArr[i][1].y], transArr);
+        rotatedFlippedCreaseArr.push([start, finish]);
+    }
+    
+    console.log(rotatedFlippedCreaseArr);
+
+    return rotatedFlippedCreaseArr;
+}
+
+function pointLine (point1, point2, point3) {
+    let point, lineS, lineF;
+
+    if (lineTest(point1, point2)) {
+        point = point3;
+        lineS = point1;
+        lineF = point2;
+    } else if (lineTest(point2, point3)) {
+        point = point1;
+        lineS = point2;
+        lineF = point3;
+    } else if (lineTest(point1, point3)) {
+        point = point2;
+        lineS = point1;
+        lineF = point3;
+    } else {
+        console.error("It's not pointLine");
+    }
+
+    let transArr = findTransformation(point);
+    console.log(transArr);
+
+    let lineS2 = doTransform(lineS, transArr);
+    
+    console.log(lineS2);
+    
+    let lineF2 = doTransform(lineF, transArr);
+    
+    console.log(lineF2);
+
+    let creaseArr = [[tl, br], [tl, bo]];
+
+    if (tolerantSame(lineS2[0], lineF2[0])) {
+        console.log('A');
+        if (tolerantSame(lineS2[0], bo.x)) {
+            console.log('B');
+            creaseArr.push([bo, to]);
+        } else if (tolerantSame(lineS2[0], bt.x)) {
+            console.log('C');
+            creaseArr.push([bt, tt], [tt, br]);
+        }
+    } else if (tolerantSame(lineS2[1], lineF2[1])) {
+        console.log('D');
+        if (tolerantSame(lineS2[1], lo.y)) {
+            console.log('E');
+            creaseArr.push([lo, ro], [lo, br]);
+        } else if (tolerantSame(lineS2[1], lt.y)) {
+            console.log('F');
+            creaseArr.push([bo, to], [lt, rt]);
+        }
+    }
+    
+    console.log(creaseArr);
+
+    let rotatedFlippedCreaseArr = [];
+
+    for (let i = 0; i < creaseArr.length; i++) {
+        let start = undoTransform([creaseArr[i][0].x, creaseArr[i][0].y], transArr);
+        let finish = undoTransform([creaseArr[i][1].x, creaseArr[i][1].y], transArr);
+        rotatedFlippedCreaseArr.push([start, finish]);
+    }
+    
+    console.log(rotatedFlippedCreaseArr);
+
+    return rotatedFlippedCreaseArr;
+}
+
+const tolerance = 10 ** -8;
+
+function tolerantSame (value1, value2) {
+    return Math.abs(value1 - value2) < tolerance;
+}
+
+function lineTest (point1, point2) {
+    return ((tolerantSame(point1[0], point2[0]) || tolerantSame(point1[1], point2[1])) && tolerantSame(distance(point1, point2), 1))
+}
+
+function lineLine (point1, point2, point3, point4) {
+    let line1S, line1F, line2S, line2F;
+
+    if (lineTest(point1, point2)) {
+        line1S = point1, line1F = point2, line2S = point3, line2F = point4;
+    } else if (lineTest(point1, point3)) {
+        line1S = point1, line1F = point3, line2S = point2, line2F = point4;
+    } else if (lineTest(point1, point4)) {
+        line1S = point1, line1F = point4, line2S = point2, line2F = point3;
+    } else {
+        console.error("It's not lineLine");
+    }
+
+    let transArr = findTransformation(line1S);
+
+    let line1F2 = doTransform(line1F, transArr);
+    
+    let line2S2 = doTransform(line2S, transArr);
+    
+    let line2F2 = doTransform(line2F, transArr);
+
+    let creaseArr = [];
+
+    if (tolerantSame(line2S2[0], line2F2[0])) {
+        if (tolerantSame(line2S2[0], bt.x)) {
+            creaseArr = [[tl, br], [tl, bo], [bo, to], [br, tt], [tt, bt]];
+        }
+    } else if (tolerantSame(line2S2[1], line2F2[1])) {
+        if (tolerantSame(line2S2[1], lo.y)) {
+            creaseArr = [[bl, tr], [bl, to], [to, bo], [lo, ro]];
+        } else if (tolerantSame(line2S2[1], lt.y)) {
+            creaseArr = [[tl, br], [tl, bo], [lt, rt], [bo, to]];
+        }
+    }
+
+    let rotatedFlippedCreaseArr = [];
+
+    for (let i = 0; i < creaseArr.length; i++) {
+        let start = undoTransform([creaseArr[i][0].x, creaseArr[i][0].y], transArr);
+        let finish = undoTransform([creaseArr[i][1].x, creaseArr[i][1].y], transArr);
+        rotatedFlippedCreaseArr.push([start, finish]);
+    }
+
+    return rotatedFlippedCreaseArr;
+
+}
+
+function findCreaseArr (arr) {
+    let creaseArr;
+
+    arr = arr.flat();
+
+    let cleanArray = [];
+
+    arr.forEach((point, index) => {
+        if (point instanceof paper.Point) {
+            cleanArray.push([point.x, point.y])
+        } else {
+            console.error(`Element ${index} is not a paper.Point`);
+        }
+    });
+
+    console.log(cleanArray);    
+
+    switch(cleanArray.length) {
+        case 1:
+            console.log("point");
+            creaseArr = point(cleanArray[0])
+            break;
+        case 2:
+            console.log("pointPoint");
+            creaseArr = pointPoint(cleanArray[0], cleanArray[1]);
+            break;
+        case 3:
+            console.log("pointLine");
+            creaseArr = pointLine(cleanArray[0], cleanArray[1], cleanArray[2]);
+            break;
+        case 4:
+            console.log("lineLine");
+            creaseArr = lineLine(cleanArray[0], cleanArray[1], cleanArray[2], cleanArray[3]);
+            break;
+    }
+
+    return creaseArr;
+    //linePusher(creaseArr, prelimGroup, 0);
+    //prelimGroup.addChild(border);
+    //prelimGroup.pivot = new paper.Point(0.5,0.5)
+    //prelimGroup.scale(200, 200);
+    //prelimGroup.rotate(0);
+    //prelimGroup.position = new paper.Point(300, 300);
+    //prelimGroup.strokeWidth = 1;
+    //prelimGroup.strokeColor = 'black';
+    //prelimGroup.visible = true;
+}
+
+function linePusher(arr, boxArr, time) {
+    for (let i = 0; i < arr.length; i++) {
+
+        console.log(arr);
+        console.log(arr[i].length);
+
+        // Ensure that arr[i] is an array with two points
+        if (arr[i].length === 2) {
+            const point1 = new paper.Point(arr[i][0][0], arr[i][0][1]);
+            const point2 = new paper.Point(arr[i][1][0], arr[i][1][1]);
+            var lineToBePushed = new paper.Path.Line(point1, point2);
+
+            console.log(point1);
+            console.log(point2);
+
+            boxArr.addChild(lineToBePushed);
+            lineToBePushed.strokeColor = time === 0 ? 'red' : 'black';
+            lineToBePushed.strokeWidth = 1;
+            lineToBePushed.visible = time >= 0;
+        } else {
+            console.error("Invalid array format for line:", arr[i]);
+        }
+    };
+}
+
+let scale;
+
+function dot(point, time) {
+    return new paper.Path.Circle({
+        center: point,
+        radius: 2.5/scale,
+        fillColor: 'black',
+        visible: time === 0
+    });
+}
+
+function highLighter (from, to, time) {
+    var fromDot = dot(from, time);
+    var toDot = dot(to, time);
+    var line = new paper.Path.Line({
+        from: from,
+        to: to,
+        strokeColor: 'black',
+        strokeWidth: 1,
+        shadowBlur: 4,
+        shadowColor: 'yellow',
+        visible: time === 0
+    })
+    let highLightLine = new paper.Group(fromDot, toDot, line);
+
+    console.log(`highlighter called.  time: ${time}`);
+
+    return highLightLine;
+}
+
+let fontSize;
+
+//reduces n and d by their gcd
+function simplify(n, d) {
+    if (n !== 0 && d !== 0) {
+        const gcdND = gcd(n, d);
+        n /= gcdND;
+        d /= gcdND;
+    } else if (n === 0) {
+        d = 1;
+    } else {
+        n = 1;
+    }
+    return [n, d];
+}
+
+//a pair of numbers are scaled so that the larger equals one, but proportionality is maintained
+function scaler(n, d) {
+    const maxND = Math.max(n, d);
+    n /= maxND;
+    d /= maxND;
+    return [n, d];
+}
+
+function sloper(a,b,c,type) {
+    let slopePair = [];
+    let blockInfo = [];
+    switch (type) {
+        case 'A':
+            slopePair = [a+b, c, b, c];
+            blockInfo = [1, Math.SQRT2 -1];
+            break;
+        case 'B':
+            slopePair = [a + 2*b, c, -b, c];
+            blockInfo = [1, 2 - Math.SQRT2];
+            break;
+        case 'C':
+            slopePair = [2*b, c, a - 2*b, c];
+            blockInfo = [1 + Math.SQRT2/2, 1];
+            break;
+        case 'D':
+            slopePair = [b, c, a - b, c];
+            blockInfo = [Math.SQRT2 + 1, 1];
+            break;
+        case 'E':
+            slopePair = [a + b, c, a + 2*b, c];
+            blockInfo = [2 - Math.SQRT2, Math.SQRT2 - 1];
+            break;
+        case 'F':
+            slopePair = [2 * (a + b), 3 * c, -a + 2 * b, 3 * c];
+            blockInfo = [1 + Math.SQRT2/2, Math.SQRT2 - 1];
+            break;
+        case 'G':
+            slopePair = [a + b, 2 * c, -a + b, 2 * c];
+            blockInfo = [Math.SQRT2 + 1, Math.SQRT2 - 1];
+            break;
+        case 'H':
+            slopePair = [a + 2*b, 2 * c, a - 2*b, 4 * c];
+            blockInfo = [1 + Math.SQRT2/2, 2 - Math.SQRT2];
+            break;
+        case 'I':
+            slopePair = [a + 2*b, 3 * c, a - b, 3 * c]
+            blockInfo = [Math.SQRT2 + 1, 2 - Math.SQRT2];
+            break;
+        case 'J':
+            slopePair = [-a + 2*b, c, 2*a - 2*b, c]
+            blockInfo = [Math.SQRT2 + 1, 1 + Math.SQRT2/2];
+            break;
+    }
+    return [slopePair, blockInfo];
+};
+
+let rotate = 0;
+
+function scrawler(a1, b1, w1, h1, type1, a2, b2, w2, h2, type2) {
+    let zero1 = (a1 === 0 || b1 === 0 || a1 === -0 || b1 === -0);
+    let one1 = (a1/b1 === 1);
+    let diag1 = false;
+
+    let zero2 = (a2 === 0 || b2 === 0 || a2 === -0 || b2 === -0);
+    let one2 = (a2/b2 === 1);
+    let diag2 = false;
+
+    let precrease = false;
+
+    [w1, h1] = scaler(w1, h1);
+    [w2, h2] = scaler(w2, h2);
+
+    // Get the canvas size
+    const canvas = document.getElementById('myCanvas');
+    const canvasWidth = canvas.clientWidth;
+    const canvasHeight = canvas.clientHeight;
+
+    // Adjust the step size based on the canvas dimensions
+    const stepSize = Math.min(canvasHeight / 2, canvasWidth / 6) * 0.8;
+
+    scale = stepSize;
+
+    fontSize = 12/stepSize;
+
+    const y1 = canvasHeight / 2 - canvasWidth / 12 - stepSize / 2, y2 = canvasHeight / 2 - stepSize / 2, y3 = canvasHeight / 2 + canvasWidth / 12 - stepSize / 2;
+
+    const x1 = 7 * canvasWidth / 12 - stepSize / 2, x2 = 2 * canvasWidth / 3 - stepSize / 2, x3 = 3 * canvasWidth / 4 - stepSize / 2, x4 = 5 * canvasWidth / 6 - stepSize / 2, x5 = 11 * canvasWidth / 12 - stepSize / 2;
+
+    const stepper = [
+        [[x3, y2]], 
+        [[x2, y2], [x4, y2]], 
+        [[x1, y2], [x3, y2], [x5, y2]],
+        [[x2, y1], [x4, y1], [x2, y3], [x4, y3]],
+        [[x1, y1], [x3, y1], [x5, y1], [x2, y3], [x4, y3]],
+        [[x1, y1], [x3, y1], [x5, y1], [x1, y3], [x3, y3], [x5, y3]]
+    ];
+
+    updateInfoText();
+
+    let preCreaseLineArr = [], preCreaseArr = [];
+
+    let diag1Group = diag(a1, b1, w1, h1, 0, false);
+    let diag2Group = diag(a2, b2, w2, h2, 0, true);
+
+    let c1S = new paper.Point(0,0), c1F = new paper.Point(1,1);
+    let c2S = new paper.Point(1,0), c2F = new paper.Point(0,1);
+
+    if ((one1 || zero1) && (one2 || zero2)) {
+        preCreaseLineArr.push (...oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2));
+        c1F = new paper.Point(w1, h1);
+        c2F = new paper.Point(1-w2, h2);
+        if (zero1) {
+            if (a2*w2/b2*h2 >= 1) {c1F.x = 0}
+            else {c1S.y = 1}
+        }
+        if (zero2) {
+            if (a1*w1/b1*h1 >= 1) {c2F.x = 1}
+            else {c2S.y = 1}
+        }
+    } else {
+        if (one1) {
+            if (isTwoMinusRtTwo(w1, h1) || isOnePlusHalfRtTwo(w1, h1)) preCreaseLineArr.push([[0,0],[w1,h1]]);
+            preCreaseArr.push(new paper.Point(w1, h1));
+            preCreaseLineArr.push([[0,0], [w1, h1]])
+            c1F = new paper.Point(w1, h1);
+            console.log("log")
+        } else if (zero1) {
+            if (a2*w2/b2*h2 >= 1) {c1F.x = 0}
+            else {c1S.y = 1}
+            console.log("log")
+        } else {
+            diag1 = true;
+            preCreaseArr.push(diag1Group[1]);
+            //c1F = diag1Group[0]._children[0].segments.slice(-1)[0].point;
+            console.log("log")
+        }
+        if (one2) {
+            if (isTwoMinusRtTwo(w2, h2) || isOnePlusHalfRtTwo(w2, h2)) preCreaseLineArr.push([[1,0],[1-w2,h2]]);
+            preCreaseArr.push(new paper.Point(1-w2, h2));
+            c2F = new paper.Point(1-w2, h2);
+            preCreaseLineArr.push([[1,0], [1-w2, h2]])
+            console.log("log")
+        } else if (zero2) {
+            if (a1*w1/b1*h1 >= 1) {c2F.x = 1}
+            else {c2S.y = 1}
+            console.log("log")
+        } else {
+            diag2 = true;
+            preCreaseArr.push(diag2Group[1]);
+            //c2F = diag2Group[0]._children[0].segments.slice(-1)[0].point
+            console.log("log")
+        }
+    }
+
+    let intersection = true;
+    
+    if (!((zero2 && type1 === 'powTwo' && tolerantSame(w1, h1)) || (zero1 && type2 === 'powTwo' && tolerantSame (w2, h2)))) {
+        if (!((one1 || zero1) && (one2 || zero2))) {
+            console.log("sending");
+            console.log(findCreaseArr(preCreaseArr));
+            if (findCreaseArr(preCreaseArr)) preCreaseLineArr.push (...findCreaseArr(preCreaseArr));
+        }
+        precrease = true;
+    };
+
+    if ((zero2 && type1 === 'powTwo' && (a1 > b1 === w1 > h1 || tolerantSame(w1, h1))) || 
+    (zero1 && type2 === 'powTwo' && (a2 > b2 === w2 > h2 || tolerantSame (w2, h2)))) {
+        intersection = false;
+        console.log("intersection false")
+    }
+
+    let preCreaseGroup = new paper.Group();
+
+    let stepCount = [];
+
+    if (precrease) {stepCount.push('precrease')};
+    if (diag1) {stepCount.push('diag1')};
+    if (diag2) {stepCount.push('diag2')};
+    if (intersection) {stepCount.push('intersection')};
+
+    const stepData = stepper[stepCount.length - 1];
+
+    if (preCreaseLineArr) {linePusher(preCreaseLineArr, preCreaseGroup, 0)};
+
+    function borderFactory(numSteps) {
+        const border = new paper.Path.Rectangle({
+            from: new paper.Point(stepData[numSteps][0], stepData[numSteps][1]),
+            to: new paper.Point(stepData[numSteps][0] + stepSize, stepData[numSteps][1] + stepSize),
+            strokeColor: 'black',
+            strokeWidth: 1,
+        });
+        return border;
+    }
+
+    let screen = new paper.Group();
+
+    let precreaseIndex = stepCount.indexOf('precrease');
+    let diag1Index = stepCount.indexOf('diag1');
+    let diag2Index = stepCount.indexOf('diag2');
+    let intersectionIndex = stepCount.indexOf('intersection');
+
+    let precreasesi0 = new paper.Group();
+    let precreasesi1 = new paper.Group();
+    console.log("to linePusher");
+    console.log(preCreaseLineArr);
+    linePusher(preCreaseLineArr, precreasesi0, 0);
+    linePusher(preCreaseLineArr, precreasesi1, 1);
+
+
+    let diagonals1, diagonals2;
+
+    console.log(`*** Begin drawing elev. ${window.variable} ***`);
+
+    let aRD = globalC2[window.variable-1][0];
+    let bRD = globalC2[window.variable-1][1];
+    let cRD = globalC2[window.variable-1][2];
+
+    [aRD, bRD, cRD] = normalize(aRD, bRD, cRD);
+
+    const elevationFinal = inverse(aRD, bRD, cRD);
+    const elevationFinalCoord = summup(elevationFinal[0], elevationFinal[1], elevationFinal[2])
+
+    var dSLs = new paper.Point(0,0);
+    var dSLf = new paper.Point(1,1);
+
+    if (xory === 'X') {
+        dSLs.x = (stepData[stepCount.length - 1][0]);
+        dSLs.y = (stepData[stepCount.length - 1][1]) + elevationFinalCoord*stepSize;
+        dSLf.x = (stepData[stepCount.length - 1][0] + stepSize);
+        dSLf.y = (stepData[stepCount.length - 1][1]) + elevationFinalCoord*stepSize;
+    } else {
+        dSLs.x = (stepData[stepCount.length - 1][0] + elevationFinalCoord*stepSize);
+        dSLs.y = (stepData[stepCount.length - 1][1] );
+        dSLf.x = (stepData[stepCount.length - 1][0] + elevationFinalCoord*stepSize);
+        dSLf.y = (stepData[stepCount.length - 1][1] + stepSize);
+    }
+
+    var desiredLine = new paper.Path.Line ({
+        from: dSLs,
+        to: dSLf,
+        strokeColor: 'red',
+        strokeWidth: 1
+    });
+
+    for (let i = 0; i < stepCount.length; i++) {
+        let thisStep = new paper.Group();
+
+        if (precreaseIndex !== -1) {
+            console.log(`precreases called for step ${i + 1} with a time ${i - precreaseIndex}`);
+            let precreasesToAdd 
+            if (i - precreaseIndex === 0) {
+                precreasesToAdd = precreasesi0.clone();
+            } else precreasesToAdd = precreasesi1.clone();            
+            precreasesToAdd.rotate(rotate);
+            thisStep.addChild(precreasesToAdd);
+            console.log(thisStep);
+        }
+        if (diag1Index !== -1 && i - diag1Index >= 0) {
+            console.log(`diag1 called for step ${i + 1} with a time ${i - diag1Index}`);
+            diagonals1 = diag(a1, b1, w1, h1, i - diag1Index, false)[0];
+            thisStep.addChild(diagonals1);
+            console.log(thisStep);
+            if (!intersection) {
+                diagonals1._children[0].visible = false;
+            }
+            if (i - intersectionIndex === 0) {
+                c1S = diagonals1._children[0].segments[0].point;
+                c1F = diagonals1._children[0].segments.slice(-1)[0].point;
+                console.log([c1S, c1F]);
+            }
+        }
+        if (diag2Index !== -1 && i - diag2Index >= 0) {
+            console.log(`diag2 called for step ${i + 1} with a time ${i - diag2Index}`);
+            diagonals2 = diag(a2, b2, w2, h2, i - diag2Index, true)[0];
+            thisStep.addChild(diagonals2);
+            console.log(thisStep);
+            if (!intersection) {
+                diagonals2._children[0].visible = false;
+            }
+            if (i - intersectionIndex === 0) {
+                c2S = c2S = diagonals2._children[0].segments[0].point;
+                c2F = diagonals2._children[0].segments.slice(-1)[0].point;
+                console.log([c2S, c2F]);
+            }
+        }
+        if (intersectionIndex !== -1 && i - intersectionIndex >= 0 && intersection) {
+
+            console.log("int step, " + [c1S, c1F, c2S, c2F]);
+            let intPt = new paper.Point();
+
+            let unscaledDSLS = new paper.Point(0,0);
+            let unscaledDSLF = new paper.Point(1,1);
+
+            if (xory === 'X') {
+                unscaledDSLS.y = (elevationFinalCoord);
+                unscaledDSLF.y = (elevationFinalCoord);
+            } else {
+                unscaledDSLS.x = (elevationFinalCoord);
+                unscaledDSLF.x = (elevationFinalCoord);
+            };
+
+            if (diag1 && diag2) {
+                intPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, c2S.x, c2S.y, c2F.x, c2F.y);
+            } else if (diag1) {
+                intPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, unscaledDSLS.x, unscaledDSLS.y, unscaledDSLF.x, unscaledDSLF.y);
+                if (!intPt) {
+                    intPt = c1F.clone();
+                }
+                console.log("log");
+            } else if (diag2) {
+                intPt = intersect(c2S.x, c2S.y, c2F.x, c2F.y, unscaledDSLS.x, unscaledDSLS.y, unscaledDSLF.x, unscaledDSLF.y);
+                if (!intPt) {
+                    intPt = c2F.clone();
+                }
+                console.log("log");
+            } else if (one1) {
+                if (zero2) {
+                    intPt = new paper.Point(w1, h1)
+                } else {
+                    intPt = intersect(0, 0, w1, h1, unscaledDSLS.x, unscaledDSLS.y, unscaledDSLF.x, unscaledDSLF.y);
+                }
+                //intPt = unscaledDSLS.clone();
+                console.log("hey");
+            } else if (one2 && zero1) {
+                if (zero1) {
+                    intPt = new paper.Point(1-w2, h2);
+                } else {
+                    intPt = intersect(1, 0, 1-w1, h1, unscaledDSLS.x, unscaledDSLS.y, unscaledDSLF.x, unscaledDSLF.y);
+                }
+                //intPt = unscaledDSLF.clone();
+                console.log("hey");
+            }
+
+            if (intPt) {
+                intPt.pivot = new paper.Point(0.5, 0.5);
+                intPt.rotate(rotate);
+                let intDot = dot (intPt, i - intersectionIndex);
+                console.log(intDot);
+                thisStep.addChild(intDot);
+            }
+        } else {
+            console.log("no int step, " + [c1S, c1F, c2S, c2F]);
+        }
+
+        thisStep.pivot = new paper.Point(0.5, 0.5);
+        thisStep.scale(stepSize, stepSize);
+        console.log(stepData);
+        console.log(thisStep);
+        console.log(thisStep.position);
+        thisStep.position = new paper.Point(stepData[i][0] + stepSize / 2, stepData[i][1] + stepSize / 2);
+        thisStep.strokeWidth = 1;
+
+        borderFactory(i);
+
+        screen.addChild(thisStep);
+    }
+}
+
+function diag (a, b, w, h, time, diag2) {
+    let type = findRank(a, b).type;
+
+    if (tolerantSame(a, b)) {
+        return [null, null]
+    } else if (tolerantSame(a, 0) || tolerantSame(b, 0)) {
+        return [null, null]
+    } else if (type.includes('diag')) {type = 'diag'};
+    switch (type) {
+        case 'powTwo':
+            return powTwoFunction   (a, b, w, h, time, diag2);
+        case 'general':
+            return generalFunction  (a, b, w, h, time, diag2);
+        case 'diag':
+            return diagFunction     (a, b, w, h, time, diag2);
+    }
+}
+
+//returns [powtwogroup, powtwoprelim]
+function powTwoFunction (a, b, w, h, time, diag2) {
+
+    [w, h] = scaler(w, h);
+    [a, b] = simplify(a, b);
+
+    var bbl = new paper.Point(0, 0);
+    var bbr = new paper.Point(w, 0);
+    var btr = new paper.Point(w, h);
+    var btl = new paper.Point(0, h);
+
+    let timeColor = time === 0 ? 'red' : 'black';
+    var creaseStyle = {
+        strokeColor: timeColor,
+        strokeWidth: 1,
+        visible: time >= 0
+    }
+
+    var cstart = bbl;
+    var csquare = new paper.Point(a * w, b * h);
+    [csquare.x, csquare.y] = scaler(csquare.x, csquare.y);
+    var creasePowTwo = new paper.Path(cstart, csquare);
+    creasePowTwo.style = creaseStyle;
+
+    let powTwoHighLight, powTwoDot, powTwoDotPt, powTwoLabelText, powTwoBlockDot, powTwoTextPt;
+    let powTwoTextJust = 'center';
+
+    let powTwoPrelim = [];
+
+    if (isPowerTwo(Math.max(a,b))) {
+        if (tolerantSame(w, h)) {
+            console.log("square, powTwo");
+            powTwoDotPt = csquare;
+            powTwoDot = dot(csquare, time);
+            powTwoLabelText = `${Math.min(a,b)}/${Math.max(a,b)}`;
+            powTwoTextPt = csquare.clone();
+            if (a < b) {
+                powTwoHighLight = highLighter(btl, btr, time);
+                powTwoTextPt.y += fontSize;
+            } else if (a > b) {
+                powTwoHighLight = highLighter(btr, bbr, time);
+                powTwoTextJust = 'left'
+            } else {
+                powTwoTextPt.y += fontSize;
+            }
+        } else {
+            console.log("not square, powTwo");
+            powTwoPrelim.push(btr);
+            if (a < b) {
+                powTwoHighLight = highLighter(btl,btr,time);
+                powTwoDotPt = new paper.Point(w*a/b, h);
+                powTwoLabelText = `${a}/${b}`;
+                powTwoTextPt = powTwoDotPt.clone();
+                powTwoTextPt.y += fontSize;
+                if (w > h) {
+                    powTwoPrelim.push(btl);
+                    console.log("a<b, w>h");
+                };
+            } else if (a > b) {
+                powTwoHighLight = highLighter(btr,bbr,time);
+                powTwoDotPt = new paper.Point(w,h*b/a);
+                powTwoLabelText = `${b}/${a}`;
+                powTwoTextPt = powTwoDotPt.clone();
+                powTwoTextJust = 'left';
+                if (w < h) {
+                    powTwoPrelim.push(bbr);
+                    console.log("a>b, w<h")
+                };
+            }
+            powTwoDot = dot(powTwoDotPt, time);
+        }
+        if (a === b) {powTwoLabelText = ''};
+    } else console.error("Not powTwo")
+
+    var powTwoLabel = new paper.PointText({
+        point: powTwoTextPt,
+        content: powTwoLabelText,
+        fontSize: 12/scale,
+        fillColor: 'black',
+        justification: powTwoTextJust,
+        visible: time === 0
+    })
+      
+    var validPowTwoItems = [creasePowTwo, powTwoHighLight, powTwoLabel, powTwoDot]
+    .filter(item => item instanceof paper.Item); // Only keep valid Paper.js items
+
+    var powTwoGroup = new paper.Group(validPowTwoItems);
+
+    console.log(powTwoPrelim);
+
+    powTwoGroup.pivot = new paper.Point(0.5, 0.5);
+
+    if (diag2) {
+        powTwoGroup.scale(-1, 1);
+        powTwoPrelim.forEach(element => {
+            element.x = 1 - element.x;
+        });
+        powTwoLabel.scale(-1,1);
+    }
+    console.log(powTwoPrelim);
+    console.log(powTwoLabel);
+    console.log(powTwoHighLight);
+    console.log(powTwoDot);
+
+    powTwoGroup.rotate(rotate);
+    powTwoLabel.rotation = 0;
+    
+    if (powTwoPrelim.length > 0) {
+        return([powTwoGroup, powTwoPrelim]);
+    } else return([powTwoGroup, null]);
+
+}
+
+function generalFunction (a, b, w, h, time, diag2) {
+    let tall = h > w;
+    let wide = w > h;
+    let square = tolerantSame(w, h);
+
+    let timeColor = time === 0 ? 'red' : 'black';
+    var creaseStyle = {
+        strokeColor: timeColor,
+        strokeWidth: 1,
+    };
+    
+    [w, h] = scaler(w, h);
+
+    [a, b] = simplify(a, b);
+
+    var bbl = new paper.Point(0, 0);
+    var bbr = new paper.Point(w, 0);
+    var btr = new paper.Point(w, h);
+    var btl = new paper.Point(0, h);
+
+    var cstart = bbl;
+    var csquare = new paper.Point(a * w, b * h);
+    [csquare.x, csquare.y] = scaler(csquare.x, csquare.y);
+    var creaseGen = new paper.Path(cstart, csquare);
+    creaseGen.style = creaseStyle;
+
+    const smallestPowTwo = 2 ** Math.ceil(Math.log2(Math.max(a, b)));
+
+    let vertX = w*a/smallestPowTwo;
+    let horiY = h*b/smallestPowTwo;
+
+    var genInt = new paper.Point(vertX, horiY);
+    var genIntPt = dot(genInt);
+
+    let vertY = 0;
+    let horiX = 0;
+    let vertTexY = vertY;
+    
+    let horiJust = 'right';
+    let vertJust = 'center';
+    
+    let horiHighLightStart = new paper.Point(0,0);
+    let vertHighLightStart = new paper.Point(0,0);
+    let horiHighLightFinish = new paper.Point(w,0);
+    let vertHighLightFinish = new paper.Point(0,h);
+
+    let horiNear = true;
+    let vertNear = true;
+
+    if (square) {
+        horiNear = a <= smallestPowTwo/2;
+        vertNear = b <= smallestPowTwo/2;
+    } else if (wide) {
+        horiNear = a <= smallestPowTwo/2;
+    } else if (tall) {
+        vertNear = b <= smallestPowTwo/2;
+    }
+
+    let generalPrelim = [];
+
+    if (tall) {
+        if (vertNear) {
+            generalPrelim.push(bbr);
+        } else generalPrelim.push(btr);
+    } else if (wide) {
+        if (horiNear) {
+            generalPrelim.push(btl);
+        } else generalPrelim.push(btr);
+    }
+
+    if (!horiNear) {
+        horiX = 1;
+        horiJust = 'left';
+        vertHighLightStart.x = 1;
+        vertHighLightFinish.x = 1;
+    } else {
+        horiX = 0;
+    }
+
+    if (!vertNear) {
+        vertY = 1;
+        vertTexY = 1;
+        vertTexY += fontSize;
+        horiHighLightStart.y = 1;
+        horiHighLightFinish.y = 1;
+    } else {
+        vertY = 0;
+        vertTexY -= fontSize;
+    }
+
+    let generalA = a;
+    let generalB = b;
+    let generalADenom = smallestPowTwo;
+    let generalBDenom = smallestPowTwo;
+    
+    [generalA, generalADenom] = simplify(generalA, generalADenom);
+    [generalB, generalBDenom] = simplify(generalB, generalBDenom);
+    let vertTextLabel = `${generalA}/${generalADenom}`;
+    let horiTextLabel = `${generalB}/${generalBDenom}`;
+
+    var vertStart = new paper.Point(vertX, vertY);
+    var horiStart = new paper.Point(horiX, horiY);
+    
+    var vertLine = new paper.Path(vertStart, genInt);
+    vertLine.style = creaseStyle;
+    var horiLine = new paper.Path(horiStart, genInt);
+    horiLine.style = creaseStyle;
+    let vertDot = dot(vertStart);
+    let horiDot = dot(horiStart);
+    let vertHighLight = highLighter(vertHighLightStart, vertHighLightFinish, time);
+    let horiHighLight = highLighter(horiHighLightStart, horiHighLightFinish, time);
+
+    let horiText = new paper.PointText({
+        point: new paper.Point(horiX, horiY),
+        content: horiTextLabel,
+        fillColor: 'black',
+        fontSize: 12/scale,
+        justification: horiJust,
+        visible: time === 0
+    });
+
+    let vertText = new paper.PointText({
+        point: new paper.Point(vertX, vertTexY),
+        content: vertTextLabel,
+        fillColor: 'black',
+        fontSize: 12/scale,
+        justification: vertJust,
+        visible: time === 0
+    });
+
+    var validGenItems = [creaseGen, vertHighLight, horiHighLight, vertDot, horiDot, vertLine, horiLine, genIntPt, vertText, horiText]
+    .filter(item => item instanceof paper.Item); // Only keep valid Paper.js items
+
+    var genGroup = new paper.Group(validGenItems);
+
+    genGroup.pivot = new paper.Point(0.5, 0.5);
+
+    if (diag2) {
+        genGroup.scale(-1, 1);
+        generalPrelim.forEach(element => {
+            element.x = 1 - element.x;
+        });
+        vertText.scale(-1,1);
+        horiText.scale(-1,1);
+    }
+
+    genGroup.rotate(rotate);
+    vertText.rotation = 0;
+    horiText.rotation = 0;
+    
+    return [genGroup, generalPrelim];
+}
+
+function diagFunction (a, b, w, h, time, diag2) {
+
+    let timeColor = time === 0 ? 'red' : 'black';
+    var creaseStyle = {
+        strokeColor: timeColor,
+        strokeWidth: 1,
+        visible: time >= 0
+    };
+
+    let type = findRank(a,b).type;
+    
+    [w, h] = scaler(w, h);
+    [a, b] = simplify(a, b);
+    
+    var bbl = new paper.Point(0, 0);
+    var bbr = new paper.Point(w, 0);
+    var btl = new paper.Point(0, h);
+
+    var cstart = bbl.clone();
+    var csquare = new paper.Point(a * w, b * h);
+    
+    [csquare.x, csquare.y] = scaler(csquare.x, csquare.y);
+    
+    console.log("csquare: " + csquare)
+    
+    var creaseDiag = new paper.Path(cstart, csquare);
+    creaseDiag.style = creaseStyle;
+
+    var diagStart = btl.clone();
+    var diagFinish = bbr.clone();
+    let diagNumA = a, diagNumB = b, diagDenom = Math.max(a,b);
+    let diagLabelPt = bbl.clone();
+    let diagLabelText = '';
+
+    let diagLabelSide;
+
+    //returns relevant diagStart/Finish, diagDenom, diagLabelPt, diagLabelText
+    if (type.includes('diag')) {
+        let typeFixed = type;
+        console.log(`a: ${a}, b: ${b}, type: ${type}`);
+        if (a>b) {
+            switch(type) {
+                case 'diagA':
+                    break;
+                case 'diagB':
+                    typeFixed = 'diagC';
+                    break;
+                case 'diagC':
+                    typeFixed = 'diagB';
+                    break;
+                case 'diagD':
+                    typeFixed = 'diagE';
+                    break;
+                case 'diagE':
+                    typeFixed = 'diagD';
+                    break;
+                case 'diagF':
+                    typeFixed = 'diagG';
+                    break;
+                case 'diagG':
+                    typeFixed = 'diagF';
+                    break;
+                default:
+                    break;
+            }
+        }
+        console.log(`a: ${a}, b: ${b}, typeFixed: ${typeFixed}`);
+        switch(typeFixed) {
+            case 'diagA':
+                if (isPowerTwo(a + b)) {
+                    diagDenom = a+b;
+                } else throw new Error('diagA issue');
+                break;
+            case 'diagB':
+                if (isPowerTwo(a + 2*b)) {
+                    diagStart.y = h/2;
+                    diagDenom = a + 2*b;
+                    diagLabelPt.y = h/2;
+                    diagLabelText = '1/2';
+                    diagLabelSide = 'left';
+                } else throw new Error('diagB issue');            
+                break;
+            case 'diagC':
+                if (isPowerTwo(2*a + b)) {
+                    diagFinish.x = w/2;
+                    diagDenom = 2*a + b;
+                    diagLabelPt.x = w/2;
+                    diagLabelText = '1/2';
+                    diagLabelSide = 'bottom';
+                } else throw new Error('diagC issue');
+                break;
+            case 'diagD':
+                if (isPowerTwo(a + 4*b)) {
+                    diagStart.y = h/4;
+                    diagDenom = a + 4*b;
+                    diagLabelPt.y = h/4;
+                    diagLabelText = '1/4';
+                    diagLabelSide = 'left';
+                } else throw new Error('diagD issue');
+                break;
+            case 'diagE':
+                if (isPowerTwo(4*a + b)) {
+                    diagFinish.x = w/4;
+                    diagDenom = 4*a + b;
+                    diagLabelPt.x = w/4;
+                    diagLabelText = '1/4';
+                    diagLabelSide = 'bottom';
+                } else throw new Error('diagE issue');
+                break;
+            case 'diagF':
+                if (isPowerTwo(3*a + 4*b)) {
+                    diagStart.y = 3*h/4;
+                    diagDenom = 3*a + 4*b;
+                    diagLabelPt.y = 3*h/4;
+                    diagLabelText = '3/4';
+                    diagLabelSide = 'left';
+                } else throw new Error('diagF issue');
+                break;
+            case 'diagG':
+                if (isPowerTwo(4*a + 3*b)) {
+                    diagFinish.x = 3*w/4;
+                    diagDenom = 4*a + 3*b;
+                    diagLabelPt.x = 3*w/4;
+                    diagLabelText = '3/4';
+                    diagLabelSide = 'bottom';
+                } else throw new Error('diagG issue');
+                break;
+            default:
+                break;
+        }
+    } else throw new Error ("not Diag")
+    
+    console.log(diagStart)
+    console.log(diagFinish)
+    console.log(cstart)
+    console.log(csquare)
+   
+    let diagInt = intersect(diagStart.x, diagStart.y, diagFinish.x, diagFinish.y, cstart.x, cstart.y, csquare.x, csquare.y);
+    let diagIntDot = dot(diagInt, time);
+    var parallelStart = bbl.clone();
+    let parallelText  = '';
+    var highLightX = highLighter(bbl,bbr, time);
+    var highLightY = highLighter(bbl,btl, time);
+    let diagDot = dot(diagLabelPt, time);
+    
+    [diagNumA, diagDenom] = simplify(diagNumA, diagDenom);
+    [diagNumB, diagDenom] = simplify(diagNumB, diagDenom);
+
+    let parallelLabelPt;
+    let parallelLabelJust = 'center';
+
+    let diagPrelim = [];
+
+    if (!tolerantSame(diagFinish.x, diagStart.y)) {
+        if (diagFinish.x > diagStart.y){
+            parallelStart.x = diagInt.x;
+            parallelText = `${diagNumA}/${diagDenom}`;
+            parallelLabelPt = parallelStart.clone();
+            parallelLabelPt.y -= fontSize;
+        } else if (diagFinish.x < diagStart.y){
+            parallelStart.y = diagInt.y;
+            parallelText = `${diagNumB}/${diagDenom}`;
+            parallelLabelPt = parallelStart.clone();
+            parallelLabelJust = 'right';
+        }
+    } else {
+        diagDot.visible = false;
+
+        if (a*w >= b*h) {
+            parallelStart.x = diagInt.x;
+            parallelText = `${diagNumA}/${diagDenom}`;
+            highLightY.visible = false;
+            parallelLabelPt = parallelStart.clone();
+            parallelLabelPt.y -= fontSize;
+        } else {
+            parallelStart.y = diagInt.y;
+            parallelText = `${diagNumB}/${diagDenom}`;
+            highLightX.visible = false;
+            parallelLabelPt = parallelStart.clone();
+            parallelLabelJust = 'right';
+        }
+    }
+    
+    let parallelDot = dot(parallelStart)
+    var parallelLine = new paper.Path(parallelStart, diagInt);
+    parallelLine.style = creaseStyle;
+
+    let diagJust;
+    if (diagLabelSide === 'left') {diagJust = 'right'} else {diagJust = 'center'};
+    if (diagLabelSide === 'bottom') {diagLabelPt.y -= fontSize};
+
+    var diagText = new paper.PointText({
+        point: diagLabelPt,
+        content: diagLabelText,
+        fillColor: 'black',
+        fontSize: 12/scale,
+        justification: diagJust,
+        visible: time === 0
+    })
+
+    var parallelTextObj = new paper.PointText({
+        point: parallelLabelPt,
+        content: parallelText,
+        fillColor: 'black',
+        fontSize: 12/scale,
+        justification: parallelLabelJust,
+        visible: time === 0
+    })
+
+    let diagLine = new paper.Path(diagStart, diagFinish);
+    diagLine.style = creaseStyle;
+    
+    let anotherDot;
+    if (w > h) {
+        anotherDot = dot(new paper.Point(0, h), time);
+        diagPrelim.push(btl);
+    } else if (h > w) {
+        anotherDot = dot(new paper.Point(w, 0), time);
+        diagPrelim.push(bbr);
+    }
+    
+    var validDiagItems = [creaseDiag, anotherDot, highLightX, highLightY, parallelLine, diagIntDot, diagLine, diagDot, parallelDot, parallelTextObj, diagText]
+    .filter(item => item instanceof paper.Item); // Only keep valid Paper.js items
+
+    var diagGroup = new paper.Group(validDiagItems);
+
+    diagGroup.pivot = new paper.Point(0.5, 0.5);
+
+    if (diag2) {
+        diagGroup.scale(-1, 1);
+        diagPrelim.forEach(element => {
+            element.x = 1 - element.x;
+        });
+        parallelTextObj.scale(-1,1);
+        diagText.scale(-1,1);
+    }
+
+    diagGroup.visible = time >= 0;
+
+    diagGroup.rotate(rotate);
+    parallelTextObj.rotation = 0;
+    diagText.rotation = 0;
+
+    return([diagGroup, diagPrelim])
+}
+
+function oneZero (one1, one2, zero1, zero2, w1, h1, w2, h2) {
+    let pointBucket = [];
+    console.log("calling oneZero");
+    if (one1 && one2) {
+        if (isOne(w1, h1)) {
+            if (isRtTwoMinusOne(w2, h2)) {
+                pointBucket.push([bl,tr],[tl,br],[br,tt]);
+                //dotStepOne(bl, tr, tt, br);
+                console.log("A, one & one");
+            } else if (isTwoMinusRtTwo(w2, h2)) {
+                pointBucket.push([bl,tr], [bl,to], [br,to]);
+                //dotStepOne(bl, tr, to, br);
+                console.log("B, one & one");
+            }
+        } else if (isOne(w2, h2)) {
+            if (isOnePlusHalfRtTwo(w1, h1)) {
+                pointBucket.push([tl,br], [tl,rt], [bl,rt]);
+                //dotStepOne(bl, rt, tl, br);
+                console.log("C, one & one");
+            } else if (isRtTwoPlusOne(w1, h1)) {
+                pointBucket.push([tl,br], [bl,ro], [bl,tr]);
+                //dotStepOne(bl, ro, tl, br);
+                console.log("D, one & one");
+            }
+        } else if (isRtTwoPlusOne(w1, h1)) {
+            if (isRtTwoMinusOne(w2, h2)) {
+                pointBucket.push([bl,tr],[bl,ro],[tt,br]);
+                //dotStepOne(bl, ro, tt, br);
+                //perp symbol
+                console.log("G, one & one");
+            } else if (isTwoMinusRtTwo(w2, h2)) {
+                pointBucket.push([bl,tr], [bl,to],[bl,ro],[to,br]);
+                //dotStepOne(bl, ro, to, br);
+                console.log("I, one & one");
+            } else if (isOnePlusHalfRtTwo(w2, h2)) {
+                pointBucket.push([bl,tr],[bl,ro],[tr,lt],[lt,br]);
+                //dotStepOne(br, lo, bl, rt);
+                console.log("J, one & one");
+            }
+        } else if (isOnePlusHalfRtTwo(w1, h1)) {
+            if (isRtTwoMinusOne(w2, h2)) {
+                pointBucket.push([tl,br],[tl,rt],[br,tt],[bl,rt]);
+                //dotStepOne(bl, rt, br, tt);
+                console.log("F, one & one");
+            } else if (isTwoMinusRtTwo(w2, h2)) {
+                pointBucket.push([tl,br], [tl,rt], [bl,rt],[to,br]);
+                //dotStepOne(bl, rt, to, br);
+                //perp symbol
+                console.log("H, one & one");
+            }
+        }
+    } else if (zero1 || zero2) {
+        if (one1 && isRtTwoPlusOne(w1, h1)) {
+            pointBucket.push([bl,tr],[bl,ro]);
+            console.log("zero & one(rt2+1)");
+        } else if (one2 && isRtTwoPlusOne(w2, h2)) {
+            pointBucket.push([br,tl],[br,lo]);
+            console.log("zero & one(rt2+1)");
+        } else if (one1 && isOnePlusHalfRtTwo(w1, h1)) {
+            pointBucket.push([tl,br],[tl,rt]);
+            console.log("zero & one(1+rt2/2)")
+        } else if (one2 && isOnePlusHalfRtTwo(w2, h2)) {
+            pointBucket.push([bl,tr],[tr,lt]);
+            console.log("zero & one(1+rt2/2)")
+        }
+    }
+
+    const result = pointBucket.map(pair => {
+        return pair.map(point => [point.x, point.y]);
+    });
+
+    return result;
 }
