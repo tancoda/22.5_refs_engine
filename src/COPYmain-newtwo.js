@@ -58,33 +58,27 @@ function handleFileUpload() {
     }
 }
 
-let defaultAX = 0;
-let defaultBX = 0;
-let defaultCX = 1;
-let defaultAY = 0;
-let defaultBY = 0;
-let defaultCY = 1;
+// Default values
+const defaults = {
+    AX: 0,
+    BX: 0,
+    CX: 1,
+    AY: 0,
+    BY: 0,
+    CY: 1
+};
 
-const inputAX = document.getElementById("inputAX");
-const inputBX = document.getElementById("inputBX");
-const inputCX = document.getElementById("inputCX");
-const inputAY = document.getElementById("inputAY");
-const inputBY = document.getElementById("inputBY");
-const inputCY = document.getElementById("inputCY");
-
-inputAX.value = defaultAX;
-inputBX.value = defaultBX;
-inputCX.value = defaultCX;
-inputAY.value = defaultAY;
-inputBY.value = defaultBY;
-inputCY.value = defaultCY;
+// Assign values to the input elements
+Object.keys(defaults).forEach(key => {
+    document.getElementById(`input${key}`).value = defaults[key];
+});
 
 document.getElementById('submitABC').addEventListener('click', abcRender);
 
 function abcRender () {
-    defaultValue1 = 32; // Reset to default value
-    defaultValue2 = 0.1; // Reset to default value
-    defaultConstructible = false; // Reset to default value
+    defaultValue1 = 32; 
+    defaultValue2 = 0.1; 
+    defaultConstructible = false; 
     document.getElementById("value1Modal").value = 32;
     document.getElementById("value2Modal").value = 0.1;
     document.getElementById("constructibleToggle").value = false;
@@ -161,9 +155,11 @@ function abcRender () {
                 if (localxory === 'Y') {
                     startTester.y = summup(a, b, c) ** -1;
                     finishTester.y = summup(a, b, c) ** -1;
+                    xory = 'Y';
                 } else {
                     startTester.x = summup(a, b, c) ** -1;
                     finishTester.x = summup(a, b, c) ** -1;
+                    xory = 'X';
                 }
     
                 globalVi = [[0,0], [0,1], [1,1], [1,0], [startTester.x, startTester.y], [finishTester.x, finishTester.y]];
@@ -407,8 +403,6 @@ function drawEverything() {
         type
     ]);
 
-    console.log(drawFrom);
-
     const linesA = drawFrom.filter(([x1, y1, x2, y2, type]) => type === 'A');
     const linesMV = drawFrom.filter(([x1, y1, x2, y2, type]) => type === 'M' || type === 'V');
     const linesE = drawFrom.filter(([x1, y1, x2, y2, type]) => type === 'B');
@@ -441,21 +435,12 @@ function drawEverything() {
 let cPScale, cPOffsetX, cPOffSetY;
 
 function draw (a, b, c, name, meth, val, elev) {
-    let sloped = sloper(elev[0], elev[1], elev[2], meth);
-
-    let a1 = sloped[0][0], b1 = sloped[0][1], a2 = sloped[0][2], b2 = sloped[0][3];
-
-    let w1 = sloped[1][0], w2 = sloped[1][1];
-    let h1 = 1, h2 = 1;
-
-    let typeA = (findRank(a1, b1)).type;
-    let typeB = (findRank(a2, b2)).type;
-
     let aFinal = a, bFinal = b, cFinal = c;
 
     const elevationFinal = inverse(aFinal, bFinal, cFinal);
     const elevationFinalCoord = summup(elevationFinal[0], elevationFinal[1], elevationFinal[2])
 
+    rotate = 0;
     searchVi(globalVi, elevationFinalCoord, 10 ** -8, cPScale, cPOffsetX, cPOffSetY);
 
     let lineArr = [];
@@ -483,9 +468,7 @@ function draw (a, b, c, name, meth, val, elev) {
     })
 
     lineArr = uniq_fast(lineArr);
-
-    console.log(lineArr);
-    
+   
     lineArr.forEach(element => {
         var magicLine = new paper.Path.Line(element[0], element[1]);
         magicLine.strokeColor = 'green';
@@ -526,66 +509,11 @@ function draw (a, b, c, name, meth, val, elev) {
             drawEverything();
         };
     });
-    
-    rotate = 0;
-    if (xory === 'Y') {rotate -= 90};
-    if (name.includes('neg')) {rotate += 180};
-    console.log(rotate);
 
-    scrawler(a1, b1, w1, h1, typeA, a2, b2, w2, h2, typeB);
+    scrawler(a, b, c, name, meth);
 }
 
 let xorycommand = '';
-
-//pulled from a stackoverflow https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
-function uniq_fast(a) {
-    var seen = {};
-    var out = [];
-    var len = a.length;
-    var j = 0;
-    for(var i = 0; i < len; i++) {
-         var item = a[i];
-         if(seen[item] !== 1) {
-               seen[item] = 1;
-               out[j++] = item;
-         }
-    }
-    return out;
-}
-
-function isPowerTwo(x) {
-    return (Math.log(x) / Math.log(2)) % 1 === 0;
-}
-
-// line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
-function intersect(x1, y1, x2, y2, x3, y3, x4, y4) {
-
-    // Check if none of the lines are of length 0
-    if ((x1 === x2 && y1 === y2) || (x3 === x4 && y3 === y4)) {
-        return false
-    }
-
-    let denominator = ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
-
-    // Lines are parallel
-    if (denominator === 0) {
-        return false
-    }
-
-    let ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator
-    let ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator
-
-    // is the intersection along the segments
-    if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
-        return false
-    }
-
-    // Return a object with the x and y coordinates of the intersection
-    let x = x1 + ua * (x2 - x1)
-    let y = y1 + ua * (y2 - y1)
-
-    return new paper.Point(x,y);
-}
 
 function isOne(w, h)                {return (Math.abs(w/h - 1) <                    10 ** -8)};
 function isRtTwoPlusOne(w, h)       {return (Math.abs(w/h - (Math.SQRT2 + 1)) <     10 ** -8)};
@@ -672,6 +600,7 @@ function searchVi(vi, searchValue, tolerance, scale, offsetX, offsetY) {
         elevX.shadowColor = 'black';
         elevX.shadowBlur = 5;
         xory = 'Y';
+        rotate = -90;
     }
 
     // Draw new circles at found values
@@ -906,6 +835,20 @@ function gcd(a, b) {
     }
 }
 
+//reduces n and d by their gcd
+function simplify(n, d) {
+    if (n !== 0 && d !== 0) {
+        const gcdND = gcd(n, d);
+        n /= gcdND;
+        d /= gcdND;
+    } else if (n === 0) {
+        d = 1;
+    } else {
+        n = 1;
+    }
+    return [n, d];
+}
+
 function toABC(a, b, c, d) {
     let alpha, beta, gamma;
     if (c**2 - 2 * d**2 >= 0) {
@@ -919,6 +862,70 @@ function toABC(a, b, c, d) {
     }
     let grcodi = gcd(gamma,gcd(alpha,beta));
     return [alpha/grcodi, beta/grcodi, gamma/grcodi];
+}
+
+function distance (point1, point2) {
+    let x1 = point1[0];
+    let y1 = point1[1];
+    let x2 = point2[0];
+    let y2 = point2[1];
+    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+}
+
+//pulled from a stackoverflow https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
+function uniq_fast(a) {
+    var seen = {};
+    var out = [];
+    var len = a.length;
+    var j = 0;
+    for(var i = 0; i < len; i++) {
+         var item = a[i];
+         if(seen[item] !== 1) {
+               seen[item] = 1;
+               out[j++] = item;
+         }
+    }
+    return out;
+}
+
+function isPowerTwo(x) {
+    return (Math.log(x) / Math.log(2)) % 1 === 0;
+}
+
+// line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
+function intersect(x1, y1, x2, y2, x3, y3, x4, y4) {
+
+    // Check if none of the lines are of length 0
+    if ((x1 === x2 && y1 === y2) || (x3 === x4 && y3 === y4)) {
+        return false
+    }
+
+    let denominator = ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
+
+    // Lines are parallel
+    if (denominator === 0) {
+        return false
+    }
+
+    let ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator
+    let ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator
+
+    // is the intersection along the segments
+    if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
+        return false
+    }
+
+    // Return a object with the x and y coordinates of the intersection
+    let x = x1 + ua * (x2 - x1)
+    let y = y1 + ua * (y2 - y1)
+
+    return new paper.Point(x,y);
+}
+
+const tolerance = 10 ** -8;
+
+function tolerantSame (value1, value2) {
+    return Math.abs(value1 - value2) < tolerance;
 }
 
 // Function to check if coordinates are at pi/8 and return corresponding radical forms
@@ -964,7 +971,7 @@ const checkPi8 = (C, eps) => {
 
 //----------------------------------------------------------------------------------------
 
-// PART ONE: Generates the farey sequence of all fractions having a denominator less than or equal to n.
+// Generates the farey sequence of all fractions having a denominator less than or equal to n.
 // Each fraction corresponds to a slope.  The lookup table records the number of creases required
 // to develop that slope, and the methodology used to do so.
 
@@ -976,19 +983,37 @@ const m = (1/defaultValue2);
 // if b is a power of 2, the reference may be developed in log2(b)+1 folds
 function powTwo(b)      {if (isPowerTwo(b))            {return Math.log2(b) + 1}           else {return Infinity}};
 
-function diagA(a,b)     {if (isPowerTwo(a+b))          {return Math.log2(a+b) + 2}         else {return Infinity}};
+function smartDiag(a, b) {
+    let gcdAB = gcd(a, b);
+    [a, b] = [a / gcdAB, b / gcdAB];
 
-function diagB(a,b)     {if (isPowerTwo(a + 2*b))      {return Math.log2(a + 2*b) + 3}     else {return Infinity}};
+    let i = 1, j = 1, result = null;
 
-function diagC(a,b)     {if (isPowerTwo(2*a + b))      {return Math.log2(2*a + b) + 3}     else {return Infinity}};
+    while (i <= 32 && !result) {
+        j = 1;
+        while (j <= 32 && !result) {
+            if (Math.log2(i * a + j * b) % 1 === 0 && Math.log2 (Math.max (i, j)) % 1 === 0) {
+                result = [i, j, Math.log2(i * a + j * b)];
+                break;
+            }
+            j++;
+        }
+        i++;
+    }
 
-function diagD (a,b)    {if (isPowerTwo(a + 4*b))      {return Math.log2(a + 4*b) + 4}     else {return Infinity}};
+    let same = Infinity;
+    let opp = Infinity;
+    
+    if (result && result[1] > result[0]) {
+        same = Math.log2(2 ** result[2] / gcd(b, 2 ** result[2]));
+        opp =  Math.log2(result[1]) + Math.log2(2 ** result[2] / gcd(a, 2 ** result[2]));
+    } else if (result) {
+        same = Math.log2(2 ** result[2] / gcd(a, 2 ** result[2]));
+        opp =  Math.log2(result[0]) + Math.log2(2 ** result[2] / gcd(b, 2 ** result[2]));
+    } 
 
-function diagE (a,b)    {if (isPowerTwo(4*a + b))      {return Math.log2(4*a + b) + 4}     else {return Infinity}};
-
-function diagF (a,b)    {if (isPowerTwo(3*a + 4*b))    {return Math.log2(3*a + 4*b) + 4}   else {return Infinity}};
-
-function diagG (a,b)    {if (isPowerTwo(4*a + 3*b))    {return Math.log2(4*a + 3*b) + 4}   else {return Infinity}};
+    return Math.min(same, opp) + 2;
+}
 
 function general(a,b) {if (!isPowerTwo(b)) {
         let c = Math.ceil(Math.log2(b));
@@ -999,23 +1024,11 @@ function general(a,b) {if (!isPowerTwo(b)) {
 }
 
 function type (a,b) {
-    let min = Math.min(powTwo(b), diagA(a,b), diagB(a,b), diagC(a,b), diagD(a,b), diagE(a,b), diagF(a,b), diagG(a,b), general(a,b));
+    let min = Math.min(powTwo(b), smartDiag(a,b), general(a,b));
     if (powTwo(b)===min){
         return "powTwo";
-    } else if (diagA(a,b)===min){
-        return "diagA";
-    } else if (diagB(a,b)===min){
-        return "diagB";
-    } else if (diagC(a,b)===min){
-        return "diagC";
-    } else if (diagD(a,b)===min){
-        return "diagD";
-    } else if (diagE(a,b)===min){
-        return "diagE";
-    } else if (diagF(a,b)===min){
-        return "diagF";
-    } else if (diagG(a,b)===min){
-        return "diagG";
+    } else if (smartDiag(a,b)===min){
+        return "smartDiag";
     } else if (general(a,b)===min){
         return "general";
     } else return error
@@ -1031,7 +1044,7 @@ function generateFarey () {
                     numerator: a, 
                     denominator: b, 
                     weight: a/b, 
-                    rank: Math.min(powTwo(b), diagA(a,b), diagB(a,b), diagC(a,b), diagD(a,b), diagE(a,b), diagF(a,b), diagG(a,b), general(a,b)),
+                    rank: Math.min(powTwo(b), smartDiag(a,b), general(a,b)),
                     type: type(a,b),
                 },
             );
@@ -1081,11 +1094,6 @@ function searchForFraction(numerator, denominator) {
         return Infinity;
     }
 }
-
-//---------------------------------------------------------------------------------------------------------
-// PART TWO: A rectangle having w/h = (a + b(rt2)) / c can be decomposed into a pair of slopes in ten possible ways.
-// This section calculates the number of creases required for each situation, and reports the most efficient option,
-// and the corresponding number of creases.
 
 function rankIt(alphadef, betadef, gammadef, type, callSpot) {
     let alpha, beta, gamma;
@@ -1244,112 +1252,6 @@ function rankIt(alphadef, betadef, gammadef, type, callSpot) {
     }
 }
 
-//---------------------------------------------------------------------------------------------------------------
-/*
-function findBisector(a,b,c) {
-    if ((summup(a,b,c) >= Math.SQRT2 + 1)) {
-    //CORRECT
-        let bisoA =  (2 * a * c * ((a ** 2) - (2 * (b ** 2))) * ((a ** 2) - (2 * (b ** 2)) - (c ** 2)));
-        let bisoB = (-2 * b * c * ((a ** 2) - (2 * (b ** 2))) * ((a ** 2) - (2 * (b ** 2)) + (c ** 2)));
-        let bisoC = ((a ** 2) * (((a ** 2) - (2 * (b ** 2)) - (c ** 2)) ** 2) - (2 * (b ** 2) * (((a ** 2) - (2 * (b ** 2)) + (c ** 2)) ** 2)));
-
-        let bisA = bisoA * bisoC;
-        let bisB = -bisoB * bisoC;
-        let bisC = (bisoA**2) - (2 * (bisoB ** 2))
-
-        if ((summup(bisA, bisB, bisC) < 0) || (bisA + (bisB * Math.SQRT2) < 0 && bisC < 0)) {
-            bisA = -bisA;
-            bisB = -bisB;
-            bisC = -bisC;
-        } 
-
-        let bisG = gcd((gcd(bisA, bisB)), bisC);
-        return [bisA/bisG, bisB/bisG, bisC/bisG];
-
-    } else if ((summup(a,b,c) <= Math.SQRT2 + 1 && (summup(a,b,c) >= 1))) {
-    //CORRECT
-        let bisA =  (2 * a * c * ((a ** 2) - (2 * (b ** 2))) * ((a ** 2) - (2 * (b ** 2)) - (c ** 2)));
-        let bisB = (-2 * b * c * ((a ** 2) - (2 * (b ** 2))) * ((a ** 2) - (2 * (b ** 2)) + (c ** 2)));
-        let bisC = ((a ** 2) * (((a ** 2) - (2 * (b ** 2)) - (c ** 2)) ** 2) - (2 * (b ** 2) * (((a ** 2) - (2 * (b ** 2)) + (c ** 2)) ** 2)));
-
-        if ((summup(bisA, bisB, bisC) < 0) || (bisA + (bisB * Math.SQRT2) < 0 && bisC < 0)) {
-            bisA = -bisA;
-            bisB = -bisB;
-            bisC = -bisC;
-        } 
-
-        let bisG = gcd((gcd(bisA, bisB)), bisC);
-        return [bisA/bisG, bisB/bisG, bisC/bisG];
-            
-    } else {
-        return [Infinity, Infinity, Infinity]
-    }
-}
-
-function findSwitchIt(a,b,c) {
-    //CORRECT
-    if (summup(a,b,c) > 1) {
-
-        let swiA = (((a-c)*(a+c))-(2*(b**2)));
-        let swiB = ((-2)*b*c);
-        let swiC = (((a-c)**2)-(2*(b**2)));
-
-        if ((summup(swiA, swiB, swiC) < 0) || (swiA + (swiB * Math.SQRT2) < 0 && swiC < 0)) {
-            swiA = -swiA;
-            swiB = -swiB;
-            swiC = -swiC;
-        } 
-
-        let swiG = gcd((gcd(swiA, swiB)), swiC);
-        return [swiA/swiG, swiB/swiG, swiC/swiG];
-
-    } else {
-        return [Infinity, Infinity, Infinity]
-    }
-}
-
-function findHSA(a,b,c) {
-    //CORRECT
-    if (summup(a,b,c) >= 1) {
-    
-    let hsaA = a * ((a ** 2) - (2 * (b ** 2)) + (c ** 2));
-    let hsaB = -b * (-(a ** 2) + (2 * (b ** 2)) + (c ** 2));
-    let hsaC = 2 * c * ((a ** 2) - (2 * (b ** 2)));
-
-    if ((summup(hsaA, hsaB, hsaC) < 0) || (hsaA + (hsaB * Math.SQRT2) < 0 && hsaC < 0)) {
-        hsaA = -hsaA;
-        hsaB = -hsaB;
-        hsaC = -hsaC;
-    } 
-
-    let hsaG = gcd((gcd(hsaA, hsaB)), hsaC);
-    return [hsaA/hsaG, hsaB/hsaG, hsaC/hsaG]
-    } else {
-        return [Infinity, Infinity, Infinity]
-    }
-}
-
-function findHSB(a,b,c) {
-    //CORRECT!
-    if (summup(a,b,c) >= 1) {
-    
-    let hsBA = (a ** 4) + (4 * (b ** 4)) - (c ** 4) - (4 * (a ** 2) * (b ** 2));
-    let hsBB = -4 * a * b * (c ** 2);
-    let hsBC = (a ** 4) + (4 * (b ** 4)) + (c ** 4) - (2 * (a ** 2) * (c ** 2)) - (4 * (a ** 2) * (b ** 2)) - (4 * (b ** 2) * (c ** 2));
-
-    if ((summup(hsBA, hsBB, hsBC) < 0) || (hsBA + (hsBB * Math.SQRT2) < 0 && hsBC < 0)) {
-        hsBA = -hsBA;
-        hsBB = -hsBB;
-        hsBC = -hsBC;
-    } 
-
-    let hsBG = gcd((gcd(hsBA, hsBB)), hsBC);
-    return [hsBA/hsBG, hsBB/hsBG, hsBC/hsBG]
-    } else {
-        return [Infinity, Infinity, Infinity]
-    }
-}*/
-
 function alts(a, b, c) {
     function neg(a, b, c) {
         const alpha = (a ** 2) - (a * c) - (2 * (b ** 2));
@@ -1379,37 +1281,8 @@ function alts(a, b, c) {
     // Default and negdefault
     const defaultType = createRankType('default', [a, b, c]);
 
-    //// Double and negdouble (only calculate if summup > 2)
-    //const doubleType = summup(a, b, c) > 2 ? createRankType('double', [a, b, 2 * c], 1) : [{ name: 'double', meth: 'N/A', value: Infinity }, { name: 'negdouble', meth: 'N/A', value: Infinity }];
-//
-    //// Quadruple and negquadruple (only calculate if summup > 4)
-    //const quadrupleType = summup(a, b, c) > 4 ? createRankType('quadruple', [a, b, 4 * c], 2) : [{ name: 'quadruple', meth: 'N/A', value: Infinity }, { name: 'negquadruple', meth: 'N/A', value: Infinity }];
-//
-    //// Bisector and negbisector
-    //const bisectorValues = findBisector(a, b, c);
-    //const bisectorType = createRankType('bisector', bisectorValues, 2);
-//
-    //// SwitchIt and negSwitchIt
-    //const switchItValues = findSwitchIt(a, b, c);
-    //const switchItType = createRankType('switchIt', switchItValues, 2);
-//
-    //// HSA and negHSA
-    //const hsaValues = findHSA(a, b, c);
-    //const hsaType = createRankType('HSA', hsaValues, 2);
-//
-    //// HSB and negHSB
-    //const hsbValues = findHSB(a, b, c);
-    //const hsbType = createRankType('HSB', hsbValues, 2)
-
-    // Combine all rank types into one array
     const types = [
         ...defaultType,
-        //...doubleType,
-        //...quadrupleType,
-        //...bisectorType,
-        //...switchItType,
-        //...hsaType,
-        //...hsbType
     ];
 
     // Check if all ranks are Infinity
@@ -1472,14 +1345,6 @@ function findTransformation (point) {
 
     console.log(transArr);
     return transArr;
-}
-
-function distance (point1, point2) {
-    let x1 = point1[0];
-    let y1 = point1[1];
-    let x2 = point2[0];
-    let y2 = point2[1];
-    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 }
 
 function doTransform (point, transArr) {
@@ -1666,12 +1531,6 @@ function pointLine (point1, point2, point3) {
     return rotatedFlippedCreaseArr;
 }
 
-const tolerance = 10 ** -8;
-
-function tolerantSame (value1, value2) {
-    return Math.abs(value1 - value2) < tolerance;
-}
-
 function lineTest (point1, point2) {
     return ((tolerantSame(point1[0], point2[0]) || tolerantSame(point1[1], point2[1])) && tolerantSame(distance(point1, point2), 1))
 }
@@ -1760,15 +1619,6 @@ function findCreaseArr (arr) {
     }
 
     return creaseArr;
-    //linePusher(creaseArr, prelimGroup, 0);
-    //prelimGroup.addChild(border);
-    //prelimGroup.pivot = new paper.Point(0.5,0.5)
-    //prelimGroup.scale(200, 200);
-    //prelimGroup.rotate(0);
-    //prelimGroup.position = new paper.Point(300, 300);
-    //prelimGroup.strokeWidth = 1;
-    //prelimGroup.strokeColor = 'black';
-    //prelimGroup.visible = true;
 }
 
 function linePusher(arr, boxArr, time) {
@@ -1786,10 +1636,13 @@ function linePusher(arr, boxArr, time) {
             console.log(point1);
             console.log(point2);
 
-            boxArr.addChild(lineToBePushed);
-            lineToBePushed.strokeColor = time === 0 ? 'red' : 'black';
-            lineToBePushed.strokeWidth = 1;
-            lineToBePushed.visible = time >= 0;
+            if (!(point1.x === point2.x && point1.y === point2.y)) {
+                boxArr.addChild(lineToBePushed);
+                lineToBePushed.strokeColor = time === 0 ? 'red' : 'black';
+                lineToBePushed.strokeWidth = 1;
+                lineToBePushed.pivot = new paper.Point(0.5, 0.5);
+                //lineToBePushed.rotate = rotate;
+            }
         } else {
             console.error("Invalid array format for line:", arr[i]);
         }
@@ -1827,20 +1680,6 @@ function highLighter (from, to, time) {
 }
 
 let fontSize;
-
-//reduces n and d by their gcd
-function simplify(n, d) {
-    if (n !== 0 && d !== 0) {
-        const gcdND = gcd(n, d);
-        n /= gcdND;
-        d /= gcdND;
-    } else if (n === 0) {
-        d = 1;
-    } else {
-        n = 1;
-    }
-    return [n, d];
-}
 
 //a pair of numbers are scaled so that the larger equals one, but proportionality is maintained
 function scaler(n, d) {
@@ -1895,25 +1734,17 @@ function sloper(a,b,c,type) {
             blockInfo = [Math.SQRT2 + 1, 1 + Math.SQRT2/2];
             break;
     }
-    return [slopePair, blockInfo];
+
+    console.log([slopePair, blockInfo]);
+
+    let approxRank = findRank(slopePair[0], slopePair[1]).rank + findRank(slopePair[2], slopePair[3]).rank;
+
+    return [slopePair, blockInfo, approxRank];
 };
 
 let rotate = 0;
 
-function scrawler(a1, b1, w1, h1, type1, a2, b2, w2, h2, type2) {
-    let zero1 = (a1 === 0 || b1 === 0 || a1 === -0 || b1 === -0);
-    let one1 = (a1/b1 === 1);
-    let diag1 = false;
-
-    let zero2 = (a2 === 0 || b2 === 0 || a2 === -0 || b2 === -0);
-    let one2 = (a2/b2 === 1);
-    let diag2 = false;
-
-    let precrease = false;
-
-    [w1, h1] = scaler(w1, h1);
-    [w2, h2] = scaler(w2, h2);
-
+function scrawler(a, b, c, method, split) {
     // Get the canvas size
     const canvas = document.getElementById('myCanvas');
     const canvasWidth = canvas.clientWidth;
@@ -1941,272 +1772,45 @@ function scrawler(a1, b1, w1, h1, type1, a2, b2, w2, h2, type2) {
 
     updateInfoText();
 
-    let preCreaseLineArr = [], preCreaseArr = [];
-
-    let diag1Group = diag(a1, b1, w1, h1, 0, false);
-    let diag2Group = diag(a2, b2, w2, h2, 0, true);
-
-    let c1S = new paper.Point(0,0), c1F = new paper.Point(1,1);
-    let c2S = new paper.Point(1,0), c2F = new paper.Point(0,1);
-
-    if ((one1 || zero1) && (one2 || zero2)) {
-        preCreaseLineArr.push (...oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2))[0];
-    } else {
-        if (one1) {
-            if (isTwoMinusRtTwo(w1, h1) || isOnePlusHalfRtTwo(w1, h1)) preCreaseLineArr.push([[0,0],[w1,h1]]);
-            preCreaseArr.push(new paper.Point(w1, h1));
-            preCreaseLineArr.push([[0,0], [w1, h1]])
-            c1F = new paper.Point(w1, h1);
-            console.log("log")
-        } else if (zero1) {
-            if (a2*w2/b2*h2 >= 1) {c1F.x = 0}
-            else {c1S.y = 1}
-            console.log("log")
-        } else {
-            diag1 = true;
-            preCreaseArr.push(diag1Group[1]);
-            //c1F = diag1Group[0]._children[0].segments.slice(-1)[0].point;
-            console.log("log")
-        }
-        if (one2) {
-            if (isTwoMinusRtTwo(w2, h2) || isOnePlusHalfRtTwo(w2, h2)) preCreaseLineArr.push([[1,0],[1-w2,h2]]);
-            preCreaseArr.push(new paper.Point(1-w2, h2));
-            c2F = new paper.Point(1-w2, h2);
-            preCreaseLineArr.push([[1,0], [1-w2, h2]])
-            console.log("log")
-        } else if (zero2) {
-            if (a1*w1/b1*h1 >= 1) {c2F.x = 1}
-            else {c2S.y = 1}
-            console.log("log")
-        } else {
-            diag2 = true;
-            preCreaseArr.push(diag2Group[1]);
-            //c2F = diag2Group[0]._children[0].segments.slice(-1)[0].point
-            console.log("log")
-        }
-    }
-
-    let intersection = true;
-    
-    if (!((zero2 && type1 === 'powTwo' && tolerantSame(w1, h1)) || (zero1 && type2 === 'powTwo' && tolerantSame (w2, h2)))) {
-        if (!((one1 || zero1) && (one2 || zero2))) {
-            console.log("sending");
-            console.log(findCreaseArr(preCreaseArr));
-            if (findCreaseArr(preCreaseArr)) preCreaseLineArr.push (...findCreaseArr(preCreaseArr));
-        }
-        precrease = true;
-    };
-
-    if ((zero2 && type1 === 'powTwo' && (a1 > b1 === w1 > h1 || tolerantSame(w1, h1))) || 
-    (zero1 && type2 === 'powTwo' && (a2 > b2 === w2 > h2 || tolerantSame (w2, h2)))) {
-        intersection = false;
-        console.log("intersection false")
-    }
-
-    let preCreaseGroup = new paper.Group();
-
-    let stepCount = [];
-
-    if (precrease) {stepCount.push('precrease')};
-    if (diag1) {stepCount.push('diag1')};
-    if (diag2) {stepCount.push('diag2')};
-    if (intersection) {stepCount.push('intersection')};
-
-    const stepData = stepper[stepCount.length - 1];
-
-    if (preCreaseLineArr) {linePusher(preCreaseLineArr, preCreaseGroup, 0)};
-
     function borderFactory(numSteps) {
         const border = new paper.Path.Rectangle({
             from: new paper.Point(stepData[numSteps][0], stepData[numSteps][1]),
             to: new paper.Point(stepData[numSteps][0] + stepSize, stepData[numSteps][1] + stepSize),
             strokeColor: 'black',
             strokeWidth: 1,
+            pivot: new paper.Point(0.5, 0.5)
         });
         return border;
     }
 
     let screen = new paper.Group();
 
-    let precreaseIndex = stepCount.indexOf('precrease');
-    let diag1Index = stepCount.indexOf('diag1');
-    let diag2Index = stepCount.indexOf('diag2');
-    let intersectionIndex = stepCount.indexOf('intersection');
-
-    let precreasesi0 = new paper.Group();
-    let precreasesi1 = new paper.Group();
-    console.log("to linePusher");
-    console.log(preCreaseLineArr);
-    linePusher(preCreaseLineArr, precreasesi0, 0);
-    linePusher(preCreaseLineArr, precreasesi1, 1);
-
-
-    let diagonals1, diagonals2;
-
     console.log(`*** Begin drawing elev. ${window.variable} ***`);
 
-    let aRD = globalC2[window.variable-1][0];
-    let bRD = globalC2[window.variable-1][1];
-    let cRD = globalC2[window.variable-1][2];
+    let whiteRabbit = newDiags(a, b, c, method, split);
+    //console.log(whiteRabbit);
 
-    [aRD, bRD, cRD] = normalize(aRD, bRD, cRD);
+    const stepCount = whiteRabbit.steps.length;
+    const stepData = stepper[stepCount - 1];
 
-    const elevationFinal = inverse(aRD, bRD, cRD);
-    const elevationFinalCoord = summup(elevationFinal[0], elevationFinal[1], elevationFinal[2])
+    for (let i = 0; i < stepCount; i++) {
+        let thisStep = whiteRabbit.steps[i][0];
 
-    var dSLs = new paper.Point(0,0);
-    var dSLf = new paper.Point(1,1);
-
-    if (xory === 'X') {
-        dSLs.x = (stepData[stepCount.length - 1][0]);
-        dSLs.y = (stepData[stepCount.length - 1][1]) + elevationFinalCoord*stepSize;
-        dSLf.x = (stepData[stepCount.length - 1][0] + stepSize);
-        dSLf.y = (stepData[stepCount.length - 1][1]) + elevationFinalCoord*stepSize;
-    } else {
-        dSLs.x = (stepData[stepCount.length - 1][0] + elevationFinalCoord*stepSize);
-        dSLs.y = (stepData[stepCount.length - 1][1] );
-        dSLf.x = (stepData[stepCount.length - 1][0] + elevationFinalCoord*stepSize);
-        dSLf.y = (stepData[stepCount.length - 1][1] + stepSize);
-    }
-
-    var desiredLine = new paper.Path.Line ({
-        from: dSLs,
-        to: dSLf,
-        strokeColor: 'red',
-        strokeWidth: 1
-    });
-
-    for (let i = 0; i < stepCount.length; i++) {
-        let thisStep = new paper.Group();
-
-        if (precreaseIndex !== -1) {
-            console.log(`precreases called for step ${i + 1} with a time ${i - precreaseIndex}`);
-            let precreasesToAdd 
-            if (i - precreaseIndex === 0) {
-                precreasesToAdd = precreasesi0.clone();
-            } else precreasesToAdd = precreasesi1.clone();            
-            precreasesToAdd.rotate(rotate);
-            thisStep.addChild(precreasesToAdd);
-            console.log(thisStep);
-        }
-        if (diag1Index !== -1 && i - diag1Index >= 0) {
-            console.log(`diag1 called for step ${i + 1} with a time ${i - diag1Index}`);
-            diagonals1 = diag(a1, b1, w1, h1, i - diag1Index, false)[0];
-            thisStep.addChild(diagonals1);
-            console.log(thisStep);
-            if (!intersection) {
-                diagonals1._children[0].visible = false;
-            }
-            if (i - intersectionIndex === 0) {
-                c1S = diagonals1._children[0].segments[0].point;
-                c1F = diagonals1._children[0].segments.slice(-1)[0].point;
-                console.log([c1S, c1F]);
-            }
-        }
-        if (diag2Index !== -1 && i - diag2Index >= 0) {
-            console.log(`diag2 called for step ${i + 1} with a time ${i - diag2Index}`);
-            diagonals2 = diag(a2, b2, w2, h2, i - diag2Index, true)[0];
-            thisStep.addChild(diagonals2);
-            console.log(thisStep);
-            if (!intersection) {
-                diagonals2._children[0].visible = false;
-            }
-            if (i - intersectionIndex === 0) {
-                c2S = c2S = diagonals2._children[0].segments[0].point;
-                c2F = diagonals2._children[0].segments.slice(-1)[0].point;
-                console.log([c2S, c2F]);
-            }
-        }
-        if (intersectionIndex !== -1 && i - intersectionIndex >= 0 && intersection) {
-
-            console.log("int step, " + [c1S, c1F, c2S, c2F]);
-            let intPt = new paper.Point();
-
-            let unscaledDSLS = new paper.Point(0,0);
-            let unscaledDSLF = new paper.Point(1,1);
-
-            if (xory === 'X') {
-                unscaledDSLS.y = (elevationFinalCoord);
-                unscaledDSLF.y = (elevationFinalCoord);
-            } else {
-                unscaledDSLS.x = (elevationFinalCoord);
-                unscaledDSLF.x = (elevationFinalCoord);
-            };
-
-            if (diag1) {
-                [c1S.x, c1S.y, c1F.x, c1F.y] = diag(a1, b1, w1, h1, 0, false)[2];
-            }
-
-            if (diag2) {
-                [c2S.x, c2S.y, c2F.x, c2F.y] = diag(a2, b2, w2, h2, 0, true)[2];
-            }
-
-            if ((one1 || zero1) && (one2 || zero2)) {
-                intPt = oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2)[1]
-            } else if (diag1 && diag2) {
-                intPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, c2S.x, c2S.y, c2F.x, c2F.y);
-            } else if 
-
-            //if (diag1 && diag2) {
-            //    intPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, c2S.x, c2S.y, c2F.x, c2F.y);
-            //} else if (diag1) {
-            //    intPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, unscaledDSLS.x, unscaledDSLS.y, unscaledDSLF.x, unscaledDSLF.y);
-            //} else if (diag2) {
-            //    intPt = intersect(c2S.x, c2S.y, c2F.x, c2F.y, unscaledDSLS.x, unscaledDSLS.y, unscaledDSLF.x, unscaledDSLF.y);
-            //} else {
-            //    console.log("not diag1 or diag2")
-            //}
-
-            if (diag1 && diag2) {
-                intPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, c2S.x, c2S.y, c2F.x, c2F.y);
-            } else if (diag1) {
-                intPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, unscaledDSLS.x, unscaledDSLS.y, unscaledDSLF.x, unscaledDSLF.y);
-                if (!intPt) {
-                    intPt = c1F.clone();
-                }
-                console.log("log");
-            } else if (diag2) {
-                intPt = intersect(c2S.x, c2S.y, c2F.x, c2F.y, unscaledDSLS.x, unscaledDSLS.y, unscaledDSLF.x, unscaledDSLF.y);
-                if (!intPt) {
-                    intPt = c2F.clone();
-                }
-                console.log("log");
-            } else if (one1) {
-                if (zero2) {
-                    intPt = new paper.Point(w1, h1)
-                } else {
-                    intPt = intersect(0, 0, w1, h1, unscaledDSLS.x, unscaledDSLS.y, unscaledDSLF.x, unscaledDSLF.y);
-                }
-                //intPt = unscaledDSLS.clone();
-                console.log("hey");
-            } else if (one2 && zero1) {
-                if (zero1) {
-                    intPt = new paper.Point(1-w2, h2);
-                } else {
-                    intPt = intersect(1, 0, 1-w1, h1, unscaledDSLS.x, unscaledDSLS.y, unscaledDSLF.x, unscaledDSLF.y);
-                }
-                //intPt = unscaledDSLF.clone();
-                console.log("hey");
-            }
-
-            if (intPt) {
-                intPt.pivot = new paper.Point(0.5, 0.5);
-                intPt.rotate(rotate);
-                let intDot = dot (intPt, i - intersectionIndex);
-                console.log(intDot);
-                thisStep.addChild(intDot);
-            }
-        } else {
-            console.log("no int step, " + [c1S, c1F, c2S, c2F]);
+        for (let j = 0; j < i; j ++) {
+            thisStep.addChild(whiteRabbit.steps[j][1].clone());
         }
 
         thisStep.pivot = new paper.Point(0.5, 0.5);
         thisStep.scale(stepSize, stepSize);
-        console.log(stepData);
-        console.log(thisStep);
-        console.log(thisStep.position);
         thisStep.position = new paper.Point(stepData[i][0] + stepSize / 2, stepData[i][1] + stepSize / 2);
         thisStep.strokeWidth = 1;
+        thisStep.rotation = rotate;
+
+        thisStep.children.forEach((child) => {
+            if (child instanceof paper.PointText) {
+                child.rotation = 0;
+            }
+        });
 
         borderFactory(i);
 
@@ -2215,19 +1819,20 @@ function scrawler(a1, b1, w1, h1, type1, a2, b2, w2, h2, type2) {
 }
 
 function diag (a, b, w, h, time, diag2) {
+    [a,b] = simplify(a,b);
+
+    console.log(`a: ${a}, b: ${b}, ${findRank(a, b)}`)
+    
     let type = findRank(a, b).type;
 
-    if (tolerantSame(a, b)) {
-        return [null, null]
-    } else if (tolerantSame(a, 0) || tolerantSame(b, 0)) {
-        return [null, null]
-    } else if (type.includes('diag')) {type = 'diag'};
+    console.log(type);
+
     switch (type) {
         case 'powTwo':
             return powTwoFunction   (a, b, w, h, time, diag2);
         case 'general':
             return generalFunction  (a, b, w, h, time, diag2);
-        case 'diag':
+        case 'smartDiag':
             return diagFunction     (a, b, w, h, time, diag2);
     }
 }
@@ -2309,7 +1914,7 @@ function powTwoFunction (a, b, w, h, time, diag2) {
     var powTwoLabel = new paper.PointText({
         point: powTwoTextPt,
         content: powTwoLabelText,
-        fontSize: 12/scale,
+        fontSize: fontSize,
         fillColor: 'black',
         justification: powTwoTextJust,
         visible: time === 0
@@ -2336,13 +1941,17 @@ function powTwoFunction (a, b, w, h, time, diag2) {
     console.log(powTwoHighLight);
     console.log(powTwoDot);
 
-    powTwoGroup.rotate(rotate);
+    //powTwoGroup.rotate(rotate);
     powTwoLabel.rotation = 0;
-    
-    if (powTwoPrelim.length > 0) {
-        return([powTwoGroup, powTwoPrelim, [cstart.x, cstart.y, csquare.x, csquare.y]]);
-    } else return([powTwoGroup, null]);
 
+    const powTwoReturn = {
+        drawnGroup: powTwoGroup,
+        pointsPrelim: powTwoPrelim,
+        rank: Math.log2(Math.max(a, b)) + 1,
+        diagonal: [diag2 ? 1 - cstart.x : cstart.x, cstart.y, diag2 ? 1- csquare.x : csquare.x, csquare.y]
+    }
+
+    return powTwoReturn;
 }
 
 function generalFunction (a, b, w, h, time, diag2) {
@@ -2452,8 +2061,8 @@ function generalFunction (a, b, w, h, time, diag2) {
     vertLine.style = creaseStyle;
     var horiLine = new paper.Path(horiStart, genInt);
     horiLine.style = creaseStyle;
-    let vertDot = dot(vertStart);
-    let horiDot = dot(horiStart);
+    let vertDot = dot(vertStart, time);
+    let horiDot = dot(horiStart, time);
     let vertHighLight = highLighter(vertHighLightStart, vertHighLightFinish, time);
     let horiHighLight = highLighter(horiHighLightStart, horiHighLightFinish, time);
 
@@ -2461,7 +2070,7 @@ function generalFunction (a, b, w, h, time, diag2) {
         point: new paper.Point(horiX, horiY),
         content: horiTextLabel,
         fillColor: 'black',
-        fontSize: 12/scale,
+        fontSize: fontSize,
         justification: horiJust,
         visible: time === 0
     });
@@ -2470,7 +2079,7 @@ function generalFunction (a, b, w, h, time, diag2) {
         point: new paper.Point(vertX, vertTexY),
         content: vertTextLabel,
         fillColor: 'black',
-        fontSize: 12/scale,
+        fontSize: fontSize,
         justification: vertJust,
         visible: time === 0
     });
@@ -2491,11 +2100,18 @@ function generalFunction (a, b, w, h, time, diag2) {
         horiText.scale(-1,1);
     }
 
-    genGroup.rotate(rotate);
+    //genGroup.rotate(rotate);
     vertText.rotation = 0;
     horiText.rotation = 0;
     
-    return [genGroup, generalPrelim, [cstart.x, cstart.y, csquare.x, csquare.y]];
+    const genReturn = {
+        drawnGroup: genGroup,
+        pointsPrelim: generalPrelim,
+        rank: general(a, b),
+        diagonal: [diag2 ? 1 - cstart.x : cstart.x, cstart.y, diag2 ? 1- csquare.x : csquare.x, csquare.y]
+    }
+
+    return genReturn;
 }
 
 function diagFunction (a, b, w, h, time, diag2) {
@@ -2506,8 +2122,6 @@ function diagFunction (a, b, w, h, time, diag2) {
         strokeWidth: 1,
         visible: time >= 0
     };
-
-    let type = findRank(a,b).type;
     
     [w, h] = scaler(w, h);
     [a, b] = simplify(a, b);
@@ -2521,8 +2135,6 @@ function diagFunction (a, b, w, h, time, diag2) {
     
     [csquare.x, csquare.y] = scaler(csquare.x, csquare.y);
     
-    console.log("csquare: " + csquare)
-    
     var creaseDiag = new paper.Path(cstart, csquare);
     creaseDiag.style = creaseStyle;
 
@@ -2534,117 +2146,48 @@ function diagFunction (a, b, w, h, time, diag2) {
 
     let diagLabelSide;
 
-    //returns relevant diagStart/Finish, diagDenom, diagLabelPt, diagLabelText
-    if (type.includes('diag')) {
-        let typeFixed = type;
-        console.log(`a: ${a}, b: ${b}, type: ${type}`);
-        if (a>b) {
-            switch(type) {
-                case 'diagA':
-                    break;
-                case 'diagB':
-                    typeFixed = 'diagC';
-                    break;
-                case 'diagC':
-                    typeFixed = 'diagB';
-                    break;
-                case 'diagD':
-                    typeFixed = 'diagE';
-                    break;
-                case 'diagE':
-                    typeFixed = 'diagD';
-                    break;
-                case 'diagF':
-                    typeFixed = 'diagG';
-                    break;
-                case 'diagG':
-                    typeFixed = 'diagF';
-                    break;
-                default:
-                    break;
+    let i = 1, j = 1, result = null;
+
+    while (i <= 32 && !result) {
+        j = 1;
+        while (j <= 32 && !result) {
+            if (Math.log2(i * a + j * b) % 1 === 0 && Math.log2 (Math.max (i, j)) % 1 === 0) {
+                result = [i, j, Math.log2(i * a + j * b)];
+                break;
             }
+            j++;
         }
-        console.log(`a: ${a}, b: ${b}, typeFixed: ${typeFixed}`);
-        switch(typeFixed) {
-            case 'diagA':
-                if (isPowerTwo(a + b)) {
-                    diagDenom = a+b;
-                } else throw new Error('diagA issue');
-                break;
-            case 'diagB':
-                if (isPowerTwo(a + 2*b)) {
-                    diagStart.y = h/2;
-                    diagDenom = a + 2*b;
-                    diagLabelPt.y = h/2;
-                    diagLabelText = '1/2';
-                    diagLabelSide = 'left';
-                } else throw new Error('diagB issue');            
-                break;
-            case 'diagC':
-                if (isPowerTwo(2*a + b)) {
-                    diagFinish.x = w/2;
-                    diagDenom = 2*a + b;
-                    diagLabelPt.x = w/2;
-                    diagLabelText = '1/2';
-                    diagLabelSide = 'bottom';
-                } else throw new Error('diagC issue');
-                break;
-            case 'diagD':
-                if (isPowerTwo(a + 4*b)) {
-                    diagStart.y = h/4;
-                    diagDenom = a + 4*b;
-                    diagLabelPt.y = h/4;
-                    diagLabelText = '1/4';
-                    diagLabelSide = 'left';
-                } else throw new Error('diagD issue');
-                break;
-            case 'diagE':
-                if (isPowerTwo(4*a + b)) {
-                    diagFinish.x = w/4;
-                    diagDenom = 4*a + b;
-                    diagLabelPt.x = w/4;
-                    diagLabelText = '1/4';
-                    diagLabelSide = 'bottom';
-                } else throw new Error('diagE issue');
-                break;
-            case 'diagF':
-                if (isPowerTwo(3*a + 4*b)) {
-                    diagStart.y = 3*h/4;
-                    diagDenom = 3*a + 4*b;
-                    diagLabelPt.y = 3*h/4;
-                    diagLabelText = '3/4';
-                    diagLabelSide = 'left';
-                } else throw new Error('diagF issue');
-                break;
-            case 'diagG':
-                if (isPowerTwo(4*a + 3*b)) {
-                    diagFinish.x = 3*w/4;
-                    diagDenom = 4*a + 3*b;
-                    diagLabelPt.x = 3*w/4;
-                    diagLabelText = '3/4';
-                    diagLabelSide = 'bottom';
-                } else throw new Error('diagG issue');
-                break;
-            default:
-                break;
-        }
-    } else throw new Error ("not Diag")
+        i++;
+    }
     
-    console.log(diagStart)
-    console.log(diagFinish)
-    console.log(cstart)
-    console.log(csquare)
+    console.log(result);
+    console.log([a, b]);
+
+    [i, j] = simplify(result[0], result[1]);
+    diagStart.y = i/Math.max(i, j) * h;
+    diagFinish.x = j/Math.max(i, j) * w;
+    
+    if (i > j) {
+        diagLabelPt.x = w * j/i;
+        diagLabelText = `${j}/${i}`;
+        diagLabelSide = 'bottom';
+    } else if (i < j) {
+        diagLabelPt.y = h * i/j;
+        diagLabelText = `${i}/${j}`;
+        diagLabelSide = 'left';
+    }
    
     let diagInt = intersect(diagStart.x, diagStart.y, diagFinish.x, diagFinish.y, cstart.x, cstart.y, csquare.x, csquare.y);
     let diagIntDot = dot(diagInt, time);
     var parallelStart = bbl.clone();
     let parallelText  = '';
-    var highLightX = highLighter(bbl,bbr, time);
-    var highLightY = highLighter(bbl,btl, time);
+    var highLightX = highLighter(bbl, bbr, time);
+    var highLightY = highLighter(bbl, btl, time);
+
     let diagDot = dot(diagLabelPt, time);
-    
-    [diagNumA, diagDenom] = simplify(diagNumA, diagDenom);
-    [diagNumB, diagDenom] = simplify(diagNumB, diagDenom);
+    let diagDenomA = i*a + j*b, diagDenomB = i*a + j*b;
+    [diagNumA, diagDenomA] = simplify(diagNumA, diagDenomA);
+    [diagNumB, diagDenomB] = simplify(diagNumB, diagDenomB);
 
     let parallelLabelPt;
     let parallelLabelJust = 'center';
@@ -2654,55 +2197,68 @@ function diagFunction (a, b, w, h, time, diag2) {
     if (!tolerantSame(diagFinish.x, diagStart.y)) {
         if (diagFinish.x > diagStart.y){
             parallelStart.x = diagInt.x;
-            parallelText = `${diagNumA}/${diagDenom}`;
+            parallelText = `${diagNumA}/${diagDenomA}`;
             parallelLabelPt = parallelStart.clone();
             parallelLabelPt.y -= fontSize;
+            console.log("hereA");
         } else if (diagFinish.x < diagStart.y){
             parallelStart.y = diagInt.y;
-            parallelText = `${diagNumB}/${diagDenom}`;
+            parallelText = `${diagNumB}/${diagDenomB}`;
             parallelLabelPt = parallelStart.clone();
             parallelLabelJust = 'right';
+            console.log("hereB")
         }
     } else {
-        diagDot.visible = false;
-
         if (a*w >= b*h) {
             parallelStart.x = diagInt.x;
-            parallelText = `${diagNumA}/${diagDenom}`;
-            highLightY.visible = false;
+            parallelText = `${diagNumA}/${diagDenomA}`;
             parallelLabelPt = parallelStart.clone();
             parallelLabelPt.y -= fontSize;
+            console.log("here1");
         } else {
             parallelStart.y = diagInt.y;
-            parallelText = `${diagNumB}/${diagDenom}`;
-            highLightX.visible = false;
+            parallelText = `${diagNumB}/${diagDenomB}`;
             parallelLabelPt = parallelStart.clone();
             parallelLabelJust = 'right';
+            console.log("here2");
+        }
+    }
+
+    if (i === j) {
+        diagDot = false;
+        if (parallelStart.x === diagInt.x) {
+            highLightY = false;
+        } else if (parallelStart.y === diagInt.y) {
+            highLightX = false;
         }
     }
     
-    let parallelDot = dot(parallelStart)
+    let parallelDot = dot(parallelStart, time);
     var parallelLine = new paper.Path(parallelStart, diagInt);
     parallelLine.style = creaseStyle;
 
     let diagJust;
     if (diagLabelSide === 'left') {diagJust = 'right'} else {diagJust = 'center'};
     if (diagLabelSide === 'bottom') {diagLabelPt.y -= fontSize};
+    
+    console.log(diagLabelText);
 
     var diagText = new paper.PointText({
         point: diagLabelPt,
         content: diagLabelText,
         fillColor: 'black',
-        fontSize: 12/scale,
+        fontSize: fontSize,
         justification: diagJust,
         visible: time === 0
     })
+    
+    console.log(diagText);
 
     var parallelTextObj = new paper.PointText({
         point: parallelLabelPt,
         content: parallelText,
         fillColor: 'black',
-        fontSize: 12/scale,
+        fontSize: fontSize,
         justification: parallelLabelJust,
         visible: time === 0
     })
@@ -2737,11 +2293,18 @@ function diagFunction (a, b, w, h, time, diag2) {
 
     diagGroup.visible = time >= 0;
 
-    diagGroup.rotate(rotate);
+    //diagGroup.rotate(rotate);
     parallelTextObj.rotation = 0;
     diagText.rotation = 0;
+    
+    const diagReturn = {
+        drawnGroup: diagGroup,
+        pointsPrelim: diagPrelim,
+        rank: smartDiag(a,b),
+        diagonal: [diag2 ? 1 - cstart.x : cstart.x, cstart.y, diag2 ? 1- csquare.x : csquare.x, csquare.y]
+    }
 
-    return([diagGroup, diagPrelim, [cstart.x, cstart.y, csquare.x, csquare.y]])
+    return diagReturn;
 }
 
 function oneZero (one1, one2, zero1, zero2, w1, h1, w2, h2) {
@@ -2797,7 +2360,7 @@ function oneZero (one1, one2, zero1, zero2, w1, h1, w2, h2) {
                 console.log("H, one & one");
             }
         }
-        const intArr = int.flatMap(pair => pair.map(point => [point.x, point.y])).flat();
+        const intArr = int.flatMap(point => [point.x, point.y]);
         interPt = intersect(...intArr);
     } else if (zero1 || zero2) {
         if (one1 && isRtTwoPlusOne(w1, h1)) {
@@ -2827,44 +2390,303 @@ function oneZero (one1, one2, zero1, zero2, w1, h1, w2, h2) {
 }
 
 function newDiags (a, b, c, method, split) {
-    let aInt, bInt, cInt;
+    let [aInt, bInt, cInt] = [a, b, c];
 
     if (method.includes('neg')) {
-        [aInt, bInt, cInt] = normalize(a * (a - c) - 2 * b ** 2, -b * c, (a - c) ** 2 - 2 * b ** 2)
+        [aInt, bInt, cInt] = normalize(a * (a - c) - 2 * b ** 2, -b * c, (a - c) ** 2 - 2 * b ** 2);
     }
 
-    if (method.includes('double') && summup(aInt, bInt, cInt) >= 2) {
-        [aInt, bInt, cInt] = normalize(aInt, bInt, 2 * cInt);
-    } else if (method.includes('fourThirds') && summup(aInt, bInt, cInt) >= 4/3) {
-        [aInt, bInt, cInt] = normalize(3 * aInt, 3 * bInt, 4 * cInt);
-    } else if (method.includes('quadruple') && summup(aInt, bInt, cInt) >= 4) {
-        [aInt, bInt, cInt] = normalize(aInt, bInt, 4 * cInt);
-    }
+    const powerArr = sloper(aInt, bInt, cInt, split);
 
-    let powerArr = sloper(aInt, bInt, cInt, split);
-
-    let [a1, b1, a2, b2] = powerArr[0];
+    const [a1, b1, a2, b2] = powerArr[0];
 
     let [w1, w2] = powerArr[1];
     let [h1, h2] = [1,1];
     [w1, h1] = scaler (w1, h1);
     [w2, h2] = scaler (w2, h2);
 
-    let zero1 = (a1 === 0 || b1 == 0), zero2 = (a2 === 0 || b2 === 0), one1 = (a1 === b1), one2 = (a2 === b2);
+    const zero1 = (a1 === 0 || b1 == 0), zero2 = (a2 === 0 || b2 === 0), one1 = (a1 === b1), one2 = (a2 === b2);
 
-    if (one1 && one2) {
+    var c1S = new paper.Point();
+    var c1F = new paper.Point();
+    var c2S = new paper.Point();
+    var c2F = new paper.Point();
 
-    } else if ((one1 && zero2) || (one2 && zero1)) {
+    let precreaseStep0 = new paper.Group(), diag1Step0, 
+        diag2Step0 = new paper.Group(), intStep0 = new paper.Group(),
+        precreaseStep1 = new paper.Group(), diag1Step1 = new paper.Group(), 
+        diag2Step1 = new paper.Group(), intStep1 = new paper.Group();
 
+    let preCreaseLineArr = [], preCreaseArr = [], interPt;
+    let steps = [], rank = 0;
+
+    const styleTime0 = {
+        strokeColor: 'red',
+        strokeWidth: 1
+    }
+
+    const styleTime1 = {
+        strokeColor: 'black',
+        strokeWidth: 1
+    }
+
+    let diag10obj, diag11obj;
+    diag10obj = diag (a1, b1, w1, h1, 0, false);
+    diag11obj = diag (a1, b1, w1, h1, 1, false);
+    let diag20obj, diag21obj;
+    diag20obj = diag (a2, b2, w2, h2, 0, true);
+    diag21obj = diag (a2, b2, w2, h2, 1, true);
+
+    if ((one1 || zero1) && (one2 || zero2)) {
+        //handles 1/1 & 1/0
+        console.log("onezero");
+        [preCreaseLineArr, interPt] = oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2);
+        linePusher(preCreaseLineArr, precreaseStep0, 0);
+        linePusher(preCreaseLineArr, precreaseStep1, 1);
+    
+        let interDot = dot(interPt, 0);
+        let interLine0 = new paper.Path (new paper.Point(0, interPt.y), new paper.Point(1, interPt.y));
+        interLine0.style = styleTime0;
+        let interLine1 = interLine0.clone();
+        interLine1.style = styleTime1;
+        intStep0 = new paper.Group (interDot, interLine0);
+        intStep1 = new paper.Group (interLine1)
+    
+        //not sure if this will work...
+        rank = precreaseStep1._children.length + 1;
+    
+        steps = [[precreaseStep0, precreaseStep1], [intStep0, intStep1]];
     } else if (one1 || one2) {
+        //handles 1/2      
+        console.log("onetwo");
+        if (one1) {
+            console.log("one1");
+            [c1S.x, c1S.y, c1F.x, c1F.y] = [0, 0, w1, h1];
+            preCreaseArr.push(new paper.Point(w1, h1));
+            preCreaseLineArr.push([[0,0],[w1,h1]]);
+            [c2S.x, c2S.y, c2F.x, c2F.y] = diag20obj.diagonal;
+            interPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, c2S.x, c2S.y, c2F.x, c2F.y);
+            preCreaseArr.push (...diag10obj.pointsPrelim);
+    
+            diag2Step0 = diag20obj.drawnGroup;
+            diag2Step1 = diag21obj.drawnGroup;
+    
+            uniq_fast(preCreaseArr);
+            if (findCreaseArr(preCreaseArr)) preCreaseLineArr.push (...findCreaseArr(preCreaseArr));
+            uniq_fast(preCreaseLineArr);
+            linePusher(preCreaseLineArr, precreaseStep0, 0);
+            linePusher(preCreaseLineArr, precreaseStep1, 1);
+    
+            let interDot = dot(interPt, 0);
+            let interLine0 = new paper.Path (new paper.Point(0, interPt.y), new paper.Point(1, interPt.y));
+            interLine0.style = styleTime0;
+            let interLine1 = interLine0.clone();
+            interLine1.style = styleTime1;
+            intStep0 = new paper.Group (interDot, interLine0);
+            intStep1 = new paper.Group (interLine1);
 
-    } else if (zero1 || zero2)
+            diag1Step0 = null;
+    
+            rank = precreaseStep1._children.length + diag21obj.rank + 1;
+        } else {
+            console.log("one2");
+            [c2S.x, c2S.y, c2F.x, c2F.y] = [1, 0, 1-w2, h2];
+            preCreaseArr.push(new paper.Point(1-w2, h2)); //needs to be point
+            preCreaseLineArr.push([[1,0],[1-w2,h2]]);
+    
+            [c1S.x, c1S.y, c1F.x, c1F.y] = diag10obj.diagonal;
+            interPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, c2S.x, c2S.y, c2F.x, c2F.y);
+            preCreaseArr.push(...diag10obj.pointsPrelim); //needs to be spread
+    
+            diag1Step0 = diag10obj.drawnGroup;
+            diag1Step1 = diag11obj.drawnGroup;
+    
+            uniq_fast(preCreaseArr);
+            console.log(preCreaseLineArr);
+            if (findCreaseArr(preCreaseArr)) preCreaseLineArr.push (...findCreaseArr(preCreaseArr));
+            uniq_fast(preCreaseLineArr);
+            linePusher(preCreaseLineArr, precreaseStep0, 0);
+            linePusher(preCreaseLineArr, precreaseStep1, 1);
+    
+            let interDot = dot(interPt, 0);
+            let interLine0 = new paper.Path (new paper.Point(0, interPt.y), new paper.Point(1, interPt.y));
+            interLine0.style = styleTime0;
+            let interLine1 = interLine0.clone();
+            interLine1.style = styleTime1;
+            intStep0 = new paper.Group (interDot, interLine0);
+            intStep1 = new paper.Group (interLine1);
 
-    let typeA = findRank(a1, b1).type;
-    let typeB = findRank(a2, b2).type;
+            diag2Step0 = null;
+    
+            rank = precreaseStep1._children.length + diag11obj.rank + 1;
+        }
+    
+        if (precreaseStep0) {steps.push([precreaseStep0, precreaseStep1])};
+        if (diag1Step0)     {steps.push([diag1Step0, diag1Step1])};
+        if (diag2Step0)     {steps.push([diag2Step0, diag2Step1])};
+        if (intStep0)       {steps.push([intStep0, intStep1])};
+    
+    } else if (zero1 || zero2) {
+        //handles 0/2 (need powTwo case)
+        console.log("twozero");
+        if (zero1) {
+            console.log("zero1");
+            [c2S.x, c2S.y, c2F.x, c2F.y] = diag20obj.diagonal;
+            interPt = c2F.clone();
+            preCreaseArr.push (...diag20obj.pointsPrelim);
+            
+            diag2Step0 = diag20obj.drawnGroup;
+            diag2Step1 = diag21obj.drawnGroup;
+    
+            if (!tolerantSame (w2, h2) && findCreaseArr(preCreaseArr)) {
+                preCreaseLineArr.push (...findCreaseArr(preCreaseArr));
+                linePusher(preCreaseLineArr, precreaseStep0, 0);
+                linePusher(preCreaseLineArr, precreaseStep1, 1);
+            } else precreaseStep0 = null;
+    
+            let interDot = dot(interPt, 0);
+            let interLine0 = new paper.Path (new paper.Point(0, interPt.y), new paper.Point(1, interPt.y));
+            interLine0.style = styleTime0;
+            let interLine1 = interLine0.clone();
+            interLine1.style = styleTime1;
+            intStep0 = new paper.Group (interDot, interLine0);
+            intStep1 = new paper.Group (interLine1)
+    
+            if (findRank(a2, b2).type === 'powTwo' && (a2 > b2 === w2 > h2 || tolerantSame (w2, h2))) {
+                console.log("powtwo");
+                if (tolerantSame (w2, h2)) {
+                    console.log("square");
+                    precreaseStep0 = null, precreaseStep1 = null;
+                    intStep0 = null, intStep1 = null;
+                    diag2Step0._children[0].visible = false;
+                    diag2Step1._children[0].visible = false;
+                    diag2Step0.addChild(interLine0);
+                    diag2Step1.addChild(interLine1);
+    
+                    rank = diag21obj.rank;
+                    steps = [[diag2Step0, diag2Step1]];
+                } else if (a2 > b2 === w2 > h2) {
+                    console.log("not square");
+                    intStep0 = null, intStep1 = null;
+    
+                    diag2Step0._children[0].visible = false;
+                    diag2Step1._children[0].visible = false;
+                    diag2Step0.addChild(interLine0);
+                    diag2Step1.addChild(interLine1);
+    
+                    rank = precreaseStep1._children.length + diag21obj.rank;
+                    steps = [[precreaseStep0, precreaseStep1], [diag2Step0, diag2Step1]];
+                }
+            } else {
+                if (precreaseStep0) {steps.push([precreaseStep0, precreaseStep1])};
+                if (diag2Step0)     {steps.push([diag2Step0, diag2Step1])};
+                if (intStep0)       {steps.push([intStep0, intStep1])};
+    
+                rank = precreaseStep1._children.length + diag21obj.rank + 1;
+            }
+        } else {
+            console.log("zero2");
+            [c1S.x, c1S.y, c1F.x, c1F.y] = diag10obj.diagonal;
+            interPt = c1F.clone();
+            preCreaseArr.push (...diag10obj.pointsPrelim);
+            
+            diag1Step0 = diag10obj.drawnGroup;
+            diag1Step1 = diag11obj.drawnGroup;
+    
+            if (!tolerantSame (w1, h1) && findCreaseArr(preCreaseArr)) {
+                preCreaseLineArr.push (...findCreaseArr(preCreaseArr));
+                linePusher(preCreaseLineArr, precreaseStep0, 0);
+                linePusher(preCreaseLineArr, precreaseStep1, 1);
+            } else precreaseStep0 = null;
+    
+            let interDot = dot(interPt, 0);
+            let interLine0 = new paper.Path (new paper.Point(0, interPt.y), new paper.Point(1, interPt.y));
+            interLine0.style = styleTime0;
+            let interLine1 = interLine0.clone();
+            interLine1.style = styleTime1;
+            intStep0 = new paper.Group (interDot, interLine0);
+            intStep1 = new paper.Group (interLine1)
 
+            console.log(findRank(a1, b1).type);
+    
+            if (findRank(a1, b1).type === 'powTwo' && (a1 > b1 === w1 > h1 || tolerantSame (w1, h1))) {
+                console.log("powtwo");
+                if (tolerantSame (w1, h1)) {
+                    console.log("square");
+                    precreaseStep0 = null, precreaseStep1 = null;
+                    intStep0 = null, intStep1 = null;
+                    diag1Step0._children[0].visible = false;
+                    diag1Step1._children[0].visible = false;
+                    diag1Step0.addChild(interLine0);
+                    diag1Step1.addChild(interLine1);
+    
+                    rank = diag11obj.rank;
+                    steps = [[diag1Step0, diag1Step1]];
+                } else if (a1 > b1 === w1 > h1) {
+                    console.log("notsquare");
+                    intStep0 = null, intStep1 = null;
+    
+                    diag1Step0._children[0].visible = false;
+                    diag1Step1._children[0].visible = false;
+                    diag1Step0.addChild(interLine0);
+                    diag1Step1.addChild(interLine1);
+    
+                    rank = precreaseStep1._children.length + diag11obj.rank;
+                    steps = [[precreaseStep0, precreaseStep1], [diag1Step0, diag1Step1]];
+                }
+            } else {
+                if (precreaseStep0) {steps.push([precreaseStep0, precreaseStep1])};
+                if (diag1Step0)     {steps.push([diag1Step0, diag1Step1])};
+                if (intStep0)       {steps.push([intStep0, intStep1])};
+    
+                rank = precreaseStep1._children.length + diag11obj.rank + 1;
+            }
+        }
+    } else {
+        //handles 2/2
+        console.log("twotwo");
+        [c1S.x, c1S.y, c1F.x, c1F.y] = diag10obj.diagonal;
+        preCreaseArr.push (...diag10obj.pointsPrelim);
+        diag1Step0 = diag10obj.drawnGroup;
+        diag1Step1 = diag11obj.drawnGroup;
+    
+        [c2S.x, c2S.y, c2F.x, c2F.y] = diag20obj.diagonal;
+        preCreaseArr.push (...diag20obj.pointsPrelim);
+        diag2Step0 = diag20obj.drawnGroup;
+        diag2Step1 = diag21obj.drawnGroup;
+    
+        interPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, c2S.x, c2S.y, c2F.x, c2F.y);
+    
+        uniq_fast(preCreaseArr);
+        if (findCreaseArr(preCreaseArr)) preCreaseLineArr.push (...findCreaseArr(preCreaseArr));
+        linePusher(preCreaseLineArr, precreaseStep0, 0);
+        linePusher(preCreaseLineArr, precreaseStep1, 1);
+    
+        let interDot = dot(interPt, 0);
+        let interLine0 = new paper.Path (new paper.Point(0, interPt.y), new paper.Point(1, interPt.y));
+        interLine0.style = styleTime0;
+        let interLine1 = interLine0.clone();
+        interLine1.style = styleTime1;
+        intStep0 = new paper.Group (interDot, interLine0);
+        intStep1 = new paper.Group (interLine1)
+    
+        if (precreaseStep0) {steps.push([precreaseStep0, precreaseStep1])};
+        if (diag1Step0)     {steps.push([diag1Step0, diag1Step1])};
+        if (diag2Step0)     {steps.push([diag2Step0, diag2Step1])};
+        if (intStep0)       {steps.push([intStep0, intStep1])};
+    
+        rank = precreaseStep1._children.length + diag11obj.rank + diag21obj.rank + 1;
+    }
+
+    let result = {
+        steps: steps,
+        rank: rank
+    }
+
+    return result;
 }
 
+function negate (a, b, c) {return normalize(a * (a - c) - 2 * b ** 2, -b * c, (a - c) ** 2 - 2 * b ** 2)}
 
 function eligibleA (a, b, c) {return ((a + b) / c >= 0 && b/c >= 0)};
 function eligibleB (a, b, c) {return ((a + 2*b) / c >= 0 && -b / c >= 0)};
@@ -2876,4 +2698,3 @@ function eligibleG (a, b, c) {return ((a + b) / c >= 0 && (-a + b) / c >= 0)};
 function eligibleH (a, b, c) {return ((a + 2*b) / c >= 0 && (a - 2*b) / c >= 0)};
 function eligibleI (a, b, c) {return ((a + 2*b) / c >= 0 && (a - b) / c >= 0)};
 function eligibleJ (a, b, c) {return ((-a + 2*b) / c >= 0 && (a - b) / c >= 0)};
-
