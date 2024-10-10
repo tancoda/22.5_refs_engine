@@ -28,11 +28,23 @@ function setWindowVariable(value) {
     } else {
         window.variable = value; // Valid value
     }
+    window.solnVariable = 1;
+}
+
+function setSolnVariable(value) {
+    if (value < 1) {
+        window.solnVariable = 1; // Set to minimum
+    } else if (value > globalC2[window.variable - 1][3].length) {
+        window.solnVariable = globalC2[window.variable - 1][3].length; // Set to maximum
+    } else {
+        window.solnVariable = value; // Valid value
+    }
 }
 
 // Update the displayed variable value in the HTML
 function updateDisplay() {
     document.getElementById('variableValue').innerText = window.variable;
+    document.getElementById('solnValue').innerText = window.solnVariable;
     document.getElementById("value1Modal").value = defaultValue1
     document.getElementById("value2Modal").value = defaultValue2
     document.getElementById("constructibleToggle").value = defaultConstructible
@@ -42,8 +54,8 @@ function updateDisplay() {
 
 // Function to handle file upload
 function handleFileUpload() {
-    
     window.variable = 1; // Reset window.variable to 1
+    window.solnVariable = 1;
     resetOtherVars(); // Call to reset other variables
     console.log("Settings reset to defaults.");
 
@@ -76,6 +88,8 @@ Object.keys(defaults).forEach(key => {
 document.getElementById('submitABC').addEventListener('click', abcRender);
 
 function abcRender () {
+    clearCanvas();
+    document.getElementById("fileInput").value =  null;
     defaultValue1 = 32; 
     defaultValue2 = 0.1; 
     defaultConstructible = false; 
@@ -84,6 +98,7 @@ function abcRender () {
     document.getElementById("constructibleToggle").value = false;
     document.getElementById("constructibleToggle").checked = false;
     window.variable = 1;
+    window.solnVariable = 1;
 
     let ax = parseFloat(inputAX.value);
     let bx = parseFloat(inputBX.value);
@@ -92,89 +107,45 @@ function abcRender () {
     let by = parseFloat(inputBY.value);
     let cy = parseFloat(inputCY.value);
 
-    console.log (ax)
-    console.log (bx)
-    console.log (cx)
-    console.log (ay)
-    console.log (by)
-    console.log (cy)
+    let wide;
+
+    summup(ax, bx, cx) >= summup(ay, by, cy) ? wide = true : wide = false;
 
     let a = cy * (ax * ay - 2 * bx * by);
     let b = cy * (ay * bx - ax * by);
     let c = cx * (ay ** 2 - 2 * by ** 2);
 
-    let localxory = 'Y'
-
-    if (summup(a, b, c) < 1) {
-        [a, b, c] = inverse(a,b,c);
-        localxory = 'X'
-    }
-
     [a, b, c] = normalize(a,b,c)
 
-    //let nega, negb, negc;
-    //[nega, negb, negc] = normalize(((a ** 2) - (a * c) - (2 * (b ** 2))), (-b * c), (((a - c) ** 2) - (2 * (b ** 2))))
-//
-    //let typesArr = [[a, b, c], [nega, negb, negc]]
-    //console.log(typesArr)
-
     if (summup(a,b,c) > 0) {
-        if (summup(a,b,c) <= defaultValue2 ** -1) {
-            if (c <= defaultValue1) {
-                let inputC2 = [];
+        if (Math.max(a + b*Math.SQRT2, c) / Math.min(a + b*Math.SQRT2, c) <= defaultValue2 ** -1) {
+            let inputC2;
 
-                let types = ['default', 'negdefault']
-    
-                for(let i = 0; i < types.length; i++) {
-                    let globular = rankIt(a, b, c, types[i], 'abcRender');
-                    inputC2.push(...globular);
-                }
-                    
-                //function isReasonable (element) {
-                //    return ((summup (element[0], element[1], element[2]) < (defaultValue2 ** -1)) && (summup (element[0], element[1], element[2]) > ((1 - defaultValue2) ** -1)))
-                //}
-        //
-                //inputC2 = inputC2.filter(isReasonable);
-        //
-                inputC2.sort((a, b) => {
-                    if (a === undefined || b === undefined) return Infinity;
-                    return (a[5] || 0) - (b[5] || 0);
+            wide ? inputC2 = [[a, b, c]] : inputC2 = [inverse(a, b, c)];
+
+            console.log(inputC2);
+
+            let startTester = new paper.Point(0, 0), finishTester = new paper.Point(1, 1);
+
+            wide ? (startTester.y = summup(a, b, c) ** -1, finishTester.y = summup(a, b, c) ** -1) : ((startTester.x = summup(a, b, c), finishTester.x = summup(a, b, c)))
+
+            globalVi = [[0,0], [0,1], [1,1], [1,0], [startTester.x, startTester.y], [finishTester.x, finishTester.y]];
+
+            globalEvi = [[0,1],[1,2],[2,3],[0,3],[4,5]];
+
+            globalEAi = ['B', 'B', 'B', 'B', 'M'];
+
+            function updateC2(C2) {
+                return C2.map(([a, b, c]) => {
+                    const targArr = alts(a, b, c);
+                    return [a, b, c, targArr];
                 });
+            }
 
-                function isNotInfinity (arr) {
-                    return (arr[5] !== Infinity)
-                }
-
-                inputC2 = inputC2.filter(isNotInfinity);
-    
-                globalC2 = inputC2;
-    
-                let startTester = new paper.Point(0,0);
-                let finishTester = new paper.Point(1,1);
-    
-                if (localxory === 'Y') {
-                    startTester.y = summup(a, b, c) ** -1;
-                    finishTester.y = summup(a, b, c) ** -1;
-                    xory = 'Y';
-                } else {
-                    startTester.x = summup(a, b, c) ** -1;
-                    finishTester.x = summup(a, b, c) ** -1;
-                    xory = 'X';
-                }
-    
-                globalVi = [[0,0], [0,1], [1,1], [1,0], [startTester.x, startTester.y], [finishTester.x, finishTester.y]];
-    
-                console.log(globalVi)
-    
-                console.log(globalC2)
-    
-                globalEvi = [[0,1],[1,2],[2,3],[0,3],[4,5]]
-    
-                globalEAi = ['B', 'B', 'B', 'B', 'M']
-    
-                drawEverything();
-                updateDisplay();
-            } else alert ("Either choose a less convoluted value or increase the maximum allowable denominator.")
+            inputC2 = updateC2(inputC2);
+            globalC2 = inputC2;
+            
+            drawEverything();
         } else alert ("Either choose a larger value, or decrease the minimum allowable distance from the edge.")
     } else alert("aₓ + bₓ√2 and aᵧ + bᵧ√2 must both be greater than zero.")
 }
@@ -199,18 +170,10 @@ function resetOtherVars() {
 
 function updateInfoText() {
     const fileStatus = document.getElementById('fileStatus');
-    // Check if globalC2 has valid references after processing the file
     if (globalC2.length > 0 && window.variable > 0 && window.variable <= globalC2.length) {
         const reference = globalC2[window.variable - 1];
-        let xory2 = "x";
-        if (xory === 'X') { xory2 = 'y'; }
 
-        let inversed = inverse(reference[6][0], reference[6][1], reference[6][2]);
-
-        if (xory2 === 'y' ^ reference[3].includes('neg')) {
-            inversed[0] = inversed[2] - inversed[0];
-            inversed[1] = -inversed[1];
-        }
+        let inversed = inverse(reference[0], reference[1], reference[2]);
 
         inversed = normalize(inversed[0], inversed[1], inversed[2]);
 
@@ -224,9 +187,9 @@ function updateInfoText() {
         }
 
         // Update the file status text
-        fileStatus.textContent = `${globalC2.length} references available. ${additional}
-        Reference ${window.variable}: ${xory2} = (${inversed[0]} + ${inversed[1]}√2) / ${inversed[2]} ≈ ${value.toFixed(3)}.
-        Approximate rank: ${reference[5]}.`;
+        fileStatus.textContent = `${additional} ${globalC2.length} reference(s) available. 
+        Reference ${window.variable} has ${reference[3].length} solution(s).  Solution ${window.solnVariable}: (${inversed[0]} + ${inversed[1]}√2) / ${inversed[2]} ≈ ${value.toFixed(3)}.
+        Approximate rank: ${reference[3][window.solnVariable-1][2]}.`;
     } else {
         fileStatus.textContent = "Upload a file to begin, or input a, b, and c corresponding to a reference having width (aₓ + bₓ√2) / cₓ and height (aᵧ + bᵧ√2) / cᵧ.";
     }
@@ -234,21 +197,38 @@ function updateInfoText() {
 
 window.addEventListener('DOMContentLoaded', () => {
     window.variable = 1; // Initialize variable on load
+    window.solnVariable = 1;
     updateDisplay(); // Initial display update
 
     // Event listeners for increase and decrease buttons
     document.getElementById('decreaseButton').addEventListener('click', () => {
         window.variable--;
-        xorycommand = '';
+        window.solnVariable = 1;
         setWindowVariable(window.variable);
         updateDisplay();
+        clickedALine = false;
         drawEverything();
     });
 
     document.getElementById('increaseButton').addEventListener('click', () => {
         window.variable++;
-        xorycommand = '';
+        window.solnVariable = 1;
         setWindowVariable(window.variable);
+        updateDisplay();
+        clickedALine = false;
+        drawEverything();
+    });
+
+    document.getElementById('increaseSoln').addEventListener('click', () => {
+        window.solnVariable++;
+        setSolnVariable(window.solnVariable);
+        updateDisplay();
+        drawEverything();
+    });
+
+    document.getElementById('decreaseSoln').addEventListener('click', () => {
+        window.solnVariable--;
+        setSolnVariable(window.solnVariable);
         updateDisplay();
         drawEverything();
     });
@@ -257,6 +237,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // Function to update values based on user input
 function updateValues() {
     window.variable = 1;
+    window.solnVariable = 1;
     const value1 = parseInt(document.getElementById("value1Modal").value);
     const value2 = parseFloat(document.getElementById("value2Modal").value);
     const constructibleCheckbox = document.getElementById("constructibleToggle");
@@ -426,182 +407,152 @@ function drawEverything() {
     drawLines(linesE);
     drawLines(linesU);
 
-    if (globalC2.length > 0 && globalC2[window.variable-1][3].includes('default')) {
+    if (globalC2.length > 0) {
+        console.log("we doin it")
         draw(globalC2[window.variable-1][0],globalC2[window.variable-1][1],globalC2[window.variable-1][2],
-            globalC2[window.variable-1][3],globalC2[window.variable-1][4],globalC2[window.variable-1][5],globalC2[window.variable-1][6])
-    }
+            globalC2[window.variable-1][3][window.solnVariable-1][0], globalC2[window.variable-1][3][window.solnVariable-1][1]);
+    } else console.error(globalC2)
 }
 
 let cPScale, cPOffsetX, cPOffSetY;
 
-function draw (a, b, c, name, meth, val, elev) {
+function scaleX(x) {return (x * cPScale) + cPOffsetX};
+function scaleY(y) {return (y * cPScale) + cPOffSetY};
+
+let lineVariable = [];
+
+let clickedALine = false;
+
+function draw (a, b, c, name, meth) {
     let aFinal = a, bFinal = b, cFinal = c;
 
-    const elevationFinal = inverse(aFinal, bFinal, cFinal);
-    const elevationFinalCoord = summup(elevationFinal[0], elevationFinal[1], elevationFinal[2])
+    let foundValues = [];
+    let  foundYval = [], foundXval = [];
 
-    rotate = 0;
-    searchVi(globalVi, elevationFinalCoord, 10 ** -8, cPScale, cPOffsetX, cPOffSetY);
+    const elevationFinal = inverse(aFinal, bFinal, cFinal);
+    const searchValue = summup(elevationFinal[0], elevationFinal[1], elevationFinal[2]);
+
+    if (!clickedALine) {
+        startingPointDesiredLine.x = 0, startingPointDesiredLine.y = 0;
+        finishinPointDesiredLine.x = 1, finishinPointDesiredLine.y = 1;
+
+        for (let i = 0; i < globalVi.length; i++) {
+            const [x, y] = globalVi[i];
+    
+            if (tolerantSame(y, searchValue)) {
+                foundYval.push(globalVi[i]);
+            }
+    
+            if (tolerantSame(x, searchValue)) {
+                foundXval.push(globalVi[i]);
+            }
+        }
+
+        if (foundYval.length >= foundXval.length) {
+            console.log(startingPointDesiredLine);
+            foundValues = foundYval;
+            startingPointDesiredLine.y = searchValue;
+            finishinPointDesiredLine.y = searchValue;
+        } else if (foundXval.length > foundYval.length) {
+            foundValues = foundXval;
+            startingPointDesiredLine.x = searchValue;
+            finishinPointDesiredLine.x = searchValue;
+        }
+
+        console.log(startingPointDesiredLine);
+        console.log(finishinPointDesiredLine);
+    } else {
+        startingPointDesiredLine = lineVariable[0];
+        finishinPointDesiredLine = lineVariable[1];
+        foundValues = lineVariable[2];
+    }
 
     let lineArr = [];
 
     globalC2.forEach(element => {
-        let elementA = element[0], elementB = element[1], elementC = element[2];
-        let searchValueABC = inverse(elementA, elementB, elementC);
-        let searchValue = summup(searchValueABC[0], searchValueABC[1], searchValueABC[2]);
+        let c2Index = globalC2.indexOf(element);
+        let searchHereValue = summup(element[0], element[1], element[2]) ** -1;
 
         for (let i = 0; i < globalVi.length; i++) {
             const [x, y] = globalVi[i];
 
             // Check for y value with tolerance
-            if (Math.abs(y - searchValue) < tolerance) {
-                lineArr.push([new paper.Point(cPOffsetX, (searchValue * cPScale) + cPOffSetY), 
-                    new paper.Point(cPScale + cPOffsetX, (searchValue * cPScale) + cPOffSetY)])
+            if (tolerantSame(y, searchHereValue)) {
+                lineArr.push([new paper.Point(0, searchHereValue), 
+                              new paper.Point(1, searchHereValue), c2Index])
             }
 
             // Check for x value with tolerance
-            if (Math.abs(x - searchValue) < tolerance) {
-                lineArr.push([new paper.Point((searchValue * cPScale) + cPOffsetX, cPOffSetY), 
-                    new paper.Point((searchValue * cPScale) + cPOffsetX, cPScale + cPOffSetY)])
+            if (tolerantSame(x, searchHereValue)) {
+                lineArr.push([new paper.Point(searchHereValue, 0), 
+                              new paper.Point(searchHereValue, 1), c2Index])
             }
         }
     })
 
     lineArr = uniq_fast(lineArr);
-   
+
     lineArr.forEach(element => {
-        var magicLine = new paper.Path.Line(element[0], element[1]);
+        let pointSet = [];
+
+        const [x,y] = [element[0].x, element[0].y]
+        for (let i = 0; i < globalVi.length; i++) {
+            const [xV, yV] = globalVi[i];
+            if (x !== 0 && x !== 1) {
+                if (tolerantSame(x, xV)) {pointSet.push(globalVi[i])}
+            } else {
+                if (tolerantSame(y, yV)) {pointSet.push(globalVi[i])}
+            }
+        }
+        element.push(pointSet)
+    })
+   
+    //defines behavior of clickable lineArr lines
+    lineArr.forEach(element => {
+        var magicLine = new paper.Path.Line(new paper.Point(scaleX(element[0].x), scaleY(element[0].y)),
+                                            new paper.Point(scaleX(element[1].x), scaleY(element[1].y)));
         magicLine.strokeColor = 'green';
         magicLine.strokeWidth = 2;
         magicLine.opacity = 0.1;
         magicLine.onMouseEnter = function(event) {magicLine.opacity = 1};
         magicLine.onMouseLeave = function(event) {magicLine.opacity = 0.1};
-        let localxorycommand;
 
-        let c2index;
-
-        for (let i = 0; i < globalC2.length; i++) {
-            let sum = summup(globalC2[i][0], globalC2[i][1], globalC2[i][2]);
-            let goal = sum ** -1;
-            //console.log(goal);
-
-            const s = element[0];
-            let reverseSearchVal;
-            if ((s.x - cPOffsetX)/cPScale === 0 || (s.x - cPOffsetX)/cPScale === 1) {
-                reverseSearchVal = (s.y - cPOffSetY)/cPScale;
-                localxorycommand = 'X'
-            } else {
-                reverseSearchVal = (s.x - cPOffsetX)/cPScale;
-                localxorycommand = 'Y'
-            }
-            //console.log(reverseSearchVal);
-    
-            if (tolerantSame(reverseSearchVal, goal)) {
-                c2index = i;
-                break;
-            }
-        }
+        let c2Index = element[2];
 
         magicLine.onClick = function(event) {
-            setWindowVariable(c2index + 1);
-            xorycommand = localxorycommand;
+            setWindowVariable(c2Index + 1);
             updateDisplay();
+            clickedALine = true;
+            lineVariable = [element[0], element[1], element[3]];
             drawEverything();
         };
     });
 
-    scrawler(a, b, c, name, meth);
+    drawPartII (a, b, c, name, meth, startingPointDesiredLine, finishinPointDesiredLine, foundValues);
+    lineVariable = [];
+    clickedALine = false;
 }
 
-let xorycommand = '';
-
-function isOne(w, h)                {return (Math.abs(w/h - 1) <                    10 ** -8)};
-function isRtTwoPlusOne(w, h)       {return (Math.abs(w/h - (Math.SQRT2 + 1)) <     10 ** -8)};
-function isRtTwoMinusOne(w, h)      {return (Math.abs(w/h - (Math.SQRT2 - 1)) <     10 ** -8)};
-function isOnePlusHalfRtTwo(w,h)    {return (Math.abs(w/h - (1 + Math.SQRT2/2)) <   10 ** -8)};
-function isTwoMinusRtTwo(w,h)       {return (Math.abs(w/h - (2 - Math.SQRT2)) <     10 ** -8)};
-
-let elevX = null;
-let elevY = null;
-let circles = [];
-
-let xory = '';
-
-function searchVi(vi, searchValue, tolerance, scale, offsetX, offsetY) {
-    let found = false;
-
-    // Clear previous lines if they exist
-    if (elevX) {
-        elevX.remove();
-        elevX = null;
+function drawPartII (a, b, c, name, meth, startingPointDesiredLine, finishinPointDesiredLine, foundValues) {
+    if (elev) {
+        elev.remove();
+        elev = null;
     }
 
-    if (elevY) {
-        elevY.remove();
-        elevY = null;
-    }
+    for (let circle of circles) {circle.remove()};
+    circles = [];
 
-    // Clear previous circles
-    for (let circle of circles) {
-        circle.remove();
-    }
-    circles = []; // Clear the circles array
+    elev = new paper.Path.Line(
+        new paper.Point(scaleX(startingPointDesiredLine.x), 
+                        scaleY(startingPointDesiredLine.y)),
+        new paper.Point(scaleX(finishinPointDesiredLine.x), 
+                        scaleY(finishinPointDesiredLine.y))
+    );
 
-    let foundXval = [];
-    let foundYval = [];
-    let foundValues = [];
-
-    // Scaling functions (ensure scale, offsetX, and offsetY are defined)
-    function scaleX(x) {
-        return (x * scale) + offsetX;
-    }
-
-    function scaleY(y) {
-        return (y * scale) + offsetY;
-    }
-
-    // Search through vi array
-    for (let i = 0; i < vi.length; i++) {
-        const [x, y] = vi[i];
-
-        // Check for y value with tolerance
-        if (Math.abs(y - searchValue) < tolerance) {
-            foundYval.push(vi[i]);
-            found = true;
-        }
-
-        // Check for x value with tolerance
-        if (Math.abs(x - searchValue) < tolerance) {
-            foundXval.push(vi[i]);
-            found = true;
-        }
-    }
-
-    // Decide which line to draw based on counts
-    if ((foundYval.length >= foundXval.length && !xorycommand) || xorycommand === 'X') {
-        foundValues = foundYval;
-        elevY = new paper.Path.Line(
-            new paper.Point(scaleX(0), scaleY(searchValue)),
-            new paper.Point(scaleX(1), scaleY(searchValue))
-        );
-        elevY.strokeColor = '#00ff00';
-        elevY.strokeWidth = 2;
-        elevY.shadowColor = 'black';
-        elevY.shadowBlur = 5;
-        xory = 'X';
-    } else if ((foundXval.length > foundYval.length && !xorycommand) || xorycommand === 'Y') {
-        foundValues = foundXval;
-        elevX = new paper.Path.Line(
-            new paper.Point(scaleX(searchValue), scaleY(0)),
-            new paper.Point(scaleX(searchValue), scaleY(1))
-        );
-        elevX.strokeColor = '#00ff00';
-        elevX.strokeWidth = 2;
-        elevX.shadowColor = 'black';
-        elevX.shadowBlur = 5;
-        xory = 'Y';
-        rotate = -90;
-    }
+    elev.strokeColor = '#00ff00';
+    elev.strokeWidth = 2;
+    elev.shadowColor = 'black';
+    elev.shadowBlur = 5;
 
     // Draw new circles at found values
     for (let i = 0; i < foundValues.length; i++) {
@@ -620,10 +571,20 @@ function searchVi(vi, searchValue, tolerance, scale, offsetX, offsetY) {
         circles.push(circle); // Add circle to the list
     }
 
-    if (!found) {
-        console.log(`${searchValue} not found within tolerance ${tolerance} in Vi.`);
-    }
-};
+    scrawler(a, b, c, name, meth);
+}
+
+function isOne(w, h)                {return (Math.abs(w/h - 1) <                    tolerance)};
+function isRtTwoPlusOne(w, h)       {return (Math.abs(w/h - (Math.SQRT2 + 1)) <     tolerance)};
+function isRtTwoMinusOne(w, h)      {return (Math.abs(w/h - (Math.SQRT2 - 1)) <     tolerance)};
+function isOnePlusHalfRtTwo(w,h)    {return (Math.abs(w/h - (1 + Math.SQRT2/2)) <   tolerance)};
+function isTwoMinusRtTwo(w,h)       {return (Math.abs(w/h - (2 - Math.SQRT2)) <     tolerance)};
+
+let elev = null;
+let circles = [];
+
+let startingPointDesiredLine = new paper.Point(0,0);
+let finishinPointDesiredLine = new paper.Point(1,1);
 
 function clearCanvas() {
     if (paper.project) {
@@ -701,9 +662,9 @@ function V_2_C_VC(V, eps) {
                 const sElement = C[s];
                 const fElement = C[f];
 
-                if (Math.abs(sElement - element) < 10 ** -8) {
+                if (Math.abs(sElement - element) < tolerance) {
                     trutherBucket.push(test(element, fElement))
-                } else if (Math.abs(fElement - element) < 10 ** -8) {
+                } else if (Math.abs(fElement - element) < tolerance) {
                     trutherBucket.push(test(sElement, element))
                 }
             }
@@ -718,8 +679,8 @@ function V_2_C_VC(V, eps) {
 
 function test (x,y) {
     return (isOne(x, y) || isOne(x, 1-y) || 
-    (Math.abs(x) < 10 ** -8) || (Math.abs(x - 1) < 10 ** -8) || 
-    (Math.abs(y) < 10 ** -8) || (Math.abs(y - 1) < 10 ** -8) ||
+    (Math.abs(x) < tolerance) || (Math.abs(x - 1) < tolerance) || 
+    (Math.abs(y) < tolerance) || (Math.abs(y - 1) < tolerance) ||
     isRtTwoPlusOne(x, y) || isRtTwoMinusOne(x, y) || 
     isRtTwoPlusOne(1-x, y) || isRtTwoMinusOne(1-x, y) || 
     isRtTwoPlusOne(x, 1-y) || isRtTwoMinusOne(x, 1-y) || 
@@ -768,35 +729,23 @@ function processC2(C, eps) {
 
             function updateC2(C2) {
                 return C2.map(([a, b, c]) => {
-                    const minType = alts(a, b, c);
-                    return [a, b, c, minType.name, minType.meth, minType.value, minType.elev];
+                    const targArr = alts(a, b, c);
+                    return [a, b, c, targArr];
                 });
             }
 
             C2 = updateC2(C2);
 
-            C2 = C2.filter(item => 
-                item[5] !== undefined && item[6] !== null &&
-                !(
-                    (item[0] === 1 && item[1] === 0 && item[2] === 1) || 
-                    (item[0] === 1 && item[1] === -0 && item[2] === 1)
-                )
-            );
+            function hasSolutions (element) {return element[3].length > 0};
+            C2 = C2.filter(hasSolutions);
 
-            function isReasonable (element) {
-                return ((summup (element[0], element[1], element[2]) < (defaultValue2 ** -1)) && (summup (element[0], element[1], element[2]) > ((1 - defaultValue2) ** -1)))
-            }
-
-            C2 = C2.filter(isReasonable);
-
-            C2.sort((a, b) => {
-                if (a === undefined || b === undefined) return Infinity; // Handle undefined values
-                return (a[5] || 0) - (b[5] || 0); // Compare minType.value (index 5)
-            });
-
-            globalC2 = C2
+            C2.sort((a,b) => {
+                return a[3][0][2] - b[3][0][2];
+            })
 
             console.log(C2);
+
+            globalC2 = C2
             resolve(C2);
         } catch (error) {
             reject(error);
@@ -895,10 +844,13 @@ function isPowerTwo(x) {
 // line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
 function intersect(x1, y1, x2, y2, x3, y3, x4, y4) {
 
-    // Check if none of the lines are of length 0
     if ((x1 === x2 && y1 === y2) || (x3 === x4 && y3 === y4)) {
-        return false
-    }
+        return false;
+    } else if ((x1 === x3 && y1 === y3) || (x1 === x4 && y1 === y4)) {
+        return new paper.Point(x1, y1);
+    } else if ((x2 === x3 && y2 === y3) || (x2 === x4 && y2 === y4)) {
+        return new paper.Point(x2, y2);
+    }    
 
     let denominator = ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
 
@@ -981,7 +933,7 @@ let lookupTable = [];
 const m = (1/defaultValue2);
 
 // if b is a power of 2, the reference may be developed in log2(b)+1 folds
-function powTwo(b)      {if (isPowerTwo(b))            {return Math.log2(b) + 1}           else {return Infinity}};
+function powTwo(a, b)      {if (isPowerTwo(Math.max(a,b)))            {return Math.log2(Math.max(a,b)) + 1}           else {return Infinity}};
 
 function smartDiag(a, b) {
     let gcdAB = gcd(a, b);
@@ -1016,7 +968,7 @@ function smartDiag(a, b) {
 }
 
 function general(a,b) {if (!isPowerTwo(b)) {
-        let c = Math.ceil(Math.log2(b));
+        let c = Math.ceil(Math.log2(Math.max(a,b)));
         return Math.log2((2 ** c) / (gcd((2 ** c), a))) + Math.log2((2 ** c) / (gcd((2 ** c), b))) + 1;
     } else {
         return Infinity;
@@ -1024,8 +976,8 @@ function general(a,b) {if (!isPowerTwo(b)) {
 }
 
 function type (a,b) {
-    let min = Math.min(powTwo(b), smartDiag(a,b), general(a,b));
-    if (powTwo(b)===min){
+    let min = Math.min(powTwo(a,b), smartDiag(a,b), general(a,b));
+    if (powTwo(a,b)===min){
         return "powTwo";
     } else if (smartDiag(a,b)===min){
         return "smartDiag";
@@ -1044,7 +996,7 @@ function generateFarey () {
                     numerator: a, 
                     denominator: b, 
                     weight: a/b, 
-                    rank: Math.min(powTwo(b), smartDiag(a,b), general(a,b)),
+                    rank: Math.min(powTwo(a,b), smartDiag(a,b), general(a,b)),
                     type: type(a,b),
                 },
             );
@@ -1060,6 +1012,7 @@ lookupTable.sort((frac1, frac2) => (frac1.numerator / frac1.denominator) - (frac
 
 // Function to search for a specific numerator and denominator
 function findRank(numerator, denominator) {
+    console.log(numerator+"/"+denominator);
     if (numerator > denominator) {
         [numerator, denominator] = [denominator, numerator];
     }
@@ -1073,234 +1026,74 @@ function findRank(numerator, denominator) {
 
     let result = lookupTable.find(row => row.numerator === numerator && row.denominator === denominator);
 
-    if (numerator === 0 && denominator === 0) {result.rank = Infinity}
-    else if (numerator === 0 || denominator === 0) {result.rank = 0}
-    else if (numerator/denominator === 1) {result.rank = 1}
-    else if (denominator/numerator > m || numerator/denominator > m) {result.rank = Infinity};
-
-    if (result) {return result}
+    if (result) {
+        if (numerator === 0 && denominator === 0) {result.rank = Infinity}
+        else if (numerator === 0 || denominator === 0) {result.rank = 0}
+        else if (numerator/denominator === 1) {result.rank = 1}
+        else if (denominator/numerator > m || numerator/denominator > m) {result.rank = Infinity};
+    
+        return result}
     else {
         console.log(numerator+"/"+denominator)
-        console.log(result);
+        result = {
+            rank: Infinity
+        }
         return null;
     }
 }
 
-// Function you can call later to search after data is loaded
-function searchForFraction(numerator, denominator) {
-    if (denominator <= defaultValue1 && numerator <= defaultValue1) {
-        return (findRank(numerator/gcd(numerator,denominator), denominator/gcd(numerator,denominator))).rank;
-    } else {
-        return Infinity;
-    }
-}
-
-function rankIt(alphadef, betadef, gammadef, type, callSpot) {
-    let alpha, beta, gamma;
-
-    if (type === 'default') {
-        [alpha, beta, gamma] = [alphadef, betadef, gammadef];
-    } else if (type === 'negdefault') {
-        [alpha, beta, gamma] = normalize(( (alphadef * (alphadef - gammadef)) - 2 * betadef ** 2), (-betadef * gammadef), ((alphadef - gammadef) ** 2 - 2 * betadef ** 2))
-    } else console.error("unknown type");
-
-    [alpha, beta, gamma] = normalize(alpha, beta, gamma);
-
-    let inputC2 = [];
-
-    let rankA = Infinity, rankB = Infinity, rankC = Infinity, rankD = Infinity;
-    let rankE = Infinity, rankF = Infinity, rankG = Infinity, rankH = Infinity;
-    let rankI = Infinity, rankJ = Infinity;
-
-    // Perform the checks and calculations
-    if (beta >= 0 && alpha + beta >= 0) {
-        const rank1 = searchForFraction(beta, gamma);
-        const rank2 = searchForFraction(alpha + beta, gamma);
-        if (rank1 !== undefined && rank2 !== undefined) {
-            rankA = rank1 + rank2;
-            if (rank1 !== 0) {
-                rankA += 3;
-            }
-        }
-        inputC2.push([alphadef, betadef, gammadef, type, 'A', rankA, [alpha, beta, gamma]])
-    } 
-    if (beta <= 0 && alpha + 2 * beta >= 0) {
-        const rank1 = searchForFraction(-beta, gamma);
-        const rank2 = searchForFraction(alpha + 2 * beta, gamma);
-        if (rank1 !== undefined && rank2 !== undefined) {
-            rankB = rank1 + rank2;
-            if (rank1 !== 0) {
-                rankB += 3;
-            }
-        }
-        inputC2.push([alphadef, betadef, gammadef, type, 'B', rankB, [alpha, beta, gamma]])
-    }
-    if (beta >= 0 && alpha - 2 * beta >= 0) {
-        const rank1 = searchForFraction(2 * beta, gamma);
-        const rank2 = searchForFraction(alpha - 2 * beta, gamma);
-        if (rank1 !== undefined && rank2 !== undefined) {
-            rankC = rank1 + rank2;
-            if (rank1 !== 0) {
-                rankC += 3;
-            }
-        } 
-        inputC2.push([alphadef, betadef, gammadef, type, 'C', rankC, [alpha, beta, gamma]])
-    }
-    if (beta >= 0 && alpha - beta >= 0) {
-        const rank1 = searchForFraction(beta, gamma);
-        const rank2 = searchForFraction(alpha - beta, gamma);
-        if (rank1 !== undefined && rank2 !== undefined) {
-            rankD = rank1 + rank2;
-            if (rank1 !== 0) {
-                rankD += 3;
-            }
-        }
-        inputC2.push([alphadef, betadef, gammadef, type, 'D', rankD, [alpha, beta, gamma]])
-    }
-    if (alpha + beta >= 0 && alpha + 2 * beta >= 0) {
-        const rank1 = searchForFraction(alpha + beta, gamma);
-        const rank2 = searchForFraction(alpha + 2 * beta, gamma);
-        if (rank1 !== undefined && rank2 !== undefined) {
-            rankE = rank1 + rank2 + 3;
-        }
-        inputC2.push([alphadef, betadef, gammadef, type, 'E', rankE, [alpha, beta, gamma]])
-    }
-    if (alpha + beta >= 0 && -alpha + 2 * beta >= 0) {
-        const rank1 = searchForFraction(2 * alpha + 2 * beta, 3 * gamma);
-        const rank2 = searchForFraction(-alpha + 2 * beta, 3 * gamma);
-        if (rank1 !== undefined && rank2 !== undefined) {
-            rankF = rank1 + rank2 + 3;
-            if (rank1 !== 0 && rank2 !== 0) {
-                rankF += 1;
-            }
-        }
-        inputC2.push([alphadef, betadef, gammadef, type, 'F', rankF, [alpha, beta, gamma]])
-    }
-    if (alpha + beta >= 0 && -alpha + beta >= 0) {
-        const rank1 = searchForFraction(alpha + beta, 2 * gamma);
-        const rank2 = searchForFraction(-alpha + beta, 2 * gamma);
-        if (rank1 !== undefined && rank2 !== undefined) {
-            rankG = rank1 + rank2 + 3;
-            if (rank1 !== 0 && rank2 !== 0) {
-                rankG += 1;
-            }
-        }
-        inputC2.push([alphadef, betadef, gammadef, type, 'G', rankG, [alpha, beta, gamma]])
-    }
-    if (alpha + 2 * beta >= 0 && alpha - 2 * beta >= 0) {
-        const rank1 = searchForFraction(alpha + 2 * beta, 2 * gamma);
-        const rank2 = searchForFraction(alpha - 2 * beta, 4 * gamma);
-        if (rank1 !== undefined && rank2 !== undefined) {
-            rankH = rank1 + rank2 + 3;
-            if (rank1 !== 0 && rank2 !== 0) {
-                rankH += 1;
-            }
-        }
-        inputC2.push([alphadef, betadef, gammadef, type, 'H', rankH, [alpha, beta, gamma]])
-    }
-    if (alpha + 2 * beta >= 0 && alpha - beta >= 0) {
-        const rank1 = searchForFraction(alpha + 2 * beta, 3 * gamma);
-        const rank2 = searchForFraction(alpha - beta, 3 * gamma);
-        if (rank1 !== undefined && rank2 !== undefined) {
-            rankI = rank1 + rank2 + 3;
-            if (rank1 !== 0 && rank2 !== 0) {
-                rankI += 1;
-            }
-        }
-        inputC2.push([alphadef, betadef, gammadef, type, 'I', rankI, [alpha, beta, gamma]])
-    }
-    if (-alpha + 2 * beta >= 0 && alpha - beta >= 0) {
-        const rank1 = searchForFraction(-alpha + 2 * beta, gamma);
-        const rank2 = searchForFraction(2 * alpha - 2 * beta, gamma);
-        if (rank1 !== undefined && rank2 !== undefined) {
-            rankJ = rank1 + rank2 + 3;
-            if (rank1 !== 0 && rank2 !== 0) {
-                rankJ += 2;
-            }
-        }
-        inputC2.push([alphadef, betadef, gammadef, type, 'J', rankJ, [alpha, beta, gamma]])
-    }
-
-    const types = [
-        { name: "A", value: rankA },
-        { name: "B", value: rankB },
-        { name: "C", value: rankC },
-        { name: "D", value: rankD },
-        { name: "E", value: rankE },
-        { name: "F", value: rankF },
-        { name: "G", value: rankG },
-        { name: "H", value: rankH },
-        { name: "I", value: rankI },
-        { name: "J", value: rankJ }
-    ];
-    
-    // Check if all ranks are Infinity
-    const allInfinity = types.every(type => type.value === Infinity);
-    
-    if (allInfinity) {
-        return ["N/A", Infinity];
-    }
-    
-    // Find the object with the minimum value
-    const minType = types.reduce((min, current) => current.value < min.value ? current : min, types[0]);
-    
-    // Return the type corresponding to the minimum value
-    if (callSpot === 'regular') {
-        return [minType.name, minType.value];
-    } else if (callSpot === 'abcRender') {
-        return inputC2;
-    }
-}
-
 function alts(a, b, c) {
-    function neg(a, b, c) {
-        const alpha = (a ** 2) - (a * c) - (2 * (b ** 2));
-        const beta = -b * c;
-        const gamma = ((a - c) ** 2) - (2 * (b ** 2));
+    let [nega, negb, negc] = negate(a, b, c);
 
-        const grcodi = gcd(gcd(alpha, beta), gamma);
+    let set = ['default', 'negdefault'];
 
-        if ((summup(alpha, beta, gamma) < 0) || (alpha + (beta * Math.SQRT2) < 0 && gamma < 0)) {
-            return [-alpha / grcodi, -beta / grcodi, -gamma / grcodi];
+    let targArr = [];
+
+    //for now, this takes a ton of time and just gets rank.  BUT, i think it's definitely possible to take the whole targarr and later just feed that into scrawler.
+
+    for (let i = 0; i < set.length; i++) {
+        if (summup(a, b, c) > ((1 - defaultValue2) ** -1) && 
+        typeof a === 'number' && typeof b === 'number' && typeof c === 'number' && c !== 0 &&
+        summup (a, b, c) < (defaultValue2 ** -1)) {
+            if ((eligibleA(a, b, c) && set[i] === 'default') || (eligibleA(nega, negb, negc) && set[i] === 'negdefault')) {console.log('A**************');
+                console.log(newDiags(a, b, c, set[i], 'A'));
+                targArr.push([set[i], 'A', (newDiags(a, b, c, set[i], 'A')).rank]);
+            }
+            if ((eligibleB(a, b, c) && set[i] === 'default') || (eligibleB(nega, negb, negc) && set[i] === 'negdefault')) {console.log('B**************');
+                targArr.push([set[i], 'B', (newDiags(a, b, c, set[i], 'B')).rank]);
+            }
+            if ((eligibleC(a, b, c) && set[i] === 'default') || (eligibleC(nega, negb, negc) && set[i] === 'negdefault')) {console.log('C**************');
+                targArr.push([set[i], 'C', (newDiags(a, b, c, set[i], 'C')).rank]);
+            }
+            if ((eligibleD(a, b, c) && set[i] === 'default') || (eligibleD(nega, negb, negc) && set[i] === 'negdefault')) {console.log('D**************');
+                targArr.push([set[i], 'D', (newDiags(a, b, c, set[i], 'D')).rank]);
+            }
+            if ((eligibleE(a, b, c) && set[i] === 'default') || (eligibleE(nega, negb, negc) && set[i] === 'negdefault')) {console.log('E**************');
+                targArr.push([set[i], 'E', (newDiags(a, b, c, set[i], 'E')).rank]);
+            }
+            if ((eligibleF(a, b, c) && set[i] === 'default') || (eligibleF(nega, negb, negc) && set[i] === 'negdefault')) {console.log('F**************');
+                targArr.push([set[i], 'F', (newDiags(a, b, c, set[i], 'F')).rank]);
+            }
+            if ((eligibleG(a, b, c) && set[i] === 'default') || (eligibleG(nega, negb, negc) && set[i] === 'negdefault')) {console.log('G**************');
+                targArr.push([set[i], 'G', (newDiags(a, b, c, set[i], 'G')).rank]);
+            }
+            if ((eligibleH(a, b, c) && set[i] === 'default') || (eligibleH(nega, negb, negc) && set[i] === 'negdefault')) {console.log('H**************');
+                targArr.push([set[i], 'H', (newDiags(a, b, c, set[i], 'H')).rank]);
+            }
+            if ((eligibleI(a, b, c) && set[i] === 'default') || (eligibleI(nega, negb, negc) && set[i] === 'negdefault')) {console.log('I**************');
+                targArr.push([set[i], 'I', (newDiags(a, b, c, set[i], 'I')).rank]);
+            }
+            if ((eligibleJ(a, b, c) && set[i] === 'default') || (eligibleJ(nega, negb, negc) && set[i] === 'negdefault')) {console.log('J**************');
+                targArr.push([set[i], 'J', (newDiags(a, b, c, set[i], 'J')).rank]);
+            }
         }
-
-        return [alpha / grcodi, beta / grcodi, gamma / grcodi];
     }
 
-    function createRankType(name, values, rankIncrement = 0) {
-        const rank = rankIt(values[0], values[1], values[2], name, 'regular');
-        const negValues = neg(values[0], values[1], values[2]);
-        const rankNeg = rankIt(negValues[0], negValues[1], negValues[2], "neg"+name, 'regular');
-        
-        return [
-            { name: name, meth: rank[0], value: rank[1] + rankIncrement, elev: values },
-            { name: `neg${name}`, meth: rankNeg[0], value: rankNeg[1] + rankIncrement, elev: negValues }
-        ];
-    }
+    targArr.sort((a,b) => {return a[2] - b[2]});
+    function isNotInfinity (arr) {return (arr[2] !== Infinity)};
+    targArr = targArr.filter(isNotInfinity);
 
-    // Default and negdefault
-    const defaultType = createRankType('default', [a, b, c]);
-
-    const types = [
-        ...defaultType,
-    ];
-
-    // Check if all ranks are Infinity
-    const allInfinity = types.every(type => type.value === Infinity);
-    if (allInfinity) {
-        return ["N/A", Infinity];
-    }
-
-    // Find the object with the minimum value
-    const minType = types.reduce((min, current) => current.value < min.value ? current : min, types[0]);
-
-    // Return the type corresponding to the minimum value
-    return {
-         name: minType.name, 
-         meth: minType.meth, 
-         value: minType.value, 
-         elev: minType.elev
-    };
+    return targArr;
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -1319,8 +1112,6 @@ var to = new paper.Point(Math.SQRT2-1, 1);
 var tt = new paper.Point(2-Math.SQRT2, 1);
 
 let rotation1 = [bo, bt, br, ro, rt, tr, tt, to, tl, lt, lo, bl];
-
-let flip1 = [bt, br, ro, rt, tr, tt, bo, bl, lo, lt, tl, to];
 
 function findTransformation (point) {
     let transArr = [];
@@ -1737,9 +1528,9 @@ function sloper(a,b,c,type) {
 
     console.log([slopePair, blockInfo]);
 
-    let approxRank = findRank(slopePair[0], slopePair[1]).rank + findRank(slopePair[2], slopePair[3]).rank;
+    //let approxRank = findRank(slopePair[0], slopePair[1]).rank + findRank(slopePair[2], slopePair[3]).rank;
 
-    return [slopePair, blockInfo, approxRank];
+    return [slopePair, blockInfo];
 };
 
 let rotate = 0;
@@ -1793,6 +1584,42 @@ function scrawler(a, b, c, method, split) {
     const stepCount = whiteRabbit.steps.length;
     const stepData = stepper[stepCount - 1];
 
+    const intLineToAccess = whiteRabbit.steps[stepCount - 1][1].children['interLine1'];
+
+    const startDrawnLine = intLineToAccess.segments[0].point;
+
+    function samePoint (point1, point2) {
+        return (tolerantSame(point1.x, point2.x) && tolerantSame(point1.y, point2.y))
+    }
+
+    function rotatePoint(point) {
+        let rotatedPoint = point.clone();
+        rotatedPoint.x -= 0.5, rotatedPoint.y -= 0.5;
+        [rotatedPoint.x, rotatedPoint.y] = [-rotatedPoint.y, rotatedPoint.x];
+        rotatedPoint.x += 0.5, rotatedPoint.y += 0.5;
+        return rotatedPoint;
+    }
+
+    rotate = 0;
+
+    if (samePoint(startDrawnLine, startingPointDesiredLine) || samePoint(startDrawnLine, finishinPointDesiredLine)) {
+        rotate = 0;
+    } else if (samePoint(rotatePoint(startDrawnLine), startingPointDesiredLine) || samePoint(rotatePoint(startDrawnLine), finishinPointDesiredLine)) {
+        rotate = 90;
+    } else if (samePoint(rotatePoint(rotatePoint(startDrawnLine)), startingPointDesiredLine) || samePoint(rotatePoint(rotatePoint(startDrawnLine)), finishinPointDesiredLine)) {      
+        rotate = 180;
+    } else if (samePoint(rotatePoint(rotatePoint(rotatePoint(startDrawnLine))), startingPointDesiredLine) || samePoint(rotatePoint(rotatePoint(rotatePoint(startDrawnLine))), finishinPointDesiredLine)) {
+        rotate = 270;
+    } else console.error ("It's that int point issue")
+
+    console.log(startDrawnLine);
+    console.log(rotatePoint(startDrawnLine));
+    console.log(rotatePoint(rotatePoint(startDrawnLine)));  
+    console.log(rotatePoint(rotatePoint(rotatePoint(startDrawnLine))));
+    console.log(startingPointDesiredLine);
+    console.log(finishinPointDesiredLine);
+    console.log(rotate);
+
     for (let i = 0; i < stepCount; i++) {
         let thisStep = whiteRabbit.steps[i][0];
 
@@ -1804,6 +1631,8 @@ function scrawler(a, b, c, method, split) {
         thisStep.scale(stepSize, stepSize);
         thisStep.position = new paper.Point(stepData[i][0] + stepSize / 2, stepData[i][1] + stepSize / 2);
         thisStep.strokeWidth = 1;
+
+        console.log(rotate);
         thisStep.rotation = rotate;
 
         thisStep.children.forEach((child) => {
@@ -2104,6 +1933,10 @@ function generalFunction (a, b, w, h, time, diag2) {
     vertText.rotation = 0;
     horiText.rotation = 0;
     
+    console.log(a);
+    console.log(b);
+    console.log(general(a,b));
+
     const genReturn = {
         drawnGroup: genGroup,
         pointsPrelim: generalPrelim,
@@ -2241,7 +2074,7 @@ function diagFunction (a, b, w, h, time, diag2) {
     if (diagLabelSide === 'left') {diagJust = 'right'} else {diagJust = 'center'};
     if (diagLabelSide === 'bottom') {diagLabelPt.y -= fontSize};
     
-    console.log(diagLabelText);
+    //console.log(diagLabelText);
 
     var diagText = new paper.PointText({
         point: diagLabelPt,
@@ -2320,7 +2153,7 @@ function oneZero (one1, one2, zero1, zero2, w1, h1, w2, h2) {
                 console.log("A, one & one");
             } else if (isTwoMinusRtTwo(w2, h2)) {
                 pointBucket.push([bl,tr], [bl,to], [br,to]);
-                int = [bl, tr, br, lo];
+                int = [bl, tr, br, to];
                 console.log("B, one & one");
             }
         } else if (isOne(w2, h2)) {
@@ -2359,6 +2192,10 @@ function oneZero (one1, one2, zero1, zero2, w1, h1, w2, h2) {
                 //perp symbol
                 console.log("H, one & one");
             }
+        } else if (isTwoMinusRtTwo(w1, h1) && isRtTwoMinusOne(w2, h2)) {
+            pointBucket.push([tl,br], [tt,br]);
+            int = [tl, tr, tt, br];
+            console.log("E, one & one");
         }
         const intArr = int.flatMap(point => [point.x, point.y]);
         interPt = intersect(...intArr);
@@ -2439,23 +2276,57 @@ function newDiags (a, b, c, method, split) {
 
     if ((one1 || zero1) && (one2 || zero2)) {
         //handles 1/1 & 1/0
-        console.log("onezero");
-        [preCreaseLineArr, interPt] = oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2);
-        linePusher(preCreaseLineArr, precreaseStep0, 0);
-        linePusher(preCreaseLineArr, precreaseStep1, 1);
+        if (one1 && one2) {
+            console.log("oneOne")
+            console.log(oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2));
+
+            [preCreaseLineArr, interPt] = oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2);
+            console.log (oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2));
+            linePusher(preCreaseLineArr, precreaseStep0, 0);
+            linePusher(preCreaseLineArr, precreaseStep1, 1);
+        
+            let interDot = dot(interPt, 0);
+            let interLine0 = new paper.Path (new paper.Point(0, interPt.y), new paper.Point(1, interPt.y));
+            interLine0.style = styleTime0;
+            let interLine1 = interLine0.clone();
+            interLine1.style = styleTime1;
+            interLine1.name = 'interLine1';
+            intStep0 = new paper.Group (interDot, interLine0);
+            intStep1 = new paper.Group (interLine1);
+
+            rank = precreaseStep0 ? precreaseStep1._children.length + 1 : 0;
+        
+            if (precreaseStep0) {steps.push([precreaseStep0, precreaseStep1])};
+            if (intStep0)       {steps.push([intStep0, intStep1])};
+        } else {
+            console.log("onezero");
+
+            if ((isOne(w1, h1) && zero2) || isOne(w2, h2) && zero1) {
+                preCreaseLineArr = null;
+                interPt = null;
+            } else {
+                console.log(oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2));
     
-        let interDot = dot(interPt, 0);
-        let interLine0 = new paper.Path (new paper.Point(0, interPt.y), new paper.Point(1, interPt.y));
-        interLine0.style = styleTime0;
-        let interLine1 = interLine0.clone();
-        interLine1.style = styleTime1;
-        intStep0 = new paper.Group (interDot, interLine0);
-        intStep1 = new paper.Group (interLine1)
-    
-        //not sure if this will work...
-        rank = precreaseStep1._children.length + 1;
-    
-        steps = [[precreaseStep0, precreaseStep1], [intStep0, intStep1]];
+                [preCreaseLineArr, interPt] = oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2);
+                console.log (oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2));
+                linePusher(preCreaseLineArr, precreaseStep0, 0);
+                linePusher(preCreaseLineArr, precreaseStep1, 1);
+            
+                let interDot = dot(interPt, 0);
+                let interLine0 = new paper.Path (new paper.Point(0, interPt.y), new paper.Point(1, interPt.y));
+                interLine0.style = styleTime0;
+                let interLine1 = interLine0.clone();
+                interLine1.style = styleTime1;
+                interLine1.name = 'interLine1';
+                intStep0 = new paper.Group (interDot, interLine0);
+                intStep1 = new paper.Group (interLine1)
+            }
+        
+            rank = precreaseStep0 ? precreaseStep1._children.length + 1 : 0;
+        
+            if (precreaseStep0) {steps.push([precreaseStep0, precreaseStep1])};
+            if (intStep0)       {steps.push([intStep0, intStep1])};
+        }
     } else if (one1 || one2) {
         //handles 1/2      
         console.log("onetwo");
@@ -2466,14 +2337,14 @@ function newDiags (a, b, c, method, split) {
             preCreaseLineArr.push([[0,0],[w1,h1]]);
             [c2S.x, c2S.y, c2F.x, c2F.y] = diag20obj.diagonal;
             interPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, c2S.x, c2S.y, c2F.x, c2F.y);
-            preCreaseArr.push (...diag10obj.pointsPrelim);
+            preCreaseArr.push (...diag20obj.pointsPrelim);
     
             diag2Step0 = diag20obj.drawnGroup;
             diag2Step1 = diag21obj.drawnGroup;
     
-            uniq_fast(preCreaseArr);
+            preCreaseArr = uniq_fast(preCreaseArr);
             if (findCreaseArr(preCreaseArr)) preCreaseLineArr.push (...findCreaseArr(preCreaseArr));
-            uniq_fast(preCreaseLineArr);
+            preCreaseLineArr = uniq_fast(preCreaseLineArr);
             linePusher(preCreaseLineArr, precreaseStep0, 0);
             linePusher(preCreaseLineArr, precreaseStep1, 1);
     
@@ -2482,6 +2353,7 @@ function newDiags (a, b, c, method, split) {
             interLine0.style = styleTime0;
             let interLine1 = interLine0.clone();
             interLine1.style = styleTime1;
+            interLine1.name = 'interLine1';
             intStep0 = new paper.Group (interDot, interLine0);
             intStep1 = new paper.Group (interLine1);
 
@@ -2501,10 +2373,10 @@ function newDiags (a, b, c, method, split) {
             diag1Step0 = diag10obj.drawnGroup;
             diag1Step1 = diag11obj.drawnGroup;
     
-            uniq_fast(preCreaseArr);
+            preCreaseArr = uniq_fast(preCreaseArr);
             console.log(preCreaseLineArr);
             if (findCreaseArr(preCreaseArr)) preCreaseLineArr.push (...findCreaseArr(preCreaseArr));
-            uniq_fast(preCreaseLineArr);
+            preCreaseLineArr = uniq_fast(preCreaseLineArr);
             linePusher(preCreaseLineArr, precreaseStep0, 0);
             linePusher(preCreaseLineArr, precreaseStep1, 1);
     
@@ -2513,10 +2385,14 @@ function newDiags (a, b, c, method, split) {
             interLine0.style = styleTime0;
             let interLine1 = interLine0.clone();
             interLine1.style = styleTime1;
+            interLine1.name = 'interLine1';
             intStep0 = new paper.Group (interDot, interLine0);
             intStep1 = new paper.Group (interLine1);
 
             diag2Step0 = null;
+
+            console.log(precreaseStep1._children.length);
+            console.log(diag11obj.rank);
     
             rank = precreaseStep1._children.length + diag11obj.rank + 1;
         }
@@ -2549,6 +2425,7 @@ function newDiags (a, b, c, method, split) {
             interLine0.style = styleTime0;
             let interLine1 = interLine0.clone();
             interLine1.style = styleTime1;
+            interLine1.name = 'interLine1';
             intStep0 = new paper.Group (interDot, interLine0);
             intStep1 = new paper.Group (interLine1)
     
@@ -2563,7 +2440,7 @@ function newDiags (a, b, c, method, split) {
                     diag2Step0.addChild(interLine0);
                     diag2Step1.addChild(interLine1);
     
-                    rank = diag21obj.rank;
+                    rank = diag21obj.rank - 1;
                     steps = [[diag2Step0, diag2Step1]];
                 } else if (a2 > b2 === w2 > h2) {
                     console.log("not square");
@@ -2574,7 +2451,7 @@ function newDiags (a, b, c, method, split) {
                     diag2Step0.addChild(interLine0);
                     diag2Step1.addChild(interLine1);
     
-                    rank = precreaseStep1._children.length + diag21obj.rank;
+                    rank = precreaseStep1._children.length + diag21obj.rank - 1;
                     steps = [[precreaseStep0, precreaseStep1], [diag2Step0, diag2Step1]];
                 }
             } else {
@@ -2604,6 +2481,7 @@ function newDiags (a, b, c, method, split) {
             interLine0.style = styleTime0;
             let interLine1 = interLine0.clone();
             interLine1.style = styleTime1;
+            interLine1.name = 'interLine1';
             intStep0 = new paper.Group (interDot, interLine0);
             intStep1 = new paper.Group (interLine1)
 
@@ -2656,17 +2534,25 @@ function newDiags (a, b, c, method, split) {
         diag2Step1 = diag21obj.drawnGroup;
     
         interPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, c2S.x, c2S.y, c2F.x, c2F.y);
+        console.log(interPt);
     
-        uniq_fast(preCreaseArr);
+        preCreaseArr = uniq_fast(preCreaseArr);
+
+        console.log(preCreaseArr);
+
         if (findCreaseArr(preCreaseArr)) preCreaseLineArr.push (...findCreaseArr(preCreaseArr));
+        console.log(preCreaseLineArr);
         linePusher(preCreaseLineArr, precreaseStep0, 0);
         linePusher(preCreaseLineArr, precreaseStep1, 1);
+        console.log(precreaseStep0);
+        console.log(precreaseStep1);
     
         let interDot = dot(interPt, 0);
         let interLine0 = new paper.Path (new paper.Point(0, interPt.y), new paper.Point(1, interPt.y));
         interLine0.style = styleTime0;
         let interLine1 = interLine0.clone();
         interLine1.style = styleTime1;
+        interLine1.name = 'interLine1';
         intStep0 = new paper.Group (interDot, interLine0);
         intStep1 = new paper.Group (interLine1)
     
@@ -2674,6 +2560,8 @@ function newDiags (a, b, c, method, split) {
         if (diag1Step0)     {steps.push([diag1Step0, diag1Step1])};
         if (diag2Step0)     {steps.push([diag2Step0, diag2Step1])};
         if (intStep0)       {steps.push([intStep0, intStep1])};
+
+        console.log(precreaseStep0);
     
         rank = precreaseStep1._children.length + diag11obj.rank + diag21obj.rank + 1;
     }
@@ -2686,15 +2574,27 @@ function newDiags (a, b, c, method, split) {
     return result;
 }
 
-function negate (a, b, c) {return normalize(a * (a - c) - 2 * b ** 2, -b * c, (a - c) ** 2 - 2 * b ** 2)}
+function negate (a, b, c) {return normalize(a * (a - c) - 2 * b ** 2, -b * c, (a - c) ** 2 - 2 * b ** 2)};
 
-function eligibleA (a, b, c) {return ((a + b) / c >= 0 && b/c >= 0)};
-function eligibleB (a, b, c) {return ((a + 2*b) / c >= 0 && -b / c >= 0)};
-function eligibleC (a, b, c) {return (b / c >= 0 && (a - 2 * b) / c >= 0)};
-function eligibleD (a, b, c) {return ((a - b) / c >= 0 && b / c >= 0)};
-function eligibleE (a, b, c) {return ((a + b) / c >= 0 && (a + 2*b) / c >= 0)};
-function eligibleF (a, b, c) {return ((a + b) / c >= 0 && (-a + 2*b) / c >= 0)};
-function eligibleG (a, b, c) {return ((a + b) / c >= 0 && (-a + b) / c >= 0)};
-function eligibleH (a, b, c) {return ((a + 2*b) / c >= 0 && (a - 2*b) / c >= 0)};
-function eligibleI (a, b, c) {return ((a + 2*b) / c >= 0 && (a - b) / c >= 0)};
-function eligibleJ (a, b, c) {return ((-a + 2*b) / c >= 0 && (a - b) / c >= 0)};
+function eligibleA (a, b, c) {return (testIt((a + b)    , c    , b          , c))};
+function eligibleB (a, b, c) {return (testIt((a + 2*b)  , c    , -b         , c))};
+function eligibleC (a, b, c) {return (testIt((2 * b)    , c    , (a - 2*b)  , c))};
+function eligibleD (a, b, c) {return (testIt((a - b)    , c    , b          , c))};
+function eligibleE (a, b, c) {return (testIt((a + b)    , c    , (a + 2*b)  , c))};
+function eligibleF (a, b, c) {return (testIt(2 * (a + b), 3 * c, (-a + 2*b) , 3 * c))};
+function eligibleG (a, b, c) {return (testIt((a + b)    , 2 * c, (-a + b)   , 2 * c))};
+function eligibleH (a, b, c) {return (testIt((a + 2*b)  , 2 * c, (a - 2*b)  , 4 * c))};
+function eligibleI (a, b, c) {return (testIt((a + 2*b)  , 3 * c, (a - b)    , 2 * c))};
+function eligibleJ (a, b, c) {return (testIt((-a + 2*b) , c    , 2*(a - b)  , c))};
+
+function testIt(a, b, c, d) {
+    return ((a !== 0 && b !== 0 && Math.max(a,b)/Math.min(a,b) < m || a === 0 || b === 0) &&
+            (c !== 0 && d !== 0 && Math.max(c,d)/Math.min(c,d) < m || c === 0 || d === 0) &&
+            (Math.max(a,b) < defaultValue1) &&
+            (Math.max(c,d) < defaultValue1) &&
+            (b !== 0 ) &&
+            (d !== 0 ) &&
+            (a/b >= 0 ) &&
+            (c/d >= 0 ) &&
+            (!(a === 0 && c === 0)))
+}

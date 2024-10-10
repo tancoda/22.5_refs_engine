@@ -61,33 +61,42 @@
 
     <div id="controls">
         <button id="decreaseButton">-</button>
+        <label for="variableValue">Ref: </label>
         <span id="variableValue">1</span>
         <button id="increaseButton">+</button>
+        <button id="decreaseSoln">-</button>
+        <label for="solnValue">Soln: </label>
+        <span id="solnValue">1</span>
+        <button id="increaseSoln">+</button>
     </div>
 
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Settings</h2>
+            <h2 class="center">Settings</h2>
             <div class="inputRow">
                 <label for="value1Modal"><b>Avoid fractions having a denominator greater than:</b></label>
                 <input type="number" id="value1Modal" step="1" min="1" value="32">
                 <br>
-                The engine makes use of binary fractions to solve the crease pattern.  This sets the maximum denominator of these fractions.
+                <p class="indented">
+                    The engine makes use of binary fractions to solve the crease pattern.  This sets the maximum denominator of these fractions.
+                </p>
             </div>
-            <br>
             <div class="inputRow">
                 <label for="value2Modal"><b>Avoid refs within this distance of the edge (edge length = 1):</b></label>
                 <input type="number" id="value2Modal" step = "0.01" min="0" max="0.5" value="0.1">
-                <br> Since it is difficult in practice to fold reference lines particularly close to the edge, 
-                this setting allows you to exclude references within a certain distance of the edge.  
+                <p class="indented">
+                    Since it is difficult in practice to fold reference lines particularly close to the edge, 
+                    this setting allows you to exclude references within a certain distance of the edge.      
+                </p>
             </div>
-            <br>
             <div class="inputRow">
                 <label for="constructibleToggle"><b>Filter for immediately constructible lines:</b></label>
                 <input type="checkbox" id="constructibleToggle" value="true">
-                <br> This setting restricts the available reference lines to those having at least one vertex laying either on the 
-                edges of the square or the easy-to-fold 22.5° aux lines.  These vertices are shown in blue on the crease pattern.
+                <p class="indented">
+                    This setting restricts the available reference lines to those having at least one vertex laying either on the 
+                    edges of the square or the easy-to-fold 22.5° aux lines.  These vertices are shown in blue on the crease pattern.
+                </p>
             </div>
             <br>
             <button id="saveSettingsButton">Save Settings</button>
@@ -97,50 +106,69 @@
     <div id="helpModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Help</h2>
-            <b>From crease pattern: </b> <br>
-            Upload a 22.5° crease pattern as a .FOLD file.  The crease pattern will be rendered
-            on the left side of the screen.  The engine will analyze all the vertices within the crease
-            pattern and sort them approximately (the ranking system needs some work) by difficulty.  The first-ranked
-            reference will be highlighted in green on the crease pattern, and the steps to develop it will be displayed
-            on the right side of the screen.  To move through the list of references in order of difficulty, use the
-            + and - buttons at the bottom of the screen.  <br>Alternatively, select direcly on the crease pattern
-            which line you would like to solve. <br><br>
-            <b>From a, b, c: </b> <br>
-            The right side of the header has a field for input of custom a, b, c values.  
-            The values correspond to a pair of sums, having the form (a+b√2)/c.  In the image below,
-            (a<sub>x</sub>+b<sub>x</sub>√2)/c<sub>x</sub> is shown in red, and (a<sub>y</sub>+b<sub>y</sub>√2)/c<sub>y</sub> in green.
-            The larger value is scaled to the side-length of the square, making the reference to be found the ratio of the smaller value to the larger.
-            <br>
-            <img src="images\Screenshot 2024-09-28 012138.png" alt="abc relative to square" id="abcImage" style="height: 130px; margin-right: 10px;">
-            <br><br>
-            <b>Interpreting the steps: </b> <br>
-            Unless the desired reference is simply a binary fraction of the edge length, the first step will involve folding a few 22.5° lines as foundation for
-            the following steps.  Those creases not laying at 22.5° degrees (the "Kamiya reference") are constructed by making a crease through a pair of existing points.
-            In certain cases there are creases which appear to follow neither of these conventions - they lay perpendicular to an existing line.  
-            <br>In the following steps, black dots indicate important landmarks used to construct creases.  Binary fractions are also used.  The fraction itself
-            is printed, the line along which the fraction is taken is highlighted.  The crease emanating from the fraction lays perpendicular to the highlighted line.
+            <h2 class="center">Help</h2>
+            <b>From crease pattern:</b> <br>
+            <p class="indented">
+                Upload a 22.5° crease pattern as a .FOLD file. The crease pattern will be rendered on the left side of the screen.
+                The engine will analyze all the vertices within the crease pattern and sort them approximately (the ranking system needs some work) by difficulty.
+                The first-ranked reference will be highlighted in green on the crease pattern, and the steps to develop it will be displayed on the right side of the screen.
+                <br>
+            </p>
+            <p class="indented">
+                To move through the list of references in order of difficulty, use the <i>left</i> + and - buttons at the bottom of the screen.
+                Alternatively, select directly on the crease pattern which line you would like to solve.
+                Cycle through the various solutions to each ref using the <i>right</i> + and - buttons.
+                <br>
+            </p>
+            <b>From a, b, c:</b> <br>
+            <img src="images/Screenshot 2024-09-28 012138.png" ALIGN="right" alt="abc relative to square" id="abcImage" style="height: 130px; margin-right: 10px;">
+            <p class="indented">
+                The right side of the header has a field for input of custom a, b, c values.
+                The values correspond to a pair of sums, having the form (a+b√2)/c. In the image to the right,
+                (a<sub>x</sub>+b<sub>x</sub>√2)/c<sub>x</sub> is shown in red, and (a<sub>y</sub>+b<sub>y</sub>√2)/c<sub>y</sub> in green.
+                The larger value is scaled to the side-length of the square, making the reference to be found the ratio of the smaller value to the larger.
+                
+                <br>
+            </p>
+            <b>Interpreting the steps:</b> <br>
+            <p class="indented">
+                Unless the desired reference is simply a binary fraction of the edge length, the first step will involve folding a few 22.5° lines as foundation for the following steps.
+                Those creases not laying at 22.5° degrees (the "Kamiya reference") are constructed by making a crease through a pair of existing points.
+                In certain cases there are creases which appear to follow neither of these conventions - they lay perpendicular to an existing line.
+                <br>
+            </p>
+            <p class="indented">
+                In the following steps, black dots indicate important landmarks used to construct creases.
+                Binary fractions are also used. The fraction itself is printed, the line along which the fraction is taken is highlighted.
+                The crease emanating from the fraction lays perpendicular to the highlighted line.
+            </p>
         </div>
     </div>
+    
     
     <div id="infoModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Info</h2>
-            This program was developed by Travis Nolan (<a href="https://www.instagram.com/tankoda/">@tankoda</a>), stemming from a talk he gave at OSME 8 in Melbourne (2024).  A recording of the talk is available 
-            <a href="https://youtu.be/O3LPRcx3y1E?si=2ZxFhs29pyXTkHwo">here</a>, and the paper itself will be available when the proceedings of OSME 8 are published.
-            The talk may give insight into the math behind the application, although the project has developed considerably since the talk was given.
-            <br><br>
-            The program relies on Jason Ku's <a href="https://origamimagiro.github.io/cp_analyze/">CP Analyzer</a> by Jason Ku.  As such, 
-            it falls under the MIT License.
-            <br><br>Special thanks to the following amazing people:
-            <ul>
-                <li>Brandon Wong, for so much help and feedback throughout the development of this research and project</li>
-                <li>Jason Ku, for his development of CP Analyzer, and for generously sharing his time and brain at OSME 8</li>
-                <li>Lily Derr for her help with the original research</li>
-                <li>Bodo Haag and cracosdyllea on Discord for their feedback and ideas regarding the program</li>
-                <li>Stewart Nolan, Mary Nolan, Maddie Nolan, Regina Moreno Vera for all of their support and coolness</li>
-            </ul> 
+            <h2 class="center">Info</h2>
+            <p class="indented">
+                This program was developed by Travis Nolan (<a href="https://www.instagram.com/tankoda/">@tankoda</a>), stemming from a talk he gave at OSME 8 in Melbourne (2024).  A recording of the talk is available 
+                <a href="https://youtu.be/O3LPRcx3y1E?si=2ZxFhs29pyXTkHwo">here</a>, and the paper itself will be available when the proceedings of OSME 8 are published.
+                The talk may give insight into the math behind the application, although the project has developed considerably since the talk was given.
+            </p>
+            <p class="indented">
+                The program relies on Jason Ku's <a href="https://origamimagiro.github.io/cp_analyze/">CP Analyzer</a> by Jason Ku.  As such, 
+                it falls under the MIT License.  Special thanks to the following amazing people:
+                <ul>
+                    <li class="bullets">Brandon Wong, for so much help and feedback throughout the development of this research and project</li>
+                    <li class="bullets">Jason Ku, for his development of CP Analyzer, and for generously sharing his time and brain at OSME 8</li>
+                    <li class="bullets">Lily Derr for her help with the original research</li>
+                    <li class="bullets">Bodo Haag and cracosdyllea on Discord for their feedback and ideas regarding the program</li>
+                    <li class="bullets">Stewart Nolan, Mary Nolan, Maddie Nolan, Regina Moreno Vera for all of their support and coolness</li>
+                </ul> 
+            </p>
+            <p class="indented">
+                Questions?  Interested in collaborating?  Discovered a bug?  Email me - tanolan[at]smu.edu. 
+            <span class="block-bots" aria-hidden="true">GO AWAY SPAM BOTS!</span></p>
         </div>
     </div>
 

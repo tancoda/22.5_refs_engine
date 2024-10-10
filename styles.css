@@ -137,6 +137,24 @@ body {
     width: 80%; /* Could be more or less, depending on screen size */
 }
 
+/* Center the Help title */
+.center {
+    text-align: center;
+}
+
+/* Indent paragraphs */
+.indented {
+    text-indent: 30px; /* Adjust the value as needed */
+    line-height: 1.5;  /* Optional: Improves readability */
+    font-size: .9em;
+}
+
+.bullets{
+    line-height: 1.5;  /* Optional: Improves readability */
+    font-size: .9em;
+}
+
+
 .close {
     color: #aaa;
     float: right;
@@ -160,4 +178,8 @@ body {
 
 #buttonBar button {
     flex: 1;
+}
+
+span.block-bots { 
+    display: none; 
 }
