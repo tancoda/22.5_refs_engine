@@ -43,13 +43,13 @@ function setSolnVariable(value) {
 
 // Update the displayed variable value in the HTML
 function updateDisplay() {
-    document.getElementById('variableValue').innerText = window.variable;
-    document.getElementById('solnValue').innerText = window.solnVariable;
     document.getElementById("value1Modal").value = defaultValue1
     document.getElementById("value2Modal").value = defaultValue2
     document.getElementById("constructibleToggle").value = defaultConstructible
     document.getElementById("constructibleToggle").checked = defaultConstructible
     updateInfoText(); // Update the status text
+    document.getElementById('variableValue').innerText = globalC2.length > 0 ? `${window.variable}/${globalC2.length}` : 'N/A';
+    document.getElementById('solnValue').innerText = globalC2.length > 0 ? `${window.solnVariable}/${globalC2[window.variable-1][3].length}` : 'N/A';
 }
 
 // Function to handle file upload
@@ -305,7 +305,7 @@ function resizeCanvas() {
 window.addEventListener('load', resizeCanvas);
 window.addEventListener('resize', resizeCanvas);
 window.addEventListener('resize', () => {
-    if (globalC2) {
+    if (globalC2.length > 0) {
         drawEverything();
     }
 });
@@ -334,6 +334,9 @@ function drawEverything() {
     const canvas = document.getElementById('myCanvas');
     const canvasWidth = canvas.clientWidth;
     const canvasHeight = canvas.clientHeight;
+
+    document.getElementById('variableValue').innerText = globalC2.length > 0 ? `${window.variable}/${globalC2.length}` : 'N/A';
+    document.getElementById('solnValue').innerText = globalC2.length > 0 ? `${window.solnVariable}/${globalC2[window.variable-1][3].length}` : 'N/A';
 
     const colorMap = {
         'B': 'black',
@@ -612,7 +615,7 @@ function processFile(event) {
         alert("File contains at least one duplicate line. This usually happens when an M or V overlays an aux line. These lines will be displayed in purple.");
     }
 
-    const EPS = 10**(-8);
+    const EPS = tolerance;
     
     const [C, VC] = V_2_C_VC(Vi, EPS);
     
@@ -692,10 +695,11 @@ function update(target, eps) {
     const { C, VC, EV, EA, FV, C2 } = target;
 }
 
-let cIsPowTwoTest = true;
+let cIsPowTwoTest;
 
 // Function to process C2 with a Promise
 function processC2(C, eps) {
+    cIsPowTwoTest = true;
     return new Promise((resolve, reject) => {
         try {
             let C2 = checkPi8(C, eps);
@@ -710,17 +714,14 @@ function processC2(C, eps) {
                 C2[index] = [alpha, beta, gamma]
             });
 
-            function constructible(element) {
-                const gamma = element[2];
-                return ((Math.log(gamma)/Math.log(2)) % 1 !== 0);
-            }
+            function constructible(element) {return (!isPowerTwo(element[2]))};
 
             const C2con = C2.filter(constructible);
 
             if (C2con.length > C2.length/2){
                 C2 = C2con;
                 cIsPowTwoTest = false;
-            }
+            } 
 
             C2.forEach(([a, b, c], index) => {
                 const [alpha, beta, gamma] = inverse(a, b, c);
@@ -874,7 +875,7 @@ function intersect(x1, y1, x2, y2, x3, y3, x4, y4) {
     return new paper.Point(x,y);
 }
 
-const tolerance = 10 ** -8;
+const tolerance = 10**-10;
 
 function tolerantSame (value1, value2) {
     return Math.abs(value1 - value2) < tolerance;
