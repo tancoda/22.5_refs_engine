@@ -19,7 +19,7 @@ function initializeCanvas() {
 initializeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Function to ensure window.variable stays within range
+// Function to ensure window.variable - which controls which reference is shown - stays within range
 function setWindowVariable(value) {
     if (value < 1) {
         window.variable = 1; // Set to minimum
@@ -31,6 +31,7 @@ function setWindowVariable(value) {
     window.solnVariable = 1;
 }
 
+//same, but for which solution is shown
 function setSolnVariable(value) {
     if (value < 1) {
         window.solnVariable = 1; // Set to minimum
@@ -41,12 +42,12 @@ function setSolnVariable(value) {
     }
 }
 
-// Update the displayed variable value in the HTML
+// Update the displayed variable values in the HTML
 function updateDisplay() {
-    document.getElementById("value1Modal").value = defaultValue1
-    document.getElementById("value2Modal").value = defaultValue2
-    document.getElementById("constructibleToggle").value = defaultConstructible
-    document.getElementById("constructibleToggle").checked = defaultConstructible
+    document.getElementById("value1Modal").value = defaultValue1;
+    document.getElementById("value2Modal").value = defaultValue2;
+    document.getElementById("constructibleToggle").value = defaultConstructible;
+    document.getElementById("constructibleToggle").checked = defaultConstructible;
     updateInfoText(); // Update the status text
     document.getElementById('variableValue').innerText = globalC2.length > 0 ? `${window.variable}/${globalC2.length}` : 'N/A';
     document.getElementById('solnValue').innerText = globalC2.length > 0 ? `${window.solnVariable}/${globalC2[window.variable-1][3].length}` : 'N/A';
@@ -87,14 +88,11 @@ Object.keys(defaults).forEach(key => {
 
 document.getElementById('submitABC').addEventListener('click', abcRender);
 
+//takes the a, b, c inputs in the top right, makes sure fit the settings, processes them, feeds them to drawEverything
 function abcRender () {
     clearCanvas();
     document.getElementById("fileInput").value =  null;
-    defaultValue1 = 32; 
-    defaultValue2 = 0.1; 
     defaultConstructible = false; 
-    document.getElementById("value1Modal").value = 32;
-    document.getElementById("value2Modal").value = 0.1;
     document.getElementById("constructibleToggle").value = false;
     document.getElementById("constructibleToggle").checked = false;
     window.variable = 1;
@@ -111,41 +109,36 @@ function abcRender () {
 
     summup(ax, bx, cx) >= summup(ay, by, cy) ? wide = true : wide = false;
 
-    let a = cy * (ax * ay - 2 * bx * by);
-    let b = cy * (ay * bx - ax * by);
-    let c = cx * (ay ** 2 - 2 * by ** 2);
-
+    let a = cy * (ax * ay - 2 * bx * by), b = cy * (ay * bx - ax * by), c = cx * (ay ** 2 - 2 * by ** 2);
     [a, b, c] = normalize(a,b,c)
 
+    console.log(wide);
+    console.log([a,b,c]);
+    console.log(inverse(a,b,c)[2]);
+
     if (summup(a,b,c) > 0) {
-        if (Math.max(a + b*Math.SQRT2, c) / Math.min(a + b*Math.SQRT2, c) <= defaultValue2 ** -1) {
-            let inputC2;
-
-            wide ? inputC2 = [[a, b, c]] : inputC2 = [inverse(a, b, c)];
-
-            console.log(inputC2);
-
-            let startTester = new paper.Point(0, 0), finishTester = new paper.Point(1, 1);
-
-            wide ? (startTester.y = summup(a, b, c) ** -1, finishTester.y = summup(a, b, c) ** -1) : ((startTester.x = summup(a, b, c), finishTester.x = summup(a, b, c)))
-
-            globalVi = [[0,0], [0,1], [1,1], [1,0], [startTester.x, startTester.y], [finishTester.x, finishTester.y]];
-
-            globalEvi = [[0,1],[1,2],[2,3],[0,3],[4,5]];
-
-            globalEAi = ['B', 'B', 'B', 'B', 'M'];
-
-            function updateC2(C2) {
-                return C2.map(([a, b, c]) => {
-                    const targArr = alts(a, b, c);
-                    return [a, b, c, targArr];
-                });
-            }
-
-            inputC2 = updateC2(inputC2);
-            globalC2 = inputC2;
-            
-            drawEverything();
+        if (Math.max(a + b*Math.SQRT2, c) / Math.min(a + b*Math.SQRT2, c) <= defaultValue2 ** -1 &&
+            Math.max(a + b*Math.SQRT2, c) / Math.min(a + b*Math.SQRT2, c) >= (1 - defaultValue2) ** -1) {
+            if ((wide ? c : (inverse(a,b,c))[2]) <= defaultValue1) {
+                let inputC2;
+                let startTester = new paper.Point(0, 0), finishTester = new paper.Point(1, 1);
+    
+                wide ? (inputC2 = [[a, b, c]], startTester.y = summup(a, b, c) ** -1, finishTester.y = summup(a, b, c) ** -1) : 
+                    (inputC2 = [inverse(a, b, c)], (startTester.x = summup(a, b, c), finishTester.x = summup(a, b, c)))
+    
+                globalVi = [[0,0], [0,1], [1,1], [1,0], [startTester.x, startTester.y], [finishTester.x, finishTester.y]];
+                globalEvi = [[0,1],[1,2],[2,3],[0,3],[4,5]];
+                globalEAi = ['B', 'B', 'B', 'B', 'M'];
+    
+                function updateC2(C2) {
+                    return C2.map(([a, b, c]) => {
+                        const targArr = alts(a, b, c);
+                        return [a, b, c, targArr];
+                    });
+                }
+                globalC2 = updateC2(inputC2);
+                drawEverything();
+            } else alert ("Either choose a less convoluted reference, or increase the maximum allowed denominator.  Used denom: "+(wide ? c : (inverse(a,b,c))[2])+".  Allowable: "+defaultValue1+".")
         } else alert ("Either choose a larger value, or decrease the minimum allowable distance from the edge.")
     } else alert("aₓ + bₓ√2 and aᵧ + bᵧ√2 must both be greater than zero.")
 }
@@ -168,15 +161,13 @@ function resetOtherVars() {
     updateDisplay(); // Update the display to reflect the new values
 }
 
+//takes care of the text displaying info about the number of refs and solns found
 function updateInfoText() {
     const fileStatus = document.getElementById('fileStatus');
     if (globalC2.length > 0 && window.variable > 0 && window.variable <= globalC2.length) {
         const reference = globalC2[window.variable - 1];
-
         let inversed = inverse(reference[0], reference[1], reference[2]);
-
         inversed = normalize(inversed[0], inversed[1], inversed[2]);
-
         let value = (summup(inversed[0], inversed[1], inversed[2]));
 
         let additional;
@@ -195,6 +186,7 @@ function updateInfoText() {
     }
 }
 
+//allows cycling through the refs and solns with buttons at the bottom of the screen
 window.addEventListener('DOMContentLoaded', () => {
     window.variable = 1; // Initialize variable on load
     window.solnVariable = 1;
@@ -327,6 +319,7 @@ let globalEvi = [];
 let globalEAi = [];
 let globalC2 = [];
 
+//called to fill the canvas.  This block draws the CP on the left side, and calls the functions which draw the steps on the right.
 function drawEverything() {
     clearCanvas();
 
@@ -410,6 +403,8 @@ function drawEverything() {
     drawLines(linesE);
     drawLines(linesU);
 
+    console.log(globalC2);
+
     if (globalC2.length > 0) {
         console.log("we doin it")
         draw(globalC2[window.variable-1][0],globalC2[window.variable-1][1],globalC2[window.variable-1][2],
@@ -426,6 +421,7 @@ let lineVariable = [];
 
 let clickedALine = false;
 
+//this takes care of the green, selectable lines on the CP, and the bright green line showing the ref and its vertices
 function draw (a, b, c, name, meth) {
     let aFinal = a, bFinal = b, cFinal = c;
 
@@ -435,6 +431,7 @@ function draw (a, b, c, name, meth) {
     const elevationFinal = inverse(aFinal, bFinal, cFinal);
     const searchValue = summup(elevationFinal[0], elevationFinal[1], elevationFinal[2]);
 
+    //in the stardard setting (no line clicked), a given ref is rendered as vertical or horizontal depending on which line has more vertices in Vi
     if (!clickedALine) {
         startingPointDesiredLine.x = 0, startingPointDesiredLine.y = 0;
         finishinPointDesiredLine.x = 1, finishinPointDesiredLine.y = 1;
@@ -465,6 +462,8 @@ function draw (a, b, c, name, meth) {
         console.log(startingPointDesiredLine);
         console.log(finishinPointDesiredLine);
     } else {
+        //if a line has been clicked, we want the clicked line, rather than the one with more vertices for a given value.  
+        //the starting and finishing point, and its set of vertices are specified.
         startingPointDesiredLine = lineVariable[0];
         finishinPointDesiredLine = lineVariable[1];
         foundValues = lineVariable[2];
@@ -472,6 +471,7 @@ function draw (a, b, c, name, meth) {
 
     let lineArr = [];
 
+    //generates the set of lines, and their correspondence to the a,b,c stored in C2
     globalC2.forEach(element => {
         let c2Index = globalC2.indexOf(element);
         let searchHereValue = summup(element[0], element[1], element[2]) ** -1;
@@ -495,6 +495,7 @@ function draw (a, b, c, name, meth) {
 
     lineArr = uniq_fast(lineArr);
 
+    //each of those lines is stored with the set of vertices lying along it
     lineArr.forEach(element => {
         let pointSet = [];
 
@@ -531,6 +532,7 @@ function draw (a, b, c, name, meth) {
         };
     });
 
+    //calls the next step, which renders the highlighted line and its vertices
     drawPartII (a, b, c, name, meth, startingPointDesiredLine, finishinPointDesiredLine, foundValues);
     lineVariable = [];
     clickedALine = false;
@@ -545,6 +547,7 @@ function drawPartII (a, b, c, name, meth, startingPointDesiredLine, finishinPoin
     for (let circle of circles) {circle.remove()};
     circles = [];
 
+    //the selected line
     elev = new paper.Path.Line(
         new paper.Point(scaleX(startingPointDesiredLine.x), 
                         scaleY(startingPointDesiredLine.y)),
@@ -557,7 +560,7 @@ function drawPartII (a, b, c, name, meth, startingPointDesiredLine, finishinPoin
     elev.shadowColor = 'black';
     elev.shadowBlur = 5;
 
-    // Draw new circles at found values
+    // Draw circles at the vertices along it
     for (let i = 0; i < foundValues.length; i++) {
         let circle = new paper.Path.Circle({
             center: [scaleX(foundValues[i][0]), scaleY(foundValues[i][1])],
@@ -571,9 +574,10 @@ function drawPartII (a, b, c, name, meth, startingPointDesiredLine, finishinPoin
             circle.strokeColor = 'blue'
         }
 
-        circles.push(circle); // Add circle to the list
+        circles.push(circle);
     }
 
+    //this calls the function which will draw all the steps to develop the ref
     scrawler(a, b, c, name, meth);
 }
 
@@ -680,6 +684,8 @@ function V_2_C_VC(V, eps) {
     return [C, VC];
 }
 
+//If we want to draw the lines having at least one vertex on the easy-to-fold 22.5-deg lines
+//this function filters out the other lines
 function test (x,y) {
     return (isOne(x, y) || isOne(x, 1-y) || 
     (Math.abs(x) < tolerance) || (Math.abs(x - 1) < tolerance) || 
@@ -690,7 +696,6 @@ function test (x,y) {
     isRtTwoPlusOne(1-x, 1-y) || isRtTwoMinusOne(1-x, 1-y))
 } 
 
-// Function to update the display or data structure
 function update(target, eps) {
     const { C, VC, EV, EA, FV, C2 } = target;
 }
@@ -709,11 +714,16 @@ function processC2(C, eps) {
             
             C2 = C2.filter(isComplete);
             
+            //converts from the a, b, c, d form of CPAnalyze to the a, b, c form used here.
             C2.forEach(([a, b, c, d], index) => {
                 const [alpha, beta, gamma] = toABC(a, b, c, d);
                 C2[index] = [alpha, beta, gamma]
             });
 
+            //this block determines whether a given vertex has a c value that's a power of two.
+            //demaine and tachi show that vertices of this format may be constructed immediately via a 22.5-deg grid
+            //if we are working with a CP having vertices not of this form, then these vertices 
+            //will be of no use to us for constructing the rest of the CP
             function constructible(element) {return (!isPowerTwo(element[2]))};
 
             const C2con = C2.filter(constructible);
@@ -723,11 +733,13 @@ function processC2(C, eps) {
                 cIsPowTwoTest = false;
             } 
 
+            //now, we convert to width/height
             C2.forEach(([a, b, c], index) => {
                 const [alpha, beta, gamma] = inverse(a, b, c);
                 C2[index] = [alpha, beta, gamma];
             })
 
+            //this one is the reason it's slow to load, but for each element, it finds the list of ways by which it can be solved, and appends
             function updateC2(C2) {
                 return C2.map(([a, b, c]) => {
                     const targArr = alts(a, b, c);
@@ -737,9 +749,11 @@ function processC2(C, eps) {
 
             C2 = updateC2(C2);
 
+            //get rid of elements which aren't solved.
             function hasSolutions (element) {return element[3].length > 0};
             C2 = C2.filter(hasSolutions);
 
+            //order by which refs have the easiest-ranking solutions
             C2.sort((a,b) => {
                 return a[3][0][2] - b[3][0][2];
             })
@@ -755,10 +769,12 @@ function processC2(C, eps) {
 }
 
 //below is the maths stuff, which for now is working FINE don't mess with it.  The ranking equations will need to be updated.
+//returns (a + b(rt2))/c
 function summup(a,b,c) {
     return ((a + (b * Math.SQRT2)) / c)
 }
 
+//divides a, b, c by their gcd, makes sure they're positive
 function normalize(a,b,c) {
     let grcodi = gcd(gcd(a, b), c);
     if (summup(a,b,c) < 0 || ((a + (b * Math.SQRT2) < 0) && (c < 0))) {
@@ -769,6 +785,7 @@ function normalize(a,b,c) {
     return [a/grcodi, b/grcodi, c/grcodi];
 }
 
+//gives the a, b, c of the inverse -- c / (a + b(rt2)) with the denom rationalized
 function inverse(a, b, c) {
     let alpha = a * c;
     let beta = -b * c;
@@ -777,6 +794,7 @@ function inverse(a, b, c) {
     return normalize(alpha, beta, gamma);
 }
 
+//returns the gcd of two numbers
 function gcd(a, b) {
     if (b) {
         return gcd(b, a % b);
@@ -799,6 +817,7 @@ function simplify(n, d) {
     return [n, d];
 }
 
+//converts from a, b, c, d form to a, b, c form
 function toABC(a, b, c, d) {
     let alpha, beta, gamma;
     if (c**2 - 2 * d**2 >= 0) {
@@ -814,6 +833,7 @@ function toABC(a, b, c, d) {
     return [alpha/grcodi, beta/grcodi, gamma/grcodi];
 }
 
+//clocks the distance b/n two points
 function distance (point1, point2) {
     let x1 = point1[0];
     let y1 = point1[1];
@@ -823,6 +843,7 @@ function distance (point1, point2) {
 }
 
 //pulled from a stackoverflow https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
+//filters out repeated elements
 function uniq_fast(a) {
     var seen = {};
     var out = [];
@@ -838,11 +859,14 @@ function uniq_fast(a) {
     return out;
 }
 
+//boolean is x a power of two
 function isPowerTwo(x) {
     return (Math.log(x) / Math.log(2)) % 1 === 0;
 }
 
 // line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
+//modified so that if either endpoint is shared it returns that
+//spits out a paper.Point
 function intersect(x1, y1, x2, y2, x3, y3, x4, y4) {
 
     if ((x1 === x2 && y1 === y2) || (x3 === x4 && y3 === y4)) {
@@ -877,6 +901,7 @@ function intersect(x1, y1, x2, y2, x3, y3, x4, y4) {
 
 const tolerance = 10**-10;
 
+//is value1 within tolerance of value2
 function tolerantSame (value1, value2) {
     return Math.abs(value1 - value2) < tolerance;
 }
@@ -923,7 +948,6 @@ const checkPi8 = (C, eps) => {
 };
 
 //----------------------------------------------------------------------------------------
-
 // Generates the farey sequence of all fractions having a denominator less than or equal to n.
 // Each fraction corresponds to a slope.  The lookup table records the number of creases required
 // to develop that slope, and the methodology used to do so.
@@ -936,15 +960,19 @@ const m = (1/defaultValue2);
 // if b is a power of 2, the reference may be developed in log2(b)+1 folds
 function powTwo(a, b)      {if (isPowerTwo(Math.max(a,b)))            {return Math.log2(Math.max(a,b)) + 1}           else {return Infinity}};
 
+// for a fraction a/b, this finds (if it exists) the numbers i and j such that...
+// ia + jb is a power of two, and the larger of i and j is a power of two.
+// when it works, its usually a better solution than general
+//best understood by looking at rendered examples
 function smartDiag(a, b) {
     let gcdAB = gcd(a, b);
     [a, b] = [a / gcdAB, b / gcdAB];
 
     let i = 1, j = 1, result = null;
 
-    while (i <= 32 && !result) {
+    while (i <= defaultValue1 && !result) {
         j = 1;
-        while (j <= 32 && !result) {
+        while (j <= defaultValue1 && !result) {
             if (Math.log2(i * a + j * b) % 1 === 0 && Math.log2 (Math.max (i, j)) % 1 === 0) {
                 result = [i, j, Math.log2(i * a + j * b)];
                 break;
@@ -968,6 +996,7 @@ function smartDiag(a, b) {
     return Math.min(same, opp) + 2;
 }
 
+//default case - relies on the smallest power of two greater than both a and b
 function general(a,b) {if (!isPowerTwo(b)) {
         let c = Math.ceil(Math.log2(Math.max(a,b)));
         return Math.log2((2 ** c) / (gcd((2 ** c), a))) + Math.log2((2 ** c) / (gcd((2 ** c), b))) + 1;
@@ -976,6 +1005,7 @@ function general(a,b) {if (!isPowerTwo(b)) {
     }
 }
 
+//which of these three methods is best for a given fraction?
 function type (a,b) {
     let min = Math.min(powTwo(a,b), smartDiag(a,b), general(a,b));
     if (powTwo(a,b)===min){
@@ -987,6 +1017,8 @@ function type (a,b) {
     } else return error
 }
 
+//generates a farey sequence where each fraction also has the rank (approx number of steps to develop)
+//as well as the method used - smartdiag, general, powTwo.  used as a lookup table
 function generateFarey () {
     lookupTable = [];
     // Generate the Farey sequence
@@ -1031,7 +1063,8 @@ function findRank(numerator, denominator) {
         if (numerator === 0 && denominator === 0) {result.rank = Infinity}
         else if (numerator === 0 || denominator === 0) {result.rank = 0}
         else if (numerator/denominator === 1) {result.rank = 1}
-        else if (denominator/numerator > m || numerator/denominator > m) {result.rank = Infinity};
+        else if (Math.max(denominator, numerator)/Math.min(denominator, numerator) > m || 
+                 Math.max(denominator, numerator)/Math.min(denominator, numerator) < (1-defaultValue2)**-1) {result.rank = Infinity};
     
         return result}
     else {
@@ -1043,6 +1076,11 @@ function findRank(numerator, denominator) {
     }
 }
 
+//for a, b, c it calculates the negative (the w/h of the rectangle opposite a, b, c in the square)
+//now, we have easy 22.5 slopes to work with: rt2+1, (1+rt2)/2, 1, rt2-1, 2-rt2
+//A-J record the ten unique combos of these 5 slopes (5*4)/2 (symmetry)
+//for each A-J, for each default or neg-default, it is determined whether or not the a, b, c can be used
+//if so, [default/negdefault, A-J, rank] is added to targArr, which is then sorted, and appended back to a,b,c in globalC2
 function alts(a, b, c) {
     let [nega, negb, negc] = negate(a, b, c);
 
@@ -1051,7 +1089,6 @@ function alts(a, b, c) {
     let targArr = [];
 
     //for now, this takes a ton of time and just gets rank.  BUT, i think it's definitely possible to take the whole targarr and later just feed that into scrawler.
-
     for (let i = 0; i < set.length; i++) {
         if (summup(a, b, c) > ((1 - defaultValue2) ** -1) && 
         typeof a === 'number' && typeof b === 'number' && typeof c === 'number' && c !== 0 &&
@@ -1098,7 +1135,7 @@ function alts(a, b, c) {
 }
 
 //----------------------------------------------------------------------------------------------------------------
-
+//defines the frequently used 22.5-deg points on the unit square
 var bl = new paper.Point(0,            0);
 var tl = new paper.Point(0,            1);
 var tr = new paper.Point(1,            1);
@@ -1114,6 +1151,10 @@ var tt = new paper.Point(2-Math.SQRT2, 1);
 
 let rotation1 = [bo, bt, br, ro, rt, tr, tt, to, tl, lt, lo, bl];
 
+//THIS SECTION takes as input up to four points of the eight along the square, which are required for precreasing a certain ref
+//it stores the elemental solutions, and then finds given solutions using rotation and flipping
+
+//one of the up to four points is selected, and this returns the transformations bringing it to bo
 function findTransformation (point) {
     let transArr = [];
 
@@ -1139,6 +1180,7 @@ function findTransformation (point) {
     return transArr;
 }
 
+//applies a given transformation to the other points
 function doTransform (point, transArr) {
     //console.log("original point: " + point);
     for (let i = 0; i < transArr.length; i++) {
@@ -1156,6 +1198,7 @@ function doTransform (point, transArr) {
     return point;
 }
 
+//undoes said transformation (once creases are added)
 function undoTransform (point, transArr) {
     //console.log("original point: " + point);
     for (let i = transArr.length; i >= 0; i--) {
@@ -1173,6 +1216,7 @@ function undoTransform (point, transArr) {
     return point;
 }
 
+//if there's only one point this is pretty easy
 function point (point1) {
     let transArr = findTransformation(point1);
     console.log(transArr);
@@ -1180,6 +1224,7 @@ function point (point1) {
     let creaseArr = [[tl, br], [tl, bo]];
     let rotatedFlippedCreaseArr = []
 
+    //creases are assigned to find bo, and then rotated back so that they find the desired point
     for (let i = 0; i < creaseArr.length; i++) {
         let start = undoTransform([creaseArr[i][0].x, creaseArr[i][0].y], transArr);
         let finish = undoTransform([creaseArr[i][1].x, creaseArr[i][1].y], transArr);
@@ -1191,19 +1236,23 @@ function point (point1) {
     return rotatedFlippedCreaseArr;
 }
 
+//two points
 function pointPoint (point1, point2) {
 
     console.log("point1: " + point1);
     console.log("point2: " + point2);
 
+    //point one is moved to bo
     let transArr = findTransformation(point1);
     console.log(transArr);
 
     console.log(point2);
 
+    //point two is moved in the same way
     let point2new = doTransform(point2, transArr);
     console.log(point2new);
     
+    //point two is converted from decimal to its named value (bo, ro, bt...)
     for (let i = 0; i < rotation1.length; i ++) {
         if (tolerantSame(point2new[0], rotation1[i].x) && tolerantSame(point2new[1], rotation1[i].y)) {
             point2new = rotation1[i];
@@ -1211,8 +1260,10 @@ function pointPoint (point1, point2) {
         }
     }
 
+    //creases are assigned to find point bo...
     let creaseArr = [[tl, br], [tl, bo]];
 
+    //and the second point
     switch(point2new) {
         case bo:
             break;
@@ -1245,6 +1296,7 @@ function pointPoint (point1, point2) {
 
     let rotatedFlippedCreaseArr = []
 
+    //the rotations and flips are undone, so now we have the steps for the desired pair of points
     for (let i = 0; i < creaseArr.length; i++) {
         let start = undoTransform([creaseArr[i][0].x, creaseArr[i][0].y], transArr);
         let finish = undoTransform([creaseArr[i][1].x, creaseArr[i][1].y], transArr);
@@ -1256,6 +1308,8 @@ function pointPoint (point1, point2) {
     return rotatedFlippedCreaseArr;
 }
 
+//pointLine and lineline work in the same way - assign point one to bo, rotate/flip remaining points
+//by the same transformation, lookup a solution, untransform
 function pointLine (point1, point2, point3) {
     let point, lineS, lineF;
 
@@ -1323,6 +1377,7 @@ function pointLine (point1, point2, point3) {
     return rotatedFlippedCreaseArr;
 }
 
+//for two points, does there exist a line between them which runs parallel to the edges of the unit square?
 function lineTest (point1, point2) {
     return ((tolerantSame(point1[0], point2[0]) || tolerantSame(point1[1], point2[1])) && tolerantSame(distance(point1, point2), 1))
 }
@@ -1374,6 +1429,7 @@ function lineLine (point1, point2, point3, point4) {
 
 }
 
+//given 1-4 points, which function should be run?
 function findCreaseArr (arr) {
     let creaseArr;
 
@@ -1413,6 +1469,7 @@ function findCreaseArr (arr) {
     return creaseArr;
 }
 
+//takes an array of points, fills boxarr with the lines they correspond to
 function linePusher(arr, boxArr, time) {
     for (let i = 0; i < arr.length; i++) {
 
@@ -1443,6 +1500,10 @@ function linePusher(arr, boxArr, time) {
 
 let scale;
 
+//------------------------------------------------------------
+//drawing the steps!
+
+//if time is zero, draws a ref dot
 function dot(point, time) {
     return new paper.Path.Circle({
         center: point,
@@ -1452,6 +1513,7 @@ function dot(point, time) {
     });
 }
 
+//if times is zero, highlights the line along which a binary fraction is taken
 function highLighter (from, to, time) {
     var fromDot = dot(from, time);
     var toDot = dot(to, time);
@@ -1481,6 +1543,8 @@ function scaler(n, d) {
     return [n, d];
 }
 
+//given a, b, c, type, returns the pair of num, den, num, den, and the blocks along which they're taken
+//basically, solves the CD.  slopepair[0]/slopepair[1] * blockinfo[0] + slopepair[2]/slopepair[3] * blockinfo[1] given summup (a, b, c)
 function sloper(a,b,c,type) {
     let slopePair = [];
     let blockInfo = [];
@@ -1536,6 +1600,7 @@ function sloper(a,b,c,type) {
 
 let rotate = 0;
 
+//this draws the steps!  At last
 function scrawler(a, b, c, method, split) {
     // Get the canvas size
     const canvas = document.getElementById('myCanvas');
@@ -1553,6 +1618,7 @@ function scrawler(a, b, c, method, split) {
 
     const x1 = 7 * canvasWidth / 12 - stepSize / 2, x2 = 2 * canvasWidth / 3 - stepSize / 2, x3 = 3 * canvasWidth / 4 - stepSize / 2, x4 = 5 * canvasWidth / 6 - stepSize / 2, x5 = 11 * canvasWidth / 12 - stepSize / 2;
 
+    //coordinates of each step, depending on how many there are
     const stepper = [
         [[x3, y2]], 
         [[x2, y2], [x4, y2]], 
@@ -1564,6 +1630,7 @@ function scrawler(a, b, c, method, split) {
 
     updateInfoText();
 
+    //draws the squares
     function borderFactory(numSteps) {
         const border = new paper.Path.Rectangle({
             from: new paper.Point(stepData[numSteps][0], stepData[numSteps][1]),
@@ -1579,14 +1646,17 @@ function scrawler(a, b, c, method, split) {
 
     console.log(`*** Begin drawing elev. ${window.variable} ***`);
 
+    //contains all the info
     let whiteRabbit = newDiags(a, b, c, method, split);
     //console.log(whiteRabbit);
 
     const stepCount = whiteRabbit.steps.length;
     const stepData = stepper[stepCount - 1];
 
+    //this is the drawn intersection line, the last step.
     const intLineToAccess = whiteRabbit.steps[stepCount - 1][1].children['interLine1'];
 
+    //and this is the desired intersection line.
     const startDrawnLine = intLineToAccess.segments[0].point;
 
     function samePoint (point1, point2) {
@@ -1603,6 +1673,7 @@ function scrawler(a, b, c, method, split) {
 
     rotate = 0;
 
+    //this gives the rotation at which the drawn line is the desired line.  I'm sure it could be done more elegantly...
     if (samePoint(startDrawnLine, startingPointDesiredLine) || samePoint(startDrawnLine, finishinPointDesiredLine)) {
         rotate = 0;
     } else if (samePoint(rotatePoint(startDrawnLine), startingPointDesiredLine) || samePoint(rotatePoint(startDrawnLine), finishinPointDesiredLine)) {
@@ -1613,14 +1684,10 @@ function scrawler(a, b, c, method, split) {
         rotate = 270;
     } else console.error ("It's that int point issue")
 
-    console.log(startDrawnLine);
-    console.log(rotatePoint(startDrawnLine));
-    console.log(rotatePoint(rotatePoint(startDrawnLine)));  
-    console.log(rotatePoint(rotatePoint(rotatePoint(startDrawnLine))));
-    console.log(startingPointDesiredLine);
-    console.log(finishinPointDesiredLine);
     console.log(rotate);
 
+    //draws the steps.  each step has step0 and step1 - step 0 is for time is zero and dots and highlights are desired.  time1 is just the remaining creases
+    //to be shown on the paper in following steps.
     for (let i = 0; i < stepCount; i++) {
         let thisStep = whiteRabbit.steps[i][0];
 
@@ -1628,26 +1695,30 @@ function scrawler(a, b, c, method, split) {
             thisStep.addChild(whiteRabbit.steps[j][1].clone());
         }
 
+        //places it where we want
         thisStep.pivot = new paper.Point(0.5, 0.5);
         thisStep.scale(stepSize, stepSize);
         thisStep.position = new paper.Point(stepData[i][0] + stepSize / 2, stepData[i][1] + stepSize / 2);
         thisStep.strokeWidth = 1;
 
-        console.log(rotate);
         thisStep.rotation = rotate;
 
+        //unrotates text
         thisStep.children.forEach((child) => {
             if (child instanceof paper.PointText) {
                 child.rotation = 0;
             }
         });
 
+        //adds squares
         borderFactory(i);
 
+        //is this necessary?...
         screen.addChild(thisStep);
     }
 }
 
+//which method is used to solve a fraction?  runs the appropriate fcn
 function diag (a, b, w, h, time, diag2) {
     [a,b] = simplify(a,b);
 
@@ -1667,12 +1738,15 @@ function diag (a, b, w, h, time, diag2) {
     }
 }
 
-//returns [powtwogroup, powtwoprelim]
+//returns drawngroup, pointsprelim (to feed to the precreaser), rank, and the endpoints of the diag
+//draws the diagonal of a rectangle a*w/b*h or having a/bths of a reference rectangle w/h.  
+//if diag2, it flips about x = 0.5
 function powTwoFunction (a, b, w, h, time, diag2) {
 
     [w, h] = scaler(w, h);
     [a, b] = simplify(a, b);
 
+    //border of ref block
     var bbl = new paper.Point(0, 0);
     var bbr = new paper.Point(w, 0);
     var btr = new paper.Point(w, h);
@@ -1685,6 +1759,7 @@ function powTwoFunction (a, b, w, h, time, diag2) {
         visible: time >= 0
     }
 
+    //defines the resulting diag crease
     var cstart = bbl;
     var csquare = new paper.Point(a * w, b * h);
     [csquare.x, csquare.y] = scaler(csquare.x, csquare.y);
@@ -1696,15 +1771,20 @@ function powTwoFunction (a, b, w, h, time, diag2) {
 
     let powTwoPrelim = [];
 
+    //makes sure powtwo should be called
     if (isPowerTwo(Math.max(a,b))) {
         if (tolerantSame(w, h)) {
             console.log("square, powTwo");
+            //if its a square, no PC necessary
             powTwoDotPt = csquare;
             powTwoDot = dot(csquare, time);
+            //the fraction taken
             powTwoLabelText = `${Math.min(a,b)}/${Math.max(a,b)}`;
             powTwoTextPt = csquare.clone();
             if (a < b) {
+                //highlights the edge along which the fraction is taken
                 powTwoHighLight = highLighter(btl, btr, time);
+                //moves the text out of the way
                 powTwoTextPt.y += fontSize;
             } else if (a > b) {
                 powTwoHighLight = highLighter(btr, bbr, time);
@@ -1714,6 +1794,7 @@ function powTwoFunction (a, b, w, h, time, diag2) {
             }
         } else {
             console.log("not square, powTwo");
+            //not a square, PC needed
             powTwoPrelim.push(btr);
             if (a < b) {
                 powTwoHighLight = highLighter(btl,btr,time);
@@ -1722,6 +1803,7 @@ function powTwoFunction (a, b, w, h, time, diag2) {
                 powTwoTextPt = powTwoDotPt.clone();
                 powTwoTextPt.y += fontSize;
                 if (w > h) {
+                    //the point sent to PC
                     powTwoPrelim.push(btl);
                     console.log("a<b, w>h");
                 };
@@ -1732,6 +1814,7 @@ function powTwoFunction (a, b, w, h, time, diag2) {
                 powTwoTextPt = powTwoDotPt.clone();
                 powTwoTextJust = 'left';
                 if (w < h) {
+                    //point sent to PC
                     powTwoPrelim.push(bbr);
                     console.log("a>b, w<h")
                 };
@@ -1741,6 +1824,7 @@ function powTwoFunction (a, b, w, h, time, diag2) {
         if (a === b) {powTwoLabelText = ''};
     } else console.error("Not powTwo")
 
+    //fraction taken
     var powTwoLabel = new paper.PointText({
         point: powTwoTextPt,
         content: powTwoLabelText,
@@ -1759,6 +1843,7 @@ function powTwoFunction (a, b, w, h, time, diag2) {
 
     powTwoGroup.pivot = new paper.Point(0.5, 0.5);
 
+    //flips if diag2
     if (diag2) {
         powTwoGroup.scale(-1, 1);
         powTwoPrelim.forEach(element => {
@@ -1766,10 +1851,10 @@ function powTwoFunction (a, b, w, h, time, diag2) {
         });
         powTwoLabel.scale(-1,1);
     }
-    console.log(powTwoPrelim);
-    console.log(powTwoLabel);
-    console.log(powTwoHighLight);
-    console.log(powTwoDot);
+    //console.log(powTwoPrelim);
+    //console.log(powTwoLabel);
+    //console.log(powTwoHighLight);
+    //console.log(powTwoDot);
 
     //powTwoGroup.rotate(rotate);
     powTwoLabel.rotation = 0;
@@ -1784,6 +1869,7 @@ function powTwoFunction (a, b, w, h, time, diag2) {
     return powTwoReturn;
 }
 
+//returns the same stuff, but for general
 function generalFunction (a, b, w, h, time, diag2) {
     let tall = h > w;
     let wide = w > h;
@@ -1812,9 +1898,11 @@ function generalFunction (a, b, w, h, time, diag2) {
 
     const smallestPowTwo = 2 ** Math.ceil(Math.log2(Math.max(a, b)));
 
+    //where along the edges of the block are the perpendiculars folded
     let vertX = w*a/smallestPowTwo;
     let horiY = h*b/smallestPowTwo;
 
+    //the intersection of the perps
     var genInt = new paper.Point(vertX, horiY);
     var genIntPt = dot(genInt);
 
@@ -1825,6 +1913,7 @@ function generalFunction (a, b, w, h, time, diag2) {
     let horiJust = 'right';
     let vertJust = 'center';
     
+    //initializes the start and finish of the highlighted lines for each fraction
     let horiHighLightStart = new paper.Point(0,0);
     let vertHighLightStart = new paper.Point(0,0);
     let horiHighLightFinish = new paper.Point(w,0);
@@ -1833,6 +1922,7 @@ function generalFunction (a, b, w, h, time, diag2) {
     let horiNear = true;
     let vertNear = true;
 
+    //from which edges of the block should the perps be drawn.  The closest, but only if it doesn't require a new line.
     if (square) {
         horiNear = a <= smallestPowTwo/2;
         vertNear = b <= smallestPowTwo/2;
@@ -1844,6 +1934,7 @@ function generalFunction (a, b, w, h, time, diag2) {
 
     let generalPrelim = [];
 
+    //pushes the corresponding points to precreaser
     if (tall) {
         if (vertNear) {
             generalPrelim.push(bbr);
@@ -1854,6 +1945,7 @@ function generalFunction (a, b, w, h, time, diag2) {
         } else generalPrelim.push(btr);
     }
 
+    //moves text out of the way, sorts highlights
     if (!horiNear) {
         horiX = 1;
         horiJust = 'left';
@@ -1879,6 +1971,7 @@ function generalFunction (a, b, w, h, time, diag2) {
     let generalADenom = smallestPowTwo;
     let generalBDenom = smallestPowTwo;
     
+    //gets the labels for either fraction
     [generalA, generalADenom] = simplify(generalA, generalADenom);
     [generalB, generalBDenom] = simplify(generalB, generalBDenom);
     let vertTextLabel = `${generalA}/${generalADenom}`;
@@ -1887,6 +1980,7 @@ function generalFunction (a, b, w, h, time, diag2) {
     var vertStart = new paper.Point(vertX, vertY);
     var horiStart = new paper.Point(horiX, horiY);
     
+    //horizontal and vertical creases, plus relevant dots/highlights/text drawn
     var vertLine = new paper.Path(vertStart, genInt);
     vertLine.style = creaseStyle;
     var horiLine = new paper.Path(horiStart, genInt);
@@ -1934,9 +2028,9 @@ function generalFunction (a, b, w, h, time, diag2) {
     vertText.rotation = 0;
     horiText.rotation = 0;
     
-    console.log(a);
-    console.log(b);
-    console.log(general(a,b));
+    //console.log(a);
+    //console.log(b);
+    //console.log(general(a,b));
 
     const genReturn = {
         drawnGroup: genGroup,
@@ -1948,6 +2042,7 @@ function generalFunction (a, b, w, h, time, diag2) {
     return genReturn;
 }
 
+//for smartdiag
 function diagFunction (a, b, w, h, time, diag2) {
 
     let timeColor = time === 0 ? 'red' : 'black';
@@ -1972,6 +2067,7 @@ function diagFunction (a, b, w, h, time, diag2) {
     var creaseDiag = new paper.Path(cstart, csquare);
     creaseDiag.style = creaseStyle;
 
+    //initializes the start of the diag used
     var diagStart = btl.clone();
     var diagFinish = bbr.clone();
     let diagNumA = a, diagNumB = b, diagDenom = Math.max(a,b);
@@ -1982,6 +2078,7 @@ function diagFunction (a, b, w, h, time, diag2) {
 
     let i = 1, j = 1, result = null;
 
+    //calculates i,j to determine the diagonal and corresponding binary fraction
     while (i <= 32 && !result) {
         j = 1;
         while (j <= 32 && !result) {
@@ -1994,13 +2091,15 @@ function diagFunction (a, b, w, h, time, diag2) {
         i++;
     }
     
-    console.log(result);
-    console.log([a, b]);
+    //console.log(result);
+    //console.log([a, b]);
 
+    //cleans them up
     [i, j] = simplify(result[0], result[1]);
     diagStart.y = i/Math.max(i, j) * h;
     diagFinish.x = j/Math.max(i, j) * w;
     
+    //sorts the labels for the fraction
     if (i > j) {
         diagLabelPt.x = w * j/i;
         diagLabelText = `${j}/${i}`;
@@ -2011,6 +2110,7 @@ function diagFunction (a, b, w, h, time, diag2) {
         diagLabelSide = 'left';
     }
    
+    //intersection, dots, highlighted portions
     let diagInt = intersect(diagStart.x, diagStart.y, diagFinish.x, diagFinish.y, cstart.x, cstart.y, csquare.x, csquare.y);
     let diagIntDot = dot(diagInt, time);
     var parallelStart = bbl.clone();
@@ -2028,6 +2128,7 @@ function diagFunction (a, b, w, h, time, diag2) {
 
     let diagPrelim = [];
 
+    //if square, where does the parallel line begin
     if (!tolerantSame(diagFinish.x, diagStart.y)) {
         if (diagFinish.x > diagStart.y){
             parallelStart.x = diagInt.x;
@@ -2043,6 +2144,7 @@ function diagFunction (a, b, w, h, time, diag2) {
             console.log("hereB")
         }
     } else {
+        //if not square.  again - draw the shorter one if it doesn't require more pushed to PC
         if (a*w >= b*h) {
             parallelStart.x = diagInt.x;
             parallelText = `${diagNumA}/${diagDenomA}`;
@@ -2058,6 +2160,7 @@ function diagFunction (a, b, w, h, time, diag2) {
         }
     }
 
+    //some things not necessary if we're taking just the diag of w/h
     if (i === j) {
         diagDot = false;
         if (parallelStart.x === diagInt.x) {
@@ -2141,6 +2244,7 @@ function diagFunction (a, b, w, h, time, diag2) {
     return diagReturn;
 }
 
+//special cases (where a1/b1 and a2/b2 are one or zero)
 function oneZero (one1, one2, zero1, zero2, w1, h1, w2, h2) {
     let pointBucket = [];
     let int = [];
@@ -2234,10 +2338,9 @@ function newDiags (a, b, c, method, split) {
         [aInt, bInt, cInt] = normalize(a * (a - c) - 2 * b ** 2, -b * c, (a - c) ** 2 - 2 * b ** 2);
     }
 
+    //gets a1, b1, a2, b2, w1, h1, w2, h2
     const powerArr = sloper(aInt, bInt, cInt, split);
-
     const [a1, b1, a2, b2] = powerArr[0];
-
     let [w1, w2] = powerArr[1];
     let [h1, h2] = [1,1];
     [w1, h1] = scaler (w1, h1);
@@ -2250,6 +2353,7 @@ function newDiags (a, b, c, method, split) {
     var c2S = new paper.Point();
     var c2F = new paper.Point();
 
+    //initializes the four steps
     let precreaseStep0 = new paper.Group(), diag1Step0, 
         diag2Step0 = new paper.Group(), intStep0 = new paper.Group(),
         precreaseStep1 = new paper.Group(), diag1Step1 = new paper.Group(), 
@@ -2268,6 +2372,7 @@ function newDiags (a, b, c, method, split) {
         strokeWidth: 1
     }
 
+    //runs the diags.
     let diag10obj, diag11obj;
     diag10obj = diag (a1, b1, w1, h1, 0, false);
     diag11obj = diag (a1, b1, w1, h1, 1, false);
@@ -2275,17 +2380,24 @@ function newDiags (a, b, c, method, split) {
     diag20obj = diag (a2, b2, w2, h2, 0, true);
     diag21obj = diag (a2, b2, w2, h2, 1, true);
 
+    //the numbers here (1/1, 1/0, 2/2...) refer to the combination of cases:
+        //case 0: a/b = 0
+        //case 1: a/b = 1
+        //case 2: a/b is anything else
+    //i realize this should be consolidated.
     if ((one1 || zero1) && (one2 || zero2)) {
         //handles 1/1 & 1/0
         if (one1 && one2) {
             console.log("oneOne")
             console.log(oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2));
 
+            //gets the precreaes required
             [preCreaseLineArr, interPt] = oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2);
             console.log (oneZero(one1, one2, zero1, zero2, w1, h1, w2, h2));
             linePusher(preCreaseLineArr, precreaseStep0, 0);
             linePusher(preCreaseLineArr, precreaseStep1, 1);
         
+            //draws the intersection step
             let interDot = dot(interPt, 0);
             let interLine0 = new paper.Path (new paper.Point(0, interPt.y), new paper.Point(1, interPt.y));
             interLine0.style = styleTime0;
@@ -2295,6 +2407,7 @@ function newDiags (a, b, c, method, split) {
             intStep0 = new paper.Group (interDot, interLine0);
             intStep1 = new paper.Group (interLine1);
 
+            //calculates rank by length of PC step, plus one for int line.
             rank = precreaseStep0 ? precreaseStep1._children.length + 1 : 0;
         
             if (precreaseStep0) {steps.push([precreaseStep0, precreaseStep1])};
@@ -2333,10 +2446,15 @@ function newDiags (a, b, c, method, split) {
         console.log("onetwo");
         if (one1) {
             console.log("one1");
+            //c1 is just the diag of w1, h1
             [c1S.x, c1S.y, c1F.x, c1F.y] = [0, 0, w1, h1];
             preCreaseArr.push(new paper.Point(w1, h1));
             preCreaseLineArr.push([[0,0],[w1,h1]]);
+
+            //c2 comes from diag2
             [c2S.x, c2S.y, c2F.x, c2F.y] = diag20obj.diagonal;
+
+            //their intersection and PC points
             interPt = intersect(c1S.x, c1S.y, c1F.x, c1F.y, c2S.x, c2S.y, c2F.x, c2F.y);
             preCreaseArr.push (...diag20obj.pointsPrelim);
     
@@ -2431,6 +2549,7 @@ function newDiags (a, b, c, method, split) {
             intStep1 = new paper.Group (interLine1)
     
             if (findRank(a2, b2).type === 'powTwo' && (a2 > b2 === w2 > h2 || tolerantSame (w2, h2))) {
+                //if zero && powtwo, the diag for powtwo doesn't need to be drawn, just the intLine, even though the int-step isnt used.
                 console.log("powtwo");
                 if (tolerantSame (w2, h2)) {
                     console.log("square");
@@ -2575,8 +2694,10 @@ function newDiags (a, b, c, method, split) {
     return result;
 }
 
+//gives a, b, c of the block taking up the other part of the square
 function negate (a, b, c) {return normalize(a * (a - c) - 2 * b ** 2, -b * c, (a - c) ** 2 - 2 * b ** 2)};
 
+//is a, b, c eligible for split A-J?
 function eligibleA (a, b, c) {return (testIt((a + b)    , c    , b          , c))};
 function eligibleB (a, b, c) {return (testIt((a + 2*b)  , c    , -b         , c))};
 function eligibleC (a, b, c) {return (testIt((2 * b)    , c    , (a - 2*b)  , c))};
@@ -2589,8 +2710,8 @@ function eligibleI (a, b, c) {return (testIt((a + 2*b)  , 3 * c, (a - b)    , 2 
 function eligibleJ (a, b, c) {return (testIt((-a + 2*b) , c    , 2*(a - b)  , c))};
 
 function testIt(a, b, c, d) {
-    return ((a !== 0 && b !== 0 && Math.max(a,b)/Math.min(a,b) < m || a === 0 || b === 0) &&
-            (c !== 0 && d !== 0 && Math.max(c,d)/Math.min(c,d) < m || c === 0 || d === 0) &&
+    return (((a !== 0 && b !== 0 && Math.max(a,b)/Math.min(a,b) < m && Math.max(a,b)/Math.min(a,b) > (1-defaultValue2)**-1) || a === 0 || b === 0) &&
+            ((c !== 0 && d !== 0 && Math.max(c,d)/Math.min(c,d) < m && Math.max(c,d)/Math.min(c,d) > (1-defaultValue2)**-1) || c === 0 || d === 0) &&
             (Math.max(a,b) < defaultValue1) &&
             (Math.max(c,d) < defaultValue1) &&
             (b !== 0 ) &&
@@ -2598,4 +2719,4 @@ function testIt(a, b, c, d) {
             (a/b >= 0 ) &&
             (c/d >= 0 ) &&
             (!(a === 0 && c === 0)))
-}
+};

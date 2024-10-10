@@ -23,7 +23,6 @@
         <button id="settingsButton">Settings</button>
     </div>
     
-
     <div id="fileStatus" style=>No file loaded</div>
 
     <div id="inputContainer">
@@ -61,11 +60,11 @@
 
     <div id="controls">
         <button id="decreaseButton">-</button>
-        <label for="variableValue">Ref: </label>
+        <label for="variableValue">Reference: </label>
         <span id="variableValue">1</span>
         <button id="increaseButton">+</button>
         <button id="decreaseSoln">-</button>
-        <label for="solnValue">Soln: </label>
+        <label for="solnValue">Solution: </label>
         <span id="solnValue">1</span>
         <button id="increaseSoln">+</button>
     </div>
@@ -75,7 +74,7 @@
             <span class="close">&times;</span>
             <h2 class="center">Settings</h2>
             <div class="inputRow">
-                <label for="value1Modal"><b>Avoid fractions having a denominator greater than:</b></label>
+                <label class="header" for="value1Modal"><b>Avoid fractions having a denominator greater than:</b></label>
                 <input type="number" id="value1Modal" step="1" min="1" value="32">
                 <br>
                 <p class="indented">
@@ -83,7 +82,7 @@
                 </p>
             </div>
             <div class="inputRow">
-                <label for="value2Modal"><b>Avoid refs within this distance of the edge (edge length = 1):</b></label>
+                <label class="header" for="value2Modal"><b>Avoid refs within this distance of the edge (edge length = 1):</b></label>
                 <input type="number" id="value2Modal" step = "0.01" min="0" max="0.5" value="0.1">
                 <p class="indented">
                     Since it is difficult in practice to fold reference lines particularly close to the edge, 
@@ -91,7 +90,7 @@
                 </p>
             </div>
             <div class="inputRow">
-                <label for="constructibleToggle"><b>Filter for immediately constructible lines:</b></label>
+                <label class="header" for="constructibleToggle"><b>Filter for immediately constructible lines:</b></label>
                 <input type="checkbox" id="constructibleToggle" value="true">
                 <p class="indented">
                     This setting restricts the available reference lines to those having at least one vertex laying either on the 
@@ -107,7 +106,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2 class="center">Help</h2>
-            <b>From crease pattern:</b> <br>
+            <b class="header" >From crease pattern:</b> <br>
             <p class="indented">
                 Upload a 22.5° crease pattern as a .FOLD file. The crease pattern will be rendered on the left side of the screen.
                 The engine will analyze all the vertices within the crease pattern and sort them approximately (the ranking system needs some work) by difficulty.
@@ -120,7 +119,7 @@
                 Cycle through the various solutions to each ref using the <i>right</i> + and - buttons.
                 <br>
             </p>
-            <b>From a, b, c:</b> <br>
+            <b class="header" >From a, b, c:</b> <br>
             <img src="images/Screenshot 2024-09-28 012138.png" ALIGN="right" alt="abc relative to square" id="abcImage" style="height: 130px; margin-right: 10px;">
             <p class="indented">
                 The right side of the header has a field for input of custom a, b, c values.
@@ -130,7 +129,7 @@
                 
                 <br>
             </p>
-            <b>Interpreting the steps:</b> <br>
+            <b class="header" >Interpreting the steps:</b> <br>
             <p class="indented">
                 Unless the desired reference is simply a binary fraction of the edge length, the first step will involve folding a few 22.5° lines as foundation for the following steps.
                 Those creases not laying at 22.5° degrees (the "Kamiya reference") are constructed by making a crease through a pair of existing points.

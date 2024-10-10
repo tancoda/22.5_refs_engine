@@ -2,7 +2,8 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Prevent scrolling */
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 body {
@@ -14,21 +15,21 @@ body {
 #title {
     text-align: center;
     margin: 20px 0;
-    font-size: 2em; /* Bigger font size */
-    font-weight: bold; /* Bold font */
-    padding: 3px 0; /* Padding to add some space around the title */
-    background-color: #f0f0f0; /* Optional background to make it stand out */
+    font-size: min(3.5vw, 3.5vh); 
+    font-weight: bold; 
+    padding: 3px 0; 
+    background-color: #f0f0f0; 
 }
 
 #description {
     text-align: center;
-    font-size: .9em;
+    font-size: min(1.5vw, 1.5vh);
     margin: 10px 20px;
 }
 
 #fileStatus {
     text-align: center; 
-    font-size: .9em; 
+    font-size: min(1.5vw, 1.5vh);
     margin-top: 20px;
 }
 
@@ -43,6 +44,7 @@ body {
 #fileInput {
     flex: 1 1 auto;
     margin-left: 30px;
+    font-size: min(1.5vw, 1.5vh);
 }
 
 #abcInputsBox {
@@ -54,6 +56,7 @@ body {
     border-radius: 5px;
     background-color: #f9f9f9;
     z-index: 1;
+    font-size: min(1.5vw, 1.5vh);
 }
 
 #abcContainer {
@@ -68,18 +71,20 @@ body {
 }
 
 .inputGroup label {
-    font-size: 0.9em;
+    font-size: 1.5vh;
     margin-bottom: 5px;
 }
 
 .inputGroup input {
     width: 35px;
+    font-size: min(1.5vw, 1.5vh);
 }
 
 #submitABC {
     cursor: pointer;
     font-family: inherit;
     margin-right: 30px;
+    font-size: min(1.5vw, 1.5vh);
 }
 
 #controls {
@@ -92,12 +97,14 @@ body {
     left: 0;
     width: 100%;
     padding: 10px 0;
+    font-size: min(1.5vw, 1.5vh);
+    font-family: inherit;
 }
 
 #controls button {
     width: 30px; /* Smaller width for compactness */
     height: 30px; /* Smaller height for compactness */
-    font-size: 16px; /* Smaller font size */
+    font-size: min(1.5vw, 1.5vh);
     font-weight: bold;
     background-color: lightgray;
     border: none;
@@ -106,7 +113,7 @@ body {
 }
 
 #controls span {
-    font-size: 16px; /* Smaller font size for consistency */
+    font-size: min(1.5vw, 1.5vh);
     margin: 0 10px; /* Adjust margin for spacing */
 }
 
@@ -129,31 +136,36 @@ body {
     background-color: rgba(0,0,0,0.4); /* Black background with opacity */
 }
 
+/* Make font size responsive */
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 5% auto; /* Reduce margin for smaller screens */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 90%; /* Adjust width to be more responsive */
+    max-height: 90vh; /* Ensure the modal doesn't exceed the viewport height */
+    overflow-y: auto;
 }
 
-/* Center the Help title */
 .center {
     text-align: center;
+    font-size: min(3vw, 3vh); /* Responsive title font size based on viewport width */
 }
 
-/* Indent paragraphs */
+.header {
+    font-size: min(2.25vw, 2.25vh); /* Responsive title font size based on viewport width */
+}
+
 .indented {
-    text-indent: 30px; /* Adjust the value as needed */
-    line-height: 1.5;  /* Optional: Improves readability */
-    font-size: .9em;
+    text-indent: 30px;
+    line-height: 1.5;
+    font-size: min(1.5vw, 1.5vh); /* Responsive font size */
 }
 
-.bullets{
+.bullets {
     line-height: 1.5;  /* Optional: Improves readability */
-    font-size: .9em;
+    font-size: min(1.5vw, 1.5vh); /* Responsive font size */
 }
-
 
 .close {
     color: #aaa;
