@@ -615,6 +615,9 @@ function processFile(event) {
     globalEvi = EVi;
     globalEAi = EAi;
 
+    console.log(globalVi);
+    console.log(globalEvi);
+
     if (EAi.includes(undefined)) {
         alert("File contains at least one duplicate line. This usually happens when an M or V overlays an aux line. These lines will be displayed in purple.");
     }
@@ -622,6 +625,8 @@ function processFile(event) {
     const EPS = tolerance;
     
     const [C, VC] = V_2_C_VC(Vi, EPS);
+
+    console.log(C);
     
     const target = { C, VC, EV: EVi, EA: EAi, FV };
 
@@ -713,12 +718,16 @@ function processC2(C, eps) {
                 return element !== undefined}
             
             C2 = C2.filter(isComplete);
+
+            console.log(C2.slice());
             
             //converts from the a, b, c, d form of CPAnalyze to the a, b, c form used here.
             C2.forEach(([a, b, c, d], index) => {
                 const [alpha, beta, gamma] = toABC(a, b, c, d);
                 C2[index] = [alpha, beta, gamma]
             });
+
+            console.log(C2.slice());
 
             //this block determines whether a given vertex has a c value that's a power of two.
             //demaine and tachi show that vertices of this format may be constructed immediately via a 22.5-deg grid
@@ -738,6 +747,8 @@ function processC2(C, eps) {
                 const [alpha, beta, gamma] = inverse(a, b, c);
                 C2[index] = [alpha, beta, gamma];
             })
+
+            console.log(C2.slice());
 
             //this one is the reason it's slow to load, but for each element, it finds the list of ways by which it can be solved, and appends
             function updateC2(C2) {
