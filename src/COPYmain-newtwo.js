@@ -742,6 +742,13 @@ function processC2(C, eps) {
                 cIsPowTwoTest = false;
             } 
 
+            //C2.forEach(([a, b, c]) => {
+            //    const [alpha, beta, gamma] = normalize(c-a, -b, c);
+            //    C2.push([alpha, beta, gamma]);
+            //})
+//
+            //C2 = uniq_fast(C2);
+
             //now, we convert to width/height
             C2.forEach(([a, b, c], index) => {
                 const [alpha, beta, gamma] = inverse(a, b, c);
