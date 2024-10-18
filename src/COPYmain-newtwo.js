@@ -978,33 +978,94 @@ function powTwo(a, b)      {if (isPowerTwo(Math.max(a,b)))            {return Ma
 function smartDiag(a, b) {
     let gcdAB = gcd(a, b);
     [a, b] = [a / gcdAB, b / gcdAB];
+    let result = null, exp = 0;
 
-    let i = 1, j = 1, result = null;
+    //to ensure that the best result is returned, we iterate through the powers of two (which can be either i or j)
+    //and allow the other value to be <= it.  We first check sum1, since it will be smaller than sum2.
+    while (exp < Math.log2(defaultValue1) + 3 && !result) {
+        const dnm = 2**exp;
+        let num = 1, i = null, j = null;
 
-    while (i <= defaultValue1 && !result) {
-        j = 1;
-        while (j <= defaultValue1 && !result) {
-            if (Math.log2(i * a + j * b) % 1 === 0 && Math.log2 (Math.max (i, j)) % 1 === 0) {
-                result = [i, j, Math.log2(i * a + j * b)];
+        while (num <= dnm && !result) {
+            const sum1 = Math.min(a, b) * dnm + Math.max(a, b) * num;
+            const sum2 = Math.max(a, b) * dnm + Math.min(a, b) * num;
+
+            if (isPowerTwo(sum1) || isPowerTwo(sum2)) {
+                //i and j are assigned accordingly
+                if (isPowerTwo(sum1)) {
+                    [i, j] = a <= b ? [dnm, num] : [num, dnm];
+                } else {
+                    [i, j] = a >= b ? [dnm, num] : [num, dnm];
+                }
+                result = [i, j, a*i + b*j];
                 break;
             }
-            j++;
+
+            num++;
         }
-        i++;
+
+        exp++;
     }
 
-    let same = Infinity;
-    let opp = Infinity;
-    
-    if (result && result[1] > result[0]) {
-        same = Math.log2(2 ** result[2] / gcd(b, 2 ** result[2]));
-        opp =  Math.log2(result[1]) + Math.log2(2 ** result[2] / gcd(a, 2 ** result[2]));
-    } else if (result) {
-        same = Math.log2(2 ** result[2] / gcd(a, 2 ** result[2]));
-        opp =  Math.log2(result[0]) + Math.log2(2 ** result[2] / gcd(b, 2 ** result[2]));
-    } 
+    if (result) {
 
-    return Math.min(same, opp) + 2;
+        const dnmAB = result[2];
+        const dnmIJ = Math.max(result[0], result[1]);
+
+        let same = Infinity;
+        let opp = Infinity;
+        
+        //there are four cases, arising from whether i or j is larger, and whether we take a or b / ai + bj.
+        //same refers to the case where the fraction for i, j is on the same edge of the square as is the fraction for a, b.
+        //if the fractions are taken on the same edge of the square, the overlap in their binary fractions is the number of
+        //shared folds required to develop each, and so may be subtracted.
+        if (result[1] > result[0]) {
+            same = Math.log2(dnmAB / gcd(b, dnmAB)) + Math.log2(dnmIJ / gcd(result[0], result[1])) - fracOverlap(b, dnmAB, result[0], dnmIJ);
+            opp =  Math.log2(dnmAB / gcd(a, dnmAB)) + Math.log2(dnmIJ / gcd(result[0], result[1]));
+        } else {
+            same = Math.log2(dnmAB / gcd(a, dnmAB)) + Math.log2(dnmIJ / gcd(result[0], result[1])) - fracOverlap(a, dnmAB, result[1], dnmIJ);
+            opp =  Math.log2(dnmAB / gcd(b, dnmAB)) + Math.log2(dnmIJ / gcd(result[0], result[1]));
+        } 
+    
+        return Math.min(same, opp) + 2;
+    } else return Infinity;
+}
+
+//adapted from Lang's Origami and Geometric Constructions.
+function binaryFraction(a, b) {
+    let gcdAB = gcd(a, b);
+    [a, b] = [a / gcdAB, b / gcdAB];
+    const [num, dnm] = [Math.min(a, b), Math.max(a, b)];
+
+    if (isPowerTwo(dnm) && num > 0 && dnm > 0 && num / dnm < 1) {
+        let result = [];
+        let frac = num / dnm;
+
+        for (let i = 1; i <= Math.log2(dnm); i++) {
+            frac *= 2;
+            result.push(Math.floor(frac));
+            frac %= 1;
+        }
+
+        return result;
+    } else {
+        return null;
+    }
+}
+
+//for two fractions, how many elements of their binFrac are the same, moving from right to left?
+function fracOverlap (num1, dnm1, num2, dnm2) {
+    const binFrac1 = binaryFraction(num1, dnm1);
+    const binFrac2 = binaryFraction(num2, dnm2);
+    let result = 0;
+
+    if (binFrac1 && binFrac2) {
+        for (let i = 1; i <= Math.min(binFrac1.length, binFrac2.length); i ++) {
+            if (binFrac1[binFrac1.length-i] === binFrac2[binFrac2.length-i]) {result += 1};
+        }
+    
+        return result;
+    } else return 0;
 }
 
 //default case - relies on the smallest power of two greater than both a and b
@@ -1524,7 +1585,7 @@ function dot(point, time) {
     });
 }
 
-//if times is zero, highlights the line along which a binary fraction is taken
+//if times is zero, highlights the line along which a fraction having denominator 2^n is taken
 function highLighter (from, to, time) {
     var fromDot = dot(from, time);
     var toDot = dot(to, time);
@@ -2084,29 +2145,36 @@ function diagFunction (a, b, w, h, time, diag2) {
     let diagNumA = a, diagNumB = b, diagDenom = Math.max(a,b);
     let diagLabelPt = bbl.clone();
     let diagLabelText = '';
-
     let diagLabelSide;
+    let result = null, exp = 0;
 
-    let i = 1, j = 1, result = null;
+    while (exp < Math.log2(defaultValue1) + 3 && !result) {
+        const dnm = 2**exp;
+        let num = 1, i = null, j = null;
 
-    //calculates i,j to determine the diagonal and corresponding binary fraction
-    while (i <= 32 && !result) {
-        j = 1;
-        while (j <= 32 && !result) {
-            if (Math.log2(i * a + j * b) % 1 === 0 && Math.log2 (Math.max (i, j)) % 1 === 0) {
-                result = [i, j, Math.log2(i * a + j * b)];
+        while (num <= dnm && !result) {
+            const sum1 = Math.min(a, b) * dnm + Math.max(a, b) * num;
+            const sum2 = Math.max(a, b) * dnm + Math.min(a, b) * num;
+
+            if (isPowerTwo(sum1) || isPowerTwo(sum2)) {
+                //i and j are assigned accordingly
+                if (isPowerTwo(sum1)) {
+                    [i, j] = a <= b ? [dnm, num] : [num, dnm];
+                } else {
+                    [i, j] = a >= b ? [dnm, num] : [num, dnm];
+                }
+                result = [i, j, a*i + b*j];
                 break;
             }
-            j++;
+
+            num++;
         }
-        i++;
+
+        exp++;
     }
-    
-    //console.log(result);
-    //console.log([a, b]);
 
     //cleans them up
-    [i, j] = simplify(result[0], result[1]);
+    const [i, j] = simplify(result[0], result[1]);
     diagStart.y = i/Math.max(i, j) * h;
     diagFinish.x = j/Math.max(i, j) * w;
     
