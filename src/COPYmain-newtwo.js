@@ -1076,7 +1076,7 @@ function fracOverlap (num1, dnm1, num2, dnm2) {
 }
 
 //default case - relies on the smallest power of two greater than both a and b
-function general(a,b) {if (!isPowerTwo(b)) {
+function general(a,b) {if (!isPowerTwo(Math.max(a,b))) {
         let c = Math.ceil(Math.log2(Math.max(a,b)));
         return Math.log2((2 ** c) / (gcd((2 ** c), a))) + Math.log2((2 ** c) / (gcd((2 ** c), b))) + 1;
     } else {
@@ -1207,6 +1207,7 @@ function alts(a, b, c) {
     }
 
     targArr.sort((a,b) => {return a[2] - b[2]});
+    console.log(targArr);
     function isNotInfinity (arr) {return (arr[2] !== Infinity)};
     targArr = targArr.filter(isNotInfinity);
 
@@ -1237,7 +1238,7 @@ let rotation1 = [bo, bt, br, ro, rt, tr, tt, to, tl, lt, lo, bl];
 function findTransformation (point) {
     let transArr = [];
 
-    console.log(point);
+    //console.log(point);
  
     if (!tolerantSame(point[1], 0)) {
 
@@ -1255,7 +1256,7 @@ function findTransformation (point) {
         transArr.push("flipX")
     }
 
-    console.log(transArr);
+    //console.log(transArr);
     return transArr;
 }
 
@@ -1298,7 +1299,7 @@ function undoTransform (point, transArr) {
 //if there's only one point this is pretty easy
 function point (point1) {
     let transArr = findTransformation(point1);
-    console.log(transArr);
+    //console.log(transArr);
 
     let creaseArr = [[tl, br], [tl, bo]];
     let rotatedFlippedCreaseArr = []
@@ -1310,7 +1311,7 @@ function point (point1) {
         rotatedFlippedCreaseArr.push([start, finish]);
     }
     
-    console.log(rotatedFlippedCreaseArr)
+    //console.log(rotatedFlippedCreaseArr)
 
     return rotatedFlippedCreaseArr;
 }
@@ -1318,18 +1319,17 @@ function point (point1) {
 //two points
 function pointPoint (point1, point2) {
 
-    console.log("point1: " + point1);
-    console.log("point2: " + point2);
+    //console.log("point1: " + point1);
+    //console.log("point2: " + point2);
 
     //point one is moved to bo
     let transArr = findTransformation(point1);
-    console.log(transArr);
-
-    console.log(point2);
+    //console.log(transArr);
+    //console.log(point2);
 
     //point two is moved in the same way
     let point2new = doTransform(point2, transArr);
-    console.log(point2new);
+    //console.log(point2new);
     
     //point two is converted from decimal to its named value (bo, ro, bt...)
     for (let i = 0; i < rotation1.length; i ++) {
@@ -1371,7 +1371,7 @@ function pointPoint (point1, point2) {
             break;   
     }
     
-    console.log(creaseArr);
+    //console.log(creaseArr);
 
     let rotatedFlippedCreaseArr = []
 
@@ -1382,7 +1382,7 @@ function pointPoint (point1, point2) {
         rotatedFlippedCreaseArr.push([start, finish]);
     }
     
-    console.log(rotatedFlippedCreaseArr);
+    //console.log(rotatedFlippedCreaseArr);
 
     return rotatedFlippedCreaseArr;
 }
@@ -1409,15 +1409,15 @@ function pointLine (point1, point2, point3) {
     }
 
     let transArr = findTransformation(point);
-    console.log(transArr);
+    //console.log(transArr);
 
     let lineS2 = doTransform(lineS, transArr);
     
-    console.log(lineS2);
+    //console.log(lineS2);
     
     let lineF2 = doTransform(lineF, transArr);
     
-    console.log(lineF2);
+    //console.log(lineF2);
 
     let creaseArr = [[tl, br], [tl, bo]];
 
@@ -1441,7 +1441,7 @@ function pointLine (point1, point2, point3) {
         }
     }
     
-    console.log(creaseArr);
+    //console.log(creaseArr);
 
     let rotatedFlippedCreaseArr = [];
 
@@ -1451,7 +1451,7 @@ function pointLine (point1, point2, point3) {
         rotatedFlippedCreaseArr.push([start, finish]);
     }
     
-    console.log(rotatedFlippedCreaseArr);
+    //console.log(rotatedFlippedCreaseArr);
 
     return rotatedFlippedCreaseArr;
 }
@@ -1524,7 +1524,7 @@ function findCreaseArr (arr) {
         }
     });
 
-    console.log(cleanArray);    
+    //console.log(cleanArray);    
 
     switch(cleanArray.length) {
         case 1:
@@ -1552,8 +1552,8 @@ function findCreaseArr (arr) {
 function linePusher(arr, boxArr, time) {
     for (let i = 0; i < arr.length; i++) {
 
-        console.log(arr);
-        console.log(arr[i].length);
+        //console.log(arr);
+        //console.log(arr[i].length);
 
         // Ensure that arr[i] is an array with two points
         if (arr[i].length === 2) {
@@ -1561,8 +1561,8 @@ function linePusher(arr, boxArr, time) {
             const point2 = new paper.Point(arr[i][1][0], arr[i][1][1]);
             var lineToBePushed = new paper.Path.Line(point1, point2);
 
-            console.log(point1);
-            console.log(point2);
+            //console.log(point1);
+            //console.log(point2);
 
             if (!(point1.x === point2.x && point1.y === point2.y)) {
                 boxArr.addChild(lineToBePushed);
@@ -1607,7 +1607,7 @@ function highLighter (from, to, time) {
     })
     let highLightLine = new paper.Group(fromDot, toDot, line);
 
-    console.log(`highlighter called.  time: ${time}`);
+    //console.log(`highlighter called.  time: ${time}`);
 
     return highLightLine;
 }
@@ -1670,7 +1670,7 @@ function sloper(a,b,c,type) {
             break;
     }
 
-    console.log([slopePair, blockInfo]);
+    //console.log([slopePair, blockInfo]);
 
     //let approxRank = findRank(slopePair[0], slopePair[1]).rank + findRank(slopePair[2], slopePair[3]).rank;
 
@@ -1763,7 +1763,7 @@ function scrawler(a, b, c, method, split) {
         rotate = 270;
     } else console.error ("It's that int point issue")
 
-    console.log(rotate);
+    //console.log(rotate);
 
     //draws the steps.  each step has step0 and step1 - step 0 is for time is zero and dots and highlights are desired.  time1 is just the remaining creases
     //to be shown on the paper in following steps.
@@ -1805,7 +1805,7 @@ function diag (a, b, w, h, time, diag2) {
     
     let type = findRank(a, b).type;
 
-    console.log(type);
+    //console.log(type);
 
     switch (type) {
         case 'powTwo':
@@ -1944,6 +1944,8 @@ function powTwoFunction (a, b, w, h, time, diag2) {
         rank: Math.log2(Math.max(a, b)) + 1,
         diagonal: [diag2 ? 1 - cstart.x : cstart.x, cstart.y, diag2 ? 1- csquare.x : csquare.x, csquare.y]
     }
+
+    console.log(`powTwoRank: ${powTwoReturn.rank}`);
 
     return powTwoReturn;
 }
@@ -2117,6 +2119,8 @@ function generalFunction (a, b, w, h, time, diag2) {
         rank: general(a, b),
         diagonal: [diag2 ? 1 - cstart.x : cstart.x, cstart.y, diag2 ? 1- csquare.x : csquare.x, csquare.y]
     }
+
+    console.log(`genRank: ${genReturn.rank}`);
 
     return genReturn;
 }
@@ -2326,6 +2330,8 @@ function diagFunction (a, b, w, h, time, diag2) {
         rank: smartDiag(a,b),
         diagonal: [diag2 ? 1 - cstart.x : cstart.x, cstart.y, diag2 ? 1- csquare.x : csquare.x, csquare.y]
     }
+
+    console.log(`diagRank: ${diagReturn.rank}`);
 
     return diagReturn;
 }
@@ -2796,13 +2802,16 @@ function eligibleI (a, b, c) {return (testIt((a + 2*b)  , 3 * c, (a - b)    , 2 
 function eligibleJ (a, b, c) {return (testIt((-a + 2*b) , c    , 2*(a - b)  , c))};
 
 function testIt(a, b, c, d) {
-    return (((a !== 0 && b !== 0 && Math.max(a,b)/Math.min(a,b) < m && Math.max(a,b)/Math.min(a,b) > (1-defaultValue2)**-1) || a === 0 || b === 0) &&
-            ((c !== 0 && d !== 0 && Math.max(c,d)/Math.min(c,d) < m && Math.max(c,d)/Math.min(c,d) > (1-defaultValue2)**-1) || c === 0 || d === 0) &&
-            (Math.max(a,b) < defaultValue1) &&
-            (Math.max(c,d) < defaultValue1) &&
-            (b !== 0 ) &&
-            (d !== 0 ) &&
+    const gcdAB = gcd(a,b), gcdCD = gcd(c, d);
+    [a,b,c,d] = [a/gcdAB, b/gcdAB, c/gcdCD, d/gcdCD];
+    return ((a !== 0 && b !== 0 && Math.max(a,b)/Math.min(a,b) < (defaultValue2)**-1 || a === 0 || b === 0) &&
+            (c !== 0 && d !== 0 && Math.max(c,d)/Math.min(c,d) < (defaultValue2)**-1 || c === 0 || d === 0) &&
+            (Math.max(a,b) <= defaultValue1) &&
+            (Math.max(c,d) <= defaultValue1) &&
+            !(a === 0 && b === 0) &&
+            !(c === 0 && d === 0) &&
             (a/b >= 0 ) &&
             (c/d >= 0 ) &&
-            (!(a === 0 && c === 0)))
+            (!(Math.min(a,b) === 0 && Math.min(c,d) === 0))
+        )
 };
