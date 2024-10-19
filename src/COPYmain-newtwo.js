@@ -2798,12 +2798,15 @@ function eligibleE (a, b, c) {return (testIt((a + b)    , c    , (a + 2*b)  , c)
 function eligibleF (a, b, c) {return (testIt(2 * (a + b), 3 * c, (-a + 2*b) , 3 * c))};
 function eligibleG (a, b, c) {return (testIt((a + b)    , 2 * c, (-a + b)   , 2 * c))};
 function eligibleH (a, b, c) {return (testIt((a + 2*b)  , 2 * c, (a - 2*b)  , 4 * c))};
-function eligibleI (a, b, c) {return (testIt((a + 2*b)  , 3 * c, (a - b)    , 2 * c))};
+function eligibleI (a, b, c) {return (testIt((a + 2*b)  , 3 * c, (a - b)    , 3 * c))};
 function eligibleJ (a, b, c) {return (testIt((-a + 2*b) , c    , 2*(a - b)  , c))};
 
 function testIt(a, b, c, d) {
     const gcdAB = gcd(a,b), gcdCD = gcd(c, d);
     [a,b,c,d] = [a/gcdAB, b/gcdAB, c/gcdCD, d/gcdCD];
+
+    console.log([a, b, c, d]);
+
     return ((a !== 0 && b !== 0 && Math.max(a,b)/Math.min(a,b) < (defaultValue2)**-1 || a === 0 || b === 0) &&
             (c !== 0 && d !== 0 && Math.max(c,d)/Math.min(c,d) < (defaultValue2)**-1 || c === 0 || d === 0) &&
             (Math.max(a,b) <= defaultValue1) &&
