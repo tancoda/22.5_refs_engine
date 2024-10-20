@@ -917,7 +917,7 @@ function intersect(x1, y1, x2, y2, x3, y3, x4, y4) {
     return new paper.Point(x,y);
 }
 
-const tolerance = 10**-10;
+const tolerance = 10**-9;
 
 //is value1 within tolerance of value2
 function tolerantSame (value1, value2) {
