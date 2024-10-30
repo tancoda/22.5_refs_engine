@@ -178,6 +178,11 @@
                 paper.setup(canvas);
                 resizeCanvas(); // Ensure canvas size is correct
                 window.addEventListener('resize', resizeCanvas); // Adjust canvas on window resize
+
+				// On mobile devices and inside iframes,
+				// the initial page height calculation is likely to be wrong during page loading.
+				// We check the canvas size one more time to overcome this issue.
+				setTimeout(resizeCanvas, 500);
             } else {
                 console.error('Canvas element not found.');
             }
